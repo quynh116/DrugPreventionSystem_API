@@ -147,3 +147,4 @@ D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.API\bin\Debug\net8.0\DrugPre
 D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.API\bin\Debug\net8.0\DrugPreventionSystem.BusinessLogic.pdb
 D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.API\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.pdb
 D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.API\bin\Debug\net8.0\BCrypt.Net-Next.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.API\obj\Debug\net8.0\DrugPreventionSystem.API.sourcelink.json

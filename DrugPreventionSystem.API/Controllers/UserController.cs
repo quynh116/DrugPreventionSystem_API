@@ -50,6 +50,19 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpPost("login")]
+        public async Task<ActionResult<Result<LoginResponse>>> Login([FromBody] UserLoginRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<LoginResponse>.Invalid("Invalid login data.", errors));
+            }
+
+            var result = await _userService.LoginAsync(request);
+            return HandleResult(result);
+        }
+
         [HttpPost("register-member")]
         public async Task<ActionResult<Result<UserResponse>>> RegisterMember([FromBody] UserRegistrationRequest request)
         {

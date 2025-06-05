@@ -2,6 +2,7 @@
 using DrugPreventionSystem.BusinessLogic.Models.Request;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
+using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Utilities;
@@ -16,10 +17,12 @@ namespace DrugPreventionSystem.DataAccess.Repositories
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
+        private readonly ProvideToken _provideToken;
 
-        public UserService(IUserRepository userRepositories)
+        public UserService(IUserRepository userRepositories, ProvideToken provideToken)
         {
             _userRepository = userRepositories;
+            _provideToken = provideToken;
         }
 
         private UserResponse MapToUserResponse(User user)
@@ -201,6 +204,66 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             catch (Exception ex)
             {
                 return Result<UserResponse>.Error($"Error updating user: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<LoginResponse>> LoginAsync(UserLoginRequest request)
+        {
+            try
+            {
+                
+                var user = await _userRepository.GetUserByEmailAsync(request.Email);
+                if (user == null)
+                {
+                    return Result<LoginResponse>.NotFound("Invalid email");
+                }
+
+                
+                if (!PasswordHasher.VerifyPassword(request.Password, user.PasswordHash))
+                {
+                    return Result<LoginResponse>.Failed("Invalid password");
+                }
+
+                
+                if (!user.IsActive)
+                {
+                    return Result<LoginResponse>.Failed("Your account has been locked.");
+                }
+
+                //if (!user.EmailVerified)
+                //{
+                //    return Result<LoginResponse>.NotVerified("Your email is not verified.");
+                //}
+
+                
+                user.LastLogin = DateTime.Now;
+                await _userRepository.UpdateUserAsync(user); 
+
+                
+                var token = _provideToken.GenerateToken(user);
+                var tokenExpires = _provideToken.GetTokenExpirationTime();
+
+                
+                var loginResponse = new LoginResponse
+                {
+                    UserId = user.UserId,
+                    Username = user.Username,
+                    Email = user.Email,
+                    RoleId = user.RoleId,
+                    RoleName = user.Role?.RoleName ?? "Member", 
+                    Token = token,
+                    TokenExpires = tokenExpires
+                };
+
+                return Result<LoginResponse>.Success(loginResponse, "Login successful.");
+            }
+            catch (InvalidOperationException ex) 
+            {
+                return Result<LoginResponse>.Error($"JWT configuration error: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                return Result<LoginResponse>.Error($"Login failed: {ex.Message}");
             }
         }
     }

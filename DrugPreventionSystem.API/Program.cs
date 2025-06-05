@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
+using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Context;
 using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
@@ -19,6 +20,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 //  Services
 builder.Services.AddScoped<IUserService, UserService>();
 
+
+builder.Services.AddSingleton<ProvideToken>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
