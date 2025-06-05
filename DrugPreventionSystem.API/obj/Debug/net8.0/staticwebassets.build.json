@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "I5vTweaGFkB09e+68OcjMtU5ocaJXo7/SEsWxUZSyHg=",
+  "Source": "DrugPreventionSystem.API",
+  "BasePath": "_content/DrugPreventionSystem.API",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

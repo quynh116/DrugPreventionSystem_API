@@ -1,0 +1,15 @@
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\bin\Debug\net8.0\DrugPreventionSystem.BusinessLogic.deps.json
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\bin\Debug\net8.0\DrugPreventionSystem.BusinessLogic.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\bin\Debug\net8.0\DrugPreventionSystem.BusinessLogic.pdb
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.pdb
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.csproj.AssemblyReference.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.GeneratedMSBuildEditorConfig.editorconfig
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.AssemblyInfoInputs.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.AssemblyInfo.cs
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.csproj.CoreCompileInputs.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPrev.CC82D0CB.Up2Date
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\refint\DrugPreventionSystem.BusinessLogic.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\DrugPreventionSystem.BusinessLogic.pdb
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.BusinessLogic\obj\Debug\net8.0\ref\DrugPreventionSystem.BusinessLogic.dll

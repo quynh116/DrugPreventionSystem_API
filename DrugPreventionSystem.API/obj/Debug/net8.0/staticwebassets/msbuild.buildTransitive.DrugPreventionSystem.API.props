@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\DrugPreventionSystem.API.props" />
+</Project>

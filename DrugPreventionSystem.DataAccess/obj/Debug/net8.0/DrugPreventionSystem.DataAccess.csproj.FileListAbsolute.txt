@@ -1,0 +1,14 @@
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.deps.json
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.runtimeconfig.json
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\bin\Debug\net8.0\DrugPreventionSystem.DataAccess.pdb
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.csproj.AssemblyReference.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.AssemblyInfoInputs.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.AssemblyInfo.cs
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.csproj.CoreCompileInputs.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\refint\DrugPreventionSystem.DataAccess.dll
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.pdb
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\DrugPreventionSystem.DataAccess.genruntimeconfig.cache
+D:\SE\swp\DrugPreventionSystem\DrugPreventionSystem.DataAccess\obj\Debug\net8.0\ref\DrugPreventionSystem.DataAccess.dll

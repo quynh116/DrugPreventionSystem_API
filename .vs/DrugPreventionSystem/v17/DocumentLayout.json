@@ -1,0 +1,105 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "D:\\SE\\swp\\DrugPreventionSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{18CAA745-9871-435C-9D40-483A9B60D5BD}|DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj|d:\\se\\swp\\drugpreventionsystem\\drugpreventionsystem.api\\drugpreventionsystem.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{18CAA745-9871-435C-9D40-483A9B60D5BD}|DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj|solutionrelative:drugpreventionsystem.api\\drugpreventionsystem.api.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BAD81A2-9130-4A23-9CD5-3E46DC276E87}|DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj|d:\\se\\swp\\drugpreventionsystem\\drugpreventionsystem.businesslogic\\commons\\result.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BAD81A2-9130-4A23-9CD5-3E46DC276E87}|DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj|solutionrelative:drugpreventionsystem.businesslogic\\commons\\result.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BAD81A2-9130-4A23-9CD5-3E46DC276E87}|DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj|d:\\se\\swp\\drugpreventionsystem\\drugpreventionsystem.businesslogic\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BAD81A2-9130-4A23-9CD5-3E46DC276E87}|DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj|solutionrelative:drugpreventionsystem.businesslogic\\services\\userservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{18CAA745-9871-435C-9D40-483A9B60D5BD}|DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj|d:\\se\\swp\\drugpreventionsystem\\drugpreventionsystem.api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{18CAA745-9871-435C-9D40-483A9B60D5BD}|DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj|solutionrelative:drugpreventionsystem.api\\controllers\\usercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{1BAD81A2-9130-4A23-9CD5-3E46DC276E87}|DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj|d:\\se\\swp\\drugpreventionsystem\\drugpreventionsystem.businesslogic\\services\\interfaces\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{1BAD81A2-9130-4A23-9CD5-3E46DC276E87}|DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj|solutionrelative:drugpreventionsystem.businesslogic\\services\\interfaces\\iuserservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "DrugPreventionSystem.API",
+              "DocumentMoniker": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
+              "RelativeDocumentMoniker": "DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
+              "ToolTip": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
+              "RelativeToolTip": "DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2025-06-05T10:31:00.647Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Result.cs",
+              "DocumentMoniker": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\Commons\\Result.cs",
+              "RelativeDocumentMoniker": "DrugPreventionSystem.BusinessLogic\\Commons\\Result.cs",
+              "ToolTip": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\Commons\\Result.cs",
+              "RelativeToolTip": "DrugPreventionSystem.BusinessLogic\\Commons\\Result.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAHIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T10:25:46.35Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UserController.cs",
+              "DocumentMoniker": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\Controllers\\UserController.cs",
+              "RelativeDocumentMoniker": "DrugPreventionSystem.API\\Controllers\\UserController.cs",
+              "ToolTip": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\Controllers\\UserController.cs",
+              "RelativeToolTip": "DrugPreventionSystem.API\\Controllers\\UserController.cs",
+              "ViewState": "AQIAAEYAAAAAAAAAAAAgwFgAAAAkAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T10:07:23.251Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "UserService.cs",
+              "DocumentMoniker": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\Services\\UserService.cs",
+              "RelativeDocumentMoniker": "DrugPreventionSystem.BusinessLogic\\Services\\UserService.cs",
+              "ToolTip": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\Services\\UserService.cs",
+              "RelativeToolTip": "DrugPreventionSystem.BusinessLogic\\Services\\UserService.cs",
+              "ViewState": "AQIAALUAAAAAAAAAAAAwwM0AAAAFAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T10:02:48.893Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IUserService.cs",
+              "DocumentMoniker": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\Services\\Interfaces\\IUserService.cs",
+              "RelativeDocumentMoniker": "DrugPreventionSystem.BusinessLogic\\Services\\Interfaces\\IUserService.cs",
+              "ToolTip": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\Services\\Interfaces\\IUserService.cs",
+              "RelativeToolTip": "DrugPreventionSystem.BusinessLogic\\Services\\Interfaces\\IUserService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABIAAAAaAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-05T10:01:54.04Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
