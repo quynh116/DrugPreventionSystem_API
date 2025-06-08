@@ -103,5 +103,31 @@ namespace DrugPreventionSystem.API.Controllers
             }
             return HandleResult(result);
         }
+
+        [HttpPut("{id}/change-password")]
+        public async Task<ActionResult<Result<ChangePasswordResponse>>> ChangePassword(Guid id, [FromBody] ChangePasswordRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<ChangePasswordResponse>.Invalid("Invalid password change data.", errors));
+            }
+
+            var result = await _userService.ChangePasswordAsync(id, request);
+            return HandleResult(result);
+        }
+
+        [HttpPut("{id}/role")]
+        public async Task<ActionResult<Result<ChangeRoleResponse>>> ChangeUserRole(Guid id, [FromBody] ChangeRoleRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<ChangeRoleResponse>.Invalid("Invalid role change data.", errors));
+            }
+
+            var result = await _userService.ChangeUserRoleAsync(id, request);
+            return HandleResult(result);
+        }
     }
 }

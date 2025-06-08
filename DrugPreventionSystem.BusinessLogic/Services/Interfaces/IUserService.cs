@@ -18,5 +18,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<UserResponse>> UpdateUserAsync(Guid id, UserUpdateRequest request); 
         Task<Result<bool>> DeleteUserAsync(Guid id);
         Task<Result<LoginResponse>> LoginAsync(UserLoginRequest request);
+        Task<Result<ChangePasswordResponse>> ChangePasswordAsync(Guid id, ChangePasswordRequest request);
+        Task<Result<ChangeRoleResponse>> ChangeUserRoleAsync(Guid userId, ChangeRoleRequest request);
     }
 }

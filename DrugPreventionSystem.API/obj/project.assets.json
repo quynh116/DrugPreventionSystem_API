@@ -4467,19 +4467,24 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Welcome\\.nuget\\packages\\": {}
+    "C:\\Users\\ADMIN\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
+      "projectUniqueName": "C:\\SWPGroupProject\\BE\\DrugPreventionSystem_API\\DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
       "projectName": "DrugPreventionSystem.API",
-      "projectPath": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
-      "packagesPath": "C:\\Users\\Welcome\\.nuget\\packages\\",
-      "outputPath": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.API\\obj\\",
+      "projectPath": "C:\\SWPGroupProject\\BE\\DrugPreventionSystem_API\\DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj",
+      "packagesPath": "C:\\Users\\ADMIN\\.nuget\\packages\\",
+      "outputPath": "C:\\SWPGroupProject\\BE\\DrugPreventionSystem_API\\DrugPreventionSystem.API\\obj\\",
       "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
       "configFilePaths": [
-        "C:\\Users\\Welcome\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\ADMIN\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -4494,8 +4499,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj": {
-              "projectPath": "D:\\SE\\swp\\DrugPreventionSystem\\DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj"
+            "C:\\SWPGroupProject\\BE\\DrugPreventionSystem_API\\DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj": {
+              "projectPath": "C:\\SWPGroupProject\\BE\\DrugPreventionSystem_API\\DrugPreventionSystem.BusinessLogic\\DrugPreventionSystem.BusinessLogic.csproj"
             }
           }
         }
@@ -4545,7 +4550,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.303/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.203/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

@@ -266,5 +266,72 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 return Result<LoginResponse>.Error($"Login failed: {ex.Message}");
             }
         }
+
+        public async Task<Result<ChangePasswordResponse>> ChangePasswordAsync(Guid id, ChangePasswordRequest request)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByIdAsync(id);
+                if (user == null)
+                {
+                    return Result<ChangePasswordResponse>.NotFound("User not found.");
+                }
+
+                if (!PasswordHasher.VerifyPassword(request.CurrentPassword, user.PasswordHash))
+                {
+                    return Result<ChangePasswordResponse>.Invalid("Current password is incorrect.");
+                }
+
+                user.PasswordHash = PasswordHasher.HashPassword(request.NewPassword);
+                await _userRepository.UpdateUserAsync(user);
+
+                return Result<ChangePasswordResponse>.Success(new ChangePasswordResponse 
+                { 
+                    Success = true,
+                    Message = "Password changed successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Result<ChangePasswordResponse>.Error($"Error changing password: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<ChangeRoleResponse>> ChangeUserRoleAsync(Guid userId, ChangeRoleRequest request)
+        {
+            try
+            {
+                var user = await _userRepository.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return Result<ChangeRoleResponse>.NotFound($"User with ID {userId} not found.");
+                }
+
+                var role = await _userRepository.GetRoleByNameAsync(request.RoleName.ToString());
+                if (role == null)
+                {
+                    return Result<ChangeRoleResponse>.Invalid($"Role '{request.RoleName}' not found.");
+                }
+
+                user.RoleId = role.RoleId;
+                user.UpdatedAt = DateTime.Now;
+                await _userRepository.UpdateUserAsync(user);
+
+                var updatedUser = await _userRepository.GetUserByIdAsync(userId);
+                return Result<ChangeRoleResponse>.Success(new ChangeRoleResponse
+                {
+                    UserId = updatedUser.UserId,
+                    Username = updatedUser.Username,
+                    Email = updatedUser.Email,
+                    RoleId = updatedUser.RoleId,
+                    RoleName = updatedUser.Role?.RoleName ?? "N/A",
+                    Message = "User role updated successfully."
+                });
+            }
+            catch (Exception ex)
+            {
+                return Result<ChangeRoleResponse>.Error($"Error changing user role: {ex.Message}");
+            }
+        }
     }
 }
