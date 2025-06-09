@@ -1,12 +1,37 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "D:\\SE\\swp\\project\\DrugPreventionSystem_API\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{18CAA745-9871-435C-9D40-483A9B60D5BD}|DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj|d:\\se\\swp\\project\\drugpreventionsystem_api\\drugpreventionsystem.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{18CAA745-9871-435C-9D40-483A9B60D5BD}|DrugPreventionSystem.API\\DrugPreventionSystem.API.csproj|solutionrelative:drugpreventionsystem.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
       "VerticalTabListWidth": 256,
-      "DocumentGroups": []
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "D:\\SE\\swp\\project\\DrugPreventionSystem_API\\DrugPreventionSystem.API\\Program.cs",
+              "RelativeDocumentMoniker": "DrugPreventionSystem.API\\Program.cs",
+              "ToolTip": "D:\\SE\\swp\\project\\DrugPreventionSystem_API\\DrugPreventionSystem.API\\Program.cs",
+              "RelativeToolTip": "DrugPreventionSystem.API\\Program.cs",
+              "ViewState": "AQIAAAwAAAAAAAAAAAAAABgAAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-06-09T15:18:50.096Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DrugPreventionSystem.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96d9ba46eb977a93e9377983fa4e5629f091546a")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+10347f774f56fafe579509ffff8f8a48f813804a")]
 [assembly: System.Reflection.AssemblyProductAttribute("DrugPreventionSystem.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DrugPreventionSystem.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -22,7 +22,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //  Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
-//  Services
+//sercice
 builder.Services.AddScoped<IUserService, UserService>();
 
 
