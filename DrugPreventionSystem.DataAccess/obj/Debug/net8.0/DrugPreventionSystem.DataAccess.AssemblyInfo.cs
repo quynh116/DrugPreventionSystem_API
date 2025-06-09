@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DrugPreventionSystem.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0f68bc30851de7c99ebe5becf966876c8f0e4654")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+96d9ba46eb977a93e9377983fa4e5629f091546a")]
 [assembly: System.Reflection.AssemblyProductAttribute("DrugPreventionSystem.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DrugPreventionSystem.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
