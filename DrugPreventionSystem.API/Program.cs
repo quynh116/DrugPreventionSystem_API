@@ -1,3 +1,4 @@
+using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Context;
@@ -16,10 +17,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //  Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
 
 //  Services
 builder.Services.AddScoped<IUserService, UserService>();
-
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 

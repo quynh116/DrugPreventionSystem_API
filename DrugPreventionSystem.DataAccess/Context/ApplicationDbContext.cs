@@ -21,6 +21,7 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
+        public object User { get; internal set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

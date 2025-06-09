@@ -18,5 +18,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories.Interfaces
         Task DeleteUserAsync(Guid id);
         Task<Role?> GetRoleByIdAsync(int roleId); 
         Task<Role?> GetRoleByNameAsync(string roleName);
+        
     }
 }
