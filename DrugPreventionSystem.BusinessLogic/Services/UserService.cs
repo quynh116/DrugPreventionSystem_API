@@ -5,6 +5,8 @@ using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
+using DrugPreventionSystem.DataAccess.Repository;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using DrugPreventionSystem.DataAccess.Utilities;
 using System;
 using System.Collections.Generic;
@@ -18,11 +20,15 @@ namespace DrugPreventionSystem.DataAccess.Repositories
     {
         private readonly IUserRepository _userRepository;
         private readonly ProvideToken _provideToken;
+        private readonly IUserProfileRepository _userProfileRepository;
+        private readonly IConsultantRepository _consultantRepository;
 
-        public UserService(IUserRepository userRepositories, ProvideToken provideToken)
+        public UserService(IUserRepository userRepositories, IUserProfileRepository userProfileRepository, IConsultantRepository consultantRepository, ProvideToken provideToken)
         {
             _userRepository = userRepositories;
             _provideToken = provideToken;
+            _userProfileRepository = userProfileRepository;
+            _consultantRepository = consultantRepository;
         }
 
         private UserResponse MapToUserResponse(User user)
@@ -127,6 +133,14 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 };
 
                 var addedUser = await _userRepository.AddUserAsync(newUser);
+
+                var newUserProfile = new UserProfile
+                {
+                    ProfileId = Guid.NewGuid(),
+                    UserId = addedUser.UserId,
+                    CreatedAt = DateTime.Now
+                };
+                await _userProfileRepository.AddUserProfileAsync(newUserProfile);
                 var userWithRole = await _userRepository.GetUserByIdAsync(addedUser.UserId);
                 return Result<UserResponse>.Success(MapToUserResponse(userWithRole), "Member registered.");
             }
@@ -197,7 +211,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 user.UpdatedAt = DateTime.Now;
                 await _userRepository.UpdateUserAsync(user);
 
-                // Load lại user với Role để MapToUserResponse không bị lỗi null
+                
                 var updatedUserWithRole = await _userRepository.GetUserByIdAsync(user.UserId);
                 return Result<UserResponse>.Success(MapToUserResponse(updatedUserWithRole), "User updated.");
             }
@@ -331,6 +345,99 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             catch (Exception ex)
             {
                 return Result<ChangeRoleResponse>.Error($"Error changing user role: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<UserResponse>> RegisterUserByAdminAsync(AdminUserRegistrationRequest request)
+        {
+            try
+            {
+                if (await _userRepository.GetUserByUsernameAsync(request.Username) != null)
+                {
+                    return Result<UserResponse>.Duplicated("Username already exists.");
+                }
+                if (await _userRepository.GetUserByEmailAsync(request.Email) != null)
+                {
+                    return Result<UserResponse>.Duplicated("Email already exists.");
+                }
+
+                var targetRole = await _userRepository.GetRoleByNameAsync(request.RoleName);
+                if (targetRole == null)
+                {
+                    return Result<UserResponse>.Error($"Role '{request.RoleName}' not found.");
+                }
+
+                var newUser = new User
+                {
+                    UserId = Guid.NewGuid(),
+                    Username = request.Username,
+                    Email = request.Email,
+                    PasswordHash = PasswordHasher.HashPassword(request.Password),
+                    RoleId = targetRole.RoleId,
+                    IsActive = true,
+                    EmailVerified = false,
+                    CreatedAt = DateTime.Now
+                };
+
+                var addedUser = await _userRepository.AddUserAsync(newUser);
+
+                
+                var newUserProfile = new UserProfile
+                {
+                    ProfileId = Guid.NewGuid(),
+                    UserId = addedUser.UserId,
+                    CreatedAt = DateTime.Now
+                };
+                await _userProfileRepository.AddUserProfileAsync(newUserProfile);
+
+                // Nếu role là Consultant, tạo thêm Consultant profile
+                if (request.RoleName.Equals("Consultant", StringComparison.OrdinalIgnoreCase))
+                {
+                    var newConsultant = new Consultant
+                    {
+                        ConsultantId = Guid.NewGuid(),
+                        UserId = addedUser.UserId,
+                        IsAvailable = true,         
+                        TotalConsultations = 0,     
+                        CreatedAt = DateTime.Now
+                        
+                    };
+                    await _consultantRepository.AddConsultant(newConsultant);
+                }
+
+                var userWithRole = await _userRepository.GetUserByIdAsync(addedUser.UserId);
+                return Result<UserResponse>.Success(MapToUserResponse(userWithRole), $"{request.RoleName} registered successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Result<UserResponse>.Error($"Error during user registration by admin: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<IEnumerable<RoleResponse>>> GetManagementRolesAsync()
+        {
+            try
+            {
+                var specificRoles = new string[] { "Manager", "Staff", "Consultant" };
+                var roles = await _userRepository.GetSpecificRolesAsync(specificRoles);
+
+                if (roles == null || !roles.Any())
+                {
+                    return Result<IEnumerable<RoleResponse>>.NotFound("No management roles found.");
+                }
+
+                var roleResponses = roles.Select(r => new RoleResponse
+                {
+                    RoleId = r.RoleId,
+                    RoleName = r.RoleName,
+                    Description = r.Description
+                });
+
+                return Result<IEnumerable<RoleResponse>>.Success(roleResponses, "Management roles retrieved successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<RoleResponse>>.Error($"Error retrieving management roles: {ex.Message}");
             }
         }
     }

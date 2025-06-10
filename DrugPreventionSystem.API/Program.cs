@@ -25,11 +25,13 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //  Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+builder.Services.AddScoped<IConsultantRepository, ConsultantRepository>();
 
 
 //sercice
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
+builder.Services.AddScoped<IConsultantService, ConsultantService>();
 
 
 builder.Services.AddSingleton<ProvideToken>();

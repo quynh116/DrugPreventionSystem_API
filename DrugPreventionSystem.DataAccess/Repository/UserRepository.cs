@@ -50,6 +50,13 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             return await _context.Roles.FirstOrDefaultAsync(r => r.RoleName == roleName);
         }
 
+        public async Task<IEnumerable<Role>> GetSpecificRolesAsync(params string[] roleNames)
+        {
+            return await _context.Roles
+                                .Where(r => roleNames.Contains(r.RoleName))
+                                .ToListAsync();
+        }
+
         public async Task<User?> GetUserByEmailAsync(string email)
         {
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Email == email);

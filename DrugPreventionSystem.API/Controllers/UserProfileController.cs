@@ -9,7 +9,7 @@ namespace DrugPreventionSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class UserProfileController : ControllerBase
+    public class UserProfileController : BaseApiController
     {
         private readonly IUserProfileService _userProfileService;
 
@@ -18,21 +18,7 @@ namespace DrugPreventionSystem.API.Controllers
             _userProfileService = userProfileService;
         }
 
-        private ActionResult<Result<T>> HandleResult<T>(Result<T> result)
-        {
-            return result.ResultStatus switch
-            {
-                ResultStatus.Success => Ok(result),
-                ResultStatus.NotFound => NotFound(result),
-                ResultStatus.Duplicated => Conflict(result), // 409 
-                ResultStatus.Invalid => BadRequest(result), // 400 
-                ResultStatus.Failed => BadRequest(result),
-                ResultStatus.NotVerified => Unauthorized(result), // 401 
-                ResultStatus.Error => StatusCode(500, result), // 500 
-                ResultStatus.Failure => StatusCode(500, result), // 
-                _ => StatusCode(500, Result<T>.Error("Unknown error.")),
-            };
-        }
+        
 
         [HttpGet]
         public async Task<ActionResult<Result<IEnumerable<UserProfileResponse>>>> GetAllUsersProfile()
