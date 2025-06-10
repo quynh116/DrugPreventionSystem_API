@@ -1,8 +1,11 @@
+using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Context;
 using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
+using DrugPreventionSystem.DataAccess.Repository;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
@@ -21,9 +24,12 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 //  Repositories
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserProfileRepository, UserProfileRepository>();
+
 
 //sercice
 builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 
 
 builder.Services.AddSingleton<ProvideToken>();
