@@ -124,8 +124,8 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
-        [HttpPost("admin/register-user")]
-        public async Task<ActionResult<Result<UserResponse>>> RegisterUserByAdmin([FromBody] AdminUserRegistrationRequest request)
+        [HttpPost("admin/Create-user")]
+        public async Task<ActionResult<Result<UserResponse>>> CreateUserByAdmin([FromBody] AdminUserRegistrationRequest request)
         {
             if (!ModelState.IsValid)
             {

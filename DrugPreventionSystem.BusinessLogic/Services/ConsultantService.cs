@@ -22,17 +22,19 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             _consultantRepository = consultantRepositories;
             _provideToken = provideToken;
         }
-        private ConsultantUpdateResponse MapToConsultantResponse(Consultant consultant)
+        private ConsultantReadResponse MapToConsultantReadResponse(Consultant consultant)
         {
             if (consultant == null) return null;
-            return new ConsultantUpdateResponse
+            return new ConsultantReadResponse
             {
-                ConsultantId = consultant.ConsultantId.ToString(),
+                ConsultantId = consultant.ConsultantId,
+                UserId = consultant.UserId,
                 LicenseNumber = consultant.LicenseNumber,
                 Specialization = consultant.Specialization,
                 YearsOfExperience = consultant.YearsOfExperience,
                 Qualifications = consultant.Qualifications,
                 Bio = consultant.Bio,
+                CreatedAt = consultant.CreatedAt,
                 ConsultationFee = consultant.ConsultationFee,
                 IsAvailable = consultant.IsAvailable,
                 WorkingHours = consultant.WorkingHours,
@@ -69,31 +71,15 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<ConsultantReadResponse>.Error($"Error retrieving consultant: {ex.Message}");
             }
         }
-        private ConsultantReadResponse MapToConsultantReadResponse(Consultant consultant)
-        {
-            return new ConsultantReadResponse
-            {
-                //ConsultantId = consultant.ConsultantId,
-                LicenseNumber = consultant.LicenseNumber,
-                Specialization = consultant.Specialization,
-                YearsOfExperience = consultant.YearsOfExperience,
-                Qualifications = consultant.Qualifications,
-                Bio = consultant.Bio,
-                ConsultationFee = consultant.ConsultationFee,
-                IsAvailable = consultant.IsAvailable,
-                WorkingHours = consultant.WorkingHours,
-                Rating = consultant.Rating,
-                TotalConsultations = consultant.TotalConsultations
-            };
-        }
-        public async Task<Result<ConsultantUpdateResponse>> UpdateConsultantAsync(Guid consultantId, ConsultantUpdateRequest request)
+        
+        public async Task<Result<ConsultantReadResponse>> UpdateConsultantAsync(Guid consultantId, ConsultantUpdateRequest request)
         {
             try
             {
                 var consultant = await _consultantRepository.GetConsultantByIdAsync(consultantId);
                 if (consultant == null)
                 {
-                    return Result<ConsultantUpdateResponse>.NotFound($"Consultant with ID {consultantId} not found.");
+                    return Result<ConsultantReadResponse>.NotFound($"Consultant with ID {consultantId} not found.");
                 }
 
                 // Cập nhật nếu có dữ liệu mới
@@ -123,11 +109,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
                 await _consultantRepository.UpdateConsultantAsync(consultant);
 
-                return Result<ConsultantUpdateResponse>.Success(MapToConsultantResponse(consultant), "Consultant updated.");
+                return Result<ConsultantReadResponse>.Success(MapToConsultantReadResponse(consultant), "Consultant updated.");
             }
             catch (Exception ex)
             {
-                return Result<ConsultantUpdateResponse>.Error($"Error updating consultant: {ex.Message}");
+                return Result<ConsultantReadResponse>.Error($"Error updating consultant: {ex.Message}");
             }
         }
         public async Task<Result<bool>> DeleteConsultantAsync(Guid id)

@@ -25,7 +25,7 @@ namespace DrugPreventionSystem.DataAccess.Repository
         //Lay consultant biet id
         public async Task<Consultant?> GetConsultantByIdAsync(Guid id)
         {
-            return await _context.Consultants.FirstOrDefaultAsync(c => c.Equals(id));
+            return await _context.Consultants.FirstOrDefaultAsync(c => c.ConsultantId == id);
         }
         //Update consultant
         public async Task UpdateConsultantAsync(Consultant consultant)

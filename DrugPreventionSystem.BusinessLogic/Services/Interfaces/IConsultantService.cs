@@ -13,7 +13,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
     {
         Task<Result<IEnumerable<ConsultantReadResponse>>> GetAllConsultantAsync();
         Task<Result<ConsultantReadResponse>> GetConsultantByIdAsync(Guid consultantId);
-        Task<Result<ConsultantUpdateResponse>> UpdateConsultantAsync(Guid consultantId, ConsultantUpdateRequest request);
+        Task<Result<ConsultantReadResponse>> UpdateConsultantAsync(Guid consultantId, ConsultantUpdateRequest request);
         Task<Result<bool>> DeleteConsultantAsync(Guid id);
     }
 }

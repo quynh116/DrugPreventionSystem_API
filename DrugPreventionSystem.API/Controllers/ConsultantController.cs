@@ -33,7 +33,7 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Result<ConsultantUpdateResponse>>> UpdateConsultant(Guid id, [FromBody] ConsultantUpdateRequest request)
+        public async Task<ActionResult<Result<ConsultantReadResponse>>> UpdateConsultant(Guid id, [FromBody] ConsultantUpdateRequest request)
         {
             if (!ModelState.IsValid)
             {

@@ -8,7 +8,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Consultant
 {
     public class ConsultantUpdateRequest
     {
-        public string ConsultantId { get; set; } = string.Empty;
         public string LicenseNumber { get; set; } = string.Empty;
         public string Specialization { get; set; } = string.Empty;
         public int? YearsOfExperience { get; set; }
