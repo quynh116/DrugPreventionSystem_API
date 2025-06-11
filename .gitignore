@@ -16,8 +16,8 @@
 
 
 # Ignore appsettings.json
-appsettings.json
-appsettings.*.json
+# appsettings.json
+# appsettings.*.json
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/
