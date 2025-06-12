@@ -56,7 +56,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 // Token
-var serect = builder.Configuration["AppSettings:SecretKe"];
+var serect = builder.Configuration["AppSettings:SecretKey"];
 var key = Encoding.ASCII.GetBytes(serect);
 builder.Services.AddAuthentication(x =>
 {
