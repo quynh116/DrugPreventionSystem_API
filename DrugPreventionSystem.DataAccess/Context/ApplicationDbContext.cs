@@ -21,6 +21,11 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<User> Users { get; set; }
         public DbSet<UserProfile> UserProfiles { get; set; }
         public DbSet<Consultant> Consultants { get; set; }
+        public DbSet<Survey> Surveys { get; set; } = null!;
+        public DbSet<SurveyQuestion> SurveyQuestions { get; set; } = null!;
+        public DbSet<SurveyOption> SurveyOptions { get; set; } = null!;
+        public DbSet<UserSurveyResponse> UserSurveyResponses { get; set; } = null!;
+        public DbSet<UserSurveyAnswer> UserSurveyAnswers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -62,6 +67,52 @@ namespace DrugPreventionSystem.DataAccess.Context
             modelBuilder.Entity<Consultant>()
                 .Property(c => c.Rating)
                 .HasColumnType("decimal(3,2)");
+
+            // Survey có nhiều SurveyQuestions
+            modelBuilder.Entity<SurveyQuestion>()
+                .HasOne(sq => sq.Survey)
+                .WithMany(s => s.SurveyQuestions)
+                .HasForeignKey(sq => sq.SurveyId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa khảo sát, các câu hỏi của nó cũng bị xóa
+
+            // SurveyQuestion có nhiều SurveyOptions
+            modelBuilder.Entity<SurveyOption>()
+                .HasOne(so => so.SurveyQuestion)
+                .WithMany(sq => sq.SurveyOptions)
+                .HasForeignKey(so => so.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa câu hỏi, các lựa chọn của nó cũng bị xóa
+
+            // UserSurveyResponse liên kết với User và Survey
+            modelBuilder.Entity<UserSurveyResponse>()
+                .HasOne(usr => usr.User)
+                .WithMany(u => u.UserSurveyResponses) 
+                .HasForeignKey(usr => usr.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
+            modelBuilder.Entity<UserSurveyResponse>()
+                .HasOne(usr => usr.Survey)
+                .WithMany(s => s.UserSurveyResponses)
+                .HasForeignKey(usr => usr.SurveyId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            // UserSurveyAnswer liên kết với UserSurveyResponse, SurveyQuestion và SurveyOption
+            modelBuilder.Entity<UserSurveyAnswer>()
+                .HasOne(usa => usa.UserSurveyResponse)
+                .WithMany(usr => usr.UserSurveyAnswers)
+                .HasForeignKey(usa => usa.ResponseId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            modelBuilder.Entity<UserSurveyAnswer>()
+                .HasOne(usa => usa.SurveyQuestion)
+                .WithMany(sq => sq.UserSurveyAnswers)
+                .HasForeignKey(usa => usa.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            modelBuilder.Entity<UserSurveyAnswer>()
+                .HasOne(usa => usa.SurveyOption)
+                .WithMany(so => so.UserSurveyAnswers)
+                .HasForeignKey(usa => usa.OptionId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
 
             // Seed initial data
             SeedData(modelBuilder);

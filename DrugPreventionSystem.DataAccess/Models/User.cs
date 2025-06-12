@@ -54,5 +54,6 @@ namespace DrugPreventionSystem.DataAccess.Models
         public virtual Role Role { get; set; } = null!;
         public virtual UserProfile? UserProfile { get; set; }
         public virtual Consultant? Consultant { get; set; }
+        public virtual ICollection<UserSurveyResponse> UserSurveyResponses { get; set; } = new List<UserSurveyResponse>();
     }
 }
