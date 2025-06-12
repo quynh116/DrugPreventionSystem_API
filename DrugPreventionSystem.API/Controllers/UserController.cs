@@ -6,6 +6,7 @@ using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.DataAccess.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -20,8 +21,8 @@ namespace DrugPreventionSystem.API.Controllers
             _userService = userService;
         }
 
+        [Authorize(Roles = "Admin")]        
         
-
         [HttpGet]
         public async Task<ActionResult<Result<IEnumerable<UserResponse>>>> GetAllUsers()
         {
@@ -56,6 +57,7 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _userService.LoginAsync(request);
             return HandleResult(result);
         }
+
 
         [HttpPost("register-member")]
         public async Task<ActionResult<Result<UserResponse>>> RegisterMember([FromBody] UserRegistrationRequest request)
@@ -124,6 +126,7 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost("admin/Create-user")]
         public async Task<ActionResult<Result<UserResponse>>> CreateUserByAdmin([FromBody] AdminUserRegistrationRequest request)
         {
