@@ -108,5 +108,39 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<SurveyResponse>.Error($"Error updating survey: {ex.Message}");
             }
         }
+
+        public async Task<Result<SurveyResponse>> AddNewSurvey(SurveyCreateRequest request)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(request.Name))
+                {
+                    return Result<SurveyResponse>.Invalid("Survey name is required.");
+                }
+
+                if (await _surveyRepository.GetSurveyByNameAsync(request.Name) != null)
+                {
+                    return Result<SurveyResponse>.Duplicated("Survey name already exists.");
+                }
+
+                var now = DateTime.Now;
+                var survey = new Survey
+                {
+                    SurveyId = Guid.NewGuid(),
+                    Name = request.Name,
+                    Description = request.Description,
+                    CreatedAt = now,
+                    UpdatedAt = now
+                };
+
+                var addedSurvey = await _surveyRepository.AddNewSurvey(survey);
+
+                return Result<SurveyResponse>.Success(MapToSurveyReponse(addedSurvey), "Added successfully");
+            }
+            catch (Exception ex)
+            {
+                return Result<SurveyResponse>.Error($"Error adding survey: {ex.Message}");
+            }
+        }
     }
 }

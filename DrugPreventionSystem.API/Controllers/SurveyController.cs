@@ -14,7 +14,8 @@ namespace DrugPreventionSystem.API.Controllers
     {
         private readonly ISurveyService _surveyService;
 
-        public SurveyController(ISurveyService surveyService) {
+        public SurveyController(ISurveyService surveyService)
+        {
             _surveyService = surveyService;
         }
 
@@ -35,7 +36,7 @@ namespace DrugPreventionSystem.API.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<SurveyResponse>>> UpdateSurveyById(Guid id, [FromBody] SurveyUpdateRequest request)
         {
-            
+
             if (!ModelState.IsValid)
             {
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
@@ -49,10 +50,22 @@ namespace DrugPreventionSystem.API.Controllers
         public async Task<ActionResult<Result<bool>>> DeleteSurveyById(Guid id)
         {
             var result = await _surveyService.DeleteSurveyByIdAsync(id);
-            if(result.ResultStatus == ResultStatus.Success)
+            if (result.ResultStatus == ResultStatus.Success)
             {
                 return NoContent();
             }
+            return HandleResult(result);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Result<SurveyResponse>>> AddNewSurvey([FromBody] SurveyCreateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<SurveyResponse>.Invalid("Invalid survey data.", errors));
+            }
+            var result = await _surveyService.AddNewSurvey(request);
             return HandleResult(result);
         }
     }

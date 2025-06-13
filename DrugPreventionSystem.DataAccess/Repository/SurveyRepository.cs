@@ -18,6 +18,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             _context = context;
         }
+
+        public async Task<Survey> AddNewSurvey(Survey survey)
+        {
+            await _context.Surveys.AddAsync(survey);
+            await _context.SaveChangesAsync();
+            return survey;
+        }
+
         public async Task DeleteSurveyByIdAsync(Guid id)
         {
             var survey = await _context.Surveys.FindAsync(id);
