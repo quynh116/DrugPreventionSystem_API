@@ -166,5 +166,22 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<UserProfileResponse>.Error($"Error updating user: {ex.Message}");
             }
         }
+
+        public async Task<Result<UserProfileResponse>> GetUserProfileByUserIdAsync(Guid userId)
+        {
+            try
+            {
+                var userProfile = await _userProfileRepository.GetUserProfileByUserIdAsync(userId);
+                if (userProfile == null)
+                {
+                    return Result<UserProfileResponse>.NotFound($"User with ID {userId} not found.");
+                }
+                return Result<UserProfileResponse>.Success(MapToUserProfileResponse(userProfile));
+            }
+            catch (Exception ex)
+            {
+                return Result<UserProfileResponse>.Error($"Error retrieving user: {ex.Message}");
+            }
+        }
     }
 }

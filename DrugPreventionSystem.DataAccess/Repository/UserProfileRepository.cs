@@ -61,6 +61,11 @@ namespace DrugPreventionSystem.DataAccess.Repository
             var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(up => up.ProfileId.Equals(id));
             return userProfile;
         }
+        public async Task<UserProfile?> GetUserProfileByUserIdAsync(Guid userId)
+        {
+            var userProfile = await _context.UserProfiles.FirstOrDefaultAsync(up => up.UserId.Equals(userId));
+            return userProfile;
+        }
 
         public async Task<UserProfile?> GetUserProfileByUsernameAsync(string username)
         {

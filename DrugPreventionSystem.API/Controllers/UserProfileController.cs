@@ -34,6 +34,13 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("{userId}/UserProfile")]
+        public async Task<ActionResult<Result<UserProfileResponse>>> GetUserProfileByUserId(Guid userId)
+        {
+            var result = await _userProfileService.GetUserProfileByUserIdAsync(userId);
+            return HandleResult(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<UserProfileResponse>>> UpdateUserProfile(Guid id, [FromBody] UserProfileUpdateRequest request)
         {

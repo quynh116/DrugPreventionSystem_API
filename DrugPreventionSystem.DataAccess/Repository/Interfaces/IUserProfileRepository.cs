@@ -11,6 +11,7 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
     {
         Task<IEnumerable<UserProfile>> GetAllUsersProfileAsync();
         Task<UserProfile?> GetUserProfileByIdAsync(Guid id);
+        Task<UserProfile?> GetUserProfileByUserIdAsync(Guid userId);
         Task<UserProfile?> GetUserProfileByEmailAsync(string email);
         Task<UserProfile?> GetUserProfileByUsernameAsync(string username);
         Task<UserProfile> AddUserProfileAsync(UserProfile userProfile);
