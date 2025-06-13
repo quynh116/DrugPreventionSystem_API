@@ -47,7 +47,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             try
             {
                 var consultants = await _consultantRepository.GetAllConsultantsAsync();
-                var consultantResponses = consultants.Select(c => MapToConsultantReadResponse(c)).ToList(); // Sử dụng ánh xạ đúng
+                var consultantResponses = consultants.Select(c => MapToConsultantReadResponse(c)).ToList();
                 return Result<IEnumerable<ConsultantReadResponse>>.Success(consultantResponses);
             }
             catch (Exception ex)
