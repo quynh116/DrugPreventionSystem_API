@@ -7,6 +7,7 @@ using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.SurveyQuestion;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Consultant;
+using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
@@ -14,7 +15,7 @@ using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
-    public class SurveyQuestionService
+    public class SurveyQuestionService : ISurveyQuestionService
     {
         private readonly ISurveyQuestionRepository _surveyQuestionRepository;
         private readonly ProvideToken _provideToken;
@@ -82,7 +83,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 }
 
                 // Cập nhật tất cả các trường từ request
-                question.SurveyId = request.SurveyId;
+                
                 question.QuestionText = request.QuestionText;
                 question.QuestionType = request.QuestionType;
                 question.Sequence = request.Sequence;

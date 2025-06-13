@@ -24,7 +24,7 @@ namespace DrugPreventionSystem.DataAccess.Repository
         }
         public async Task<SurveyQuestion?> GetSurveyQuestionByIdAsync(Guid id)
         {
-            return await _context.SurveyQuestions.FirstOrDefaultAsync(s => s.SurveyId == id);
+            return await _context.SurveyQuestions.FirstOrDefaultAsync(s => s.QuestionId == id);
         }
         public async Task UpdateSurveyQuestion(SurveyQuestion question)
         {
