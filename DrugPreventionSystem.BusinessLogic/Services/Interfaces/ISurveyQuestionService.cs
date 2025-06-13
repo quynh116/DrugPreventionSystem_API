@@ -8,6 +8,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Request.Consultant;
 using DrugPreventionSystem.BusinessLogic.Models.Request.SurveyQuestion;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Consultant;
+using DrugPreventionSystem.DataAccess.Models;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
@@ -15,6 +16,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
     {
         Task<Result<IEnumerable<SurveyQuestionResponse>>> GetAllSurveyQuestionsAsync();
         Task<Result<SurveyQuestionResponse>> GetSurveyQuestionByIdAsync(Guid surveyQuestionId);
+        Task<Result<IEnumerable<SurveyQuestionResponse>>> GetSurveyQuestionsBySurveyIdAsync(Guid surveyId);
         Task<Result<SurveyQuestionResponse>> UpdateSurveyQuestionAsync(SurveyQuestionUpdateRequest request, Guid questionId);
         Task<Result<bool>> DeleteSurveyQuestionAsync(Guid questionId);
 

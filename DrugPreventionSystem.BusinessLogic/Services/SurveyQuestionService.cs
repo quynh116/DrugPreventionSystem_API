@@ -118,9 +118,25 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
+        public async Task<Result<IEnumerable<SurveyQuestionResponse>>> GetSurveyQuestionsBySurveyIdAsync(Guid surveyId)
+        {
+            try
+            {
+                var surveyQuestions = await _surveyQuestionRepository.GetSurveyQuestionsBySurveyIdAsync(surveyId);
 
+                if (surveyQuestions == null || !surveyQuestions.Any())
+                {
+                    return Result<IEnumerable<SurveyQuestionResponse>>.NotFound($"No survey questions found for SurveyId {surveyId}");
+                }
 
+                var surveyQuestionResponses = surveyQuestions.Select(q => MapToResponse(q)).ToList();
 
-
+                return Result<IEnumerable<SurveyQuestionResponse>>.Success(surveyQuestionResponses);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<SurveyQuestionResponse>>.Error($"Error retrieving survey questions: {ex.Message}");
+            }
+        }
     }
 }

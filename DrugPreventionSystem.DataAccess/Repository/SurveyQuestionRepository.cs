@@ -26,6 +26,11 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             return await _context.SurveyQuestions.FirstOrDefaultAsync(s => s.QuestionId == id);
         }
+
+        public async Task<IEnumerable<SurveyQuestion>> GetSurveyQuestionsBySurveyIdAsync(Guid surveyId)
+        {
+            return await _context.SurveyQuestions.Where(sq => sq.SurveyId == surveyId).ToListAsync();
+        }
         public async Task UpdateSurveyQuestion(SurveyQuestion question)
         {
             _context.SurveyQuestions.Update(question);

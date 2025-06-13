@@ -8,7 +8,6 @@ namespace DrugPreventionSystem.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class SurveyOptionController : ControllerBase
     {
         private readonly ISurveyOptionService _surveyOptionService;
@@ -33,6 +32,13 @@ namespace DrugPreventionSystem.API.Controllers
                 return NotFound();
 
             return Ok(surveyOption);
+        }
+
+        [HttpGet("{questionId}/Options")]
+        public async Task<ActionResult<IEnumerable<SurveyOptionDTO>>> GetSurveyOptionByQuestionId(Guid questionId)
+        {
+            var surveyOptions = await _surveyOptionService.GetByQuestionIdAsync(questionId);
+            return Ok(surveyOptions);
         }
 
 

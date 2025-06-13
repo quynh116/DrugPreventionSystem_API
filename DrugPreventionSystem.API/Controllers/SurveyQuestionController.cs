@@ -56,6 +56,13 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("{surveyId}/questions")]
+        public async Task<ActionResult<Result<IEnumerable<SurveyQuestionResponse>>>> GetSurveyQuestionsBySurveyId(Guid surveyId)
+        {
+            var result = await _surveyQuestionService.GetSurveyQuestionsBySurveyIdAsync(surveyId);
+            return HandleResult(result);
+        }
+
         [HttpPost]
         public async Task<Result<SurveyQuestionResponse>> AddSurveyQuestionAsync(SurveyQuestionCreateRequest request)
         {
