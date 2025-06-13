@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Models;
+using DrugPreventionSystem.BusinessLogic.Models.Request.SurveyOption;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
@@ -6,8 +7,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
     {
         Task<IEnumerable<SurveyOptionDTO>> GetAllAsync();
         Task<SurveyOptionDTO?> GetByIdAsync(Guid id);
-        Task<SurveyOptionDTO> CreateAsync(SurveyOptionDTO surveyOptionDTO);
-        Task<SurveyOptionDTO> UpdateAsync(Guid id, SurveyOptionDTO surveyOptionDTO);
+        Task<SurveyOptionDTO> CreateAsync(SurveyOptionAddRequest surveyOptionDTO);
+        Task<SurveyOptionDTO> UpdateAsync(Guid id, SurveyOptionUpdateRequest surveyOptionDTO);
         Task DeleteAsync(Guid id);
         Task<IEnumerable<SurveyOptionDTO>> GetByQuestionIdAsync(Guid questionId);
     }

@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Models;
+using DrugPreventionSystem.BusinessLogic.Models.Request.SurveyOption;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -36,14 +37,14 @@ namespace DrugPreventionSystem.API.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<SurveyOptionDTO>> Create(SurveyOptionDTO surveyOptionDTO)
+        public async Task<ActionResult<SurveyOptionDTO>> Create(SurveyOptionAddRequest surveyOptionDTO)
         {
             var createdOption = await _surveyOptionService.CreateAsync(surveyOptionDTO);
             return CreatedAtAction(nameof(GetById), new { id = createdOption.OptionId }, createdOption);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<SurveyOptionDTO>> Update(Guid id, SurveyOptionDTO surveyOptionDTO)
+        public async Task<ActionResult<SurveyOptionDTO>> Update(Guid id, SurveyOptionUpdateRequest surveyOptionDTO)
         {
             try
             {

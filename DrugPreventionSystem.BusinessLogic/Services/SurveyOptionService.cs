@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Models;
+using DrugPreventionSystem.BusinessLogic.Models.Request.SurveyOption;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -26,10 +27,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return surveyOption != null ? MapToDTO(surveyOption) : null;
         }
 
-        public async Task<SurveyOptionDTO> CreateAsync(SurveyOptionDTO surveyOptionDTO)
+        public async Task<SurveyOptionDTO> CreateAsync(SurveyOptionAddRequest surveyOptionDTO)
         {
             var surveyOption = new SurveyOption
             {
+                OptionId = Guid.NewGuid(),
                 QuestionId = surveyOptionDTO.QuestionId,
                 OptionText = surveyOptionDTO.OptionText,
                 ScoreValue = surveyOptionDTO.ScoreValue
@@ -39,13 +41,13 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return MapToDTO(createdOption);
         }
 
-        public async Task<SurveyOptionDTO> UpdateAsync(Guid id, SurveyOptionDTO surveyOptionDTO)
+        public async Task<SurveyOptionDTO> UpdateAsync(Guid id, SurveyOptionUpdateRequest surveyOptionDTO)
         {
             var existingOption = await _surveyOptionRepository.GetByIdAsync(id);
             if (existingOption == null)
                 throw new KeyNotFoundException($"SurveyOption with ID {id} not found.");
 
-            existingOption.QuestionId = surveyOptionDTO.QuestionId;
+            
             existingOption.OptionText = surveyOptionDTO.OptionText;
             existingOption.ScoreValue = surveyOptionDTO.ScoreValue;
 
