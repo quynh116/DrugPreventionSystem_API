@@ -88,7 +88,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 if (survey == null) return Result<SurveyResponse>.NotFound($"Cannot find survey with id: {id}");
                 if(!string.IsNullOrEmpty(request.Name) && request.Name != survey.Name)
                 {
-                    if(await _surveyRepository.GetSurveyByNameAsync(survey.Name) != null)
+                    var existingSurvey = await _surveyRepository.GetSurveyByNameAsync(request.Name);
+                    if (existingSurvey != null && existingSurvey.SurveyId != survey.SurveyId)
                     {
                         return Result<SurveyResponse>.Duplicated("Survey name already exist.");
                     }
