@@ -47,8 +47,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 return Result<bool>.Error($"Error Deleting Survey: {ex.Message}");
             }
-
-
         }
 
         public async Task<Result<IEnumerable<SurveyResponse>>> GetAllSurveyAsync()
@@ -109,7 +107,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
-        public async Task<Result<SurveyResponse>> AddNewSurvey(SurveyCreateRequest request)
+        public async Task<Result<SurveyResponse>> AddNewSurveyAsync(SurveyCreateRequest request)
         {
             try
             {
