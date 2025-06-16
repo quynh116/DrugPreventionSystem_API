@@ -65,7 +65,7 @@ namespace DrugPreventionSystem.API.Controllers
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
                 return BadRequest(Result<SurveyResponse>.Invalid("Invalid survey data.", errors));
             }
-            var result = await _surveyService.AddNewSurvey(request);
+            var result = await _surveyService.AddNewSurveyAsync(request);
             return HandleResult(result);
         }
     }

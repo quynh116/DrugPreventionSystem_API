@@ -12,7 +12,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
     public interface ISurveyService
     {
-        Task<Result<SurveyResponse>> AddNewSurvey(SurveyCreateRequest request);
+        Task<Result<SurveyResponse>> AddNewSurveyAsync(SurveyCreateRequest request);
         Task<Result<IEnumerable<SurveyResponse>>> GetAllSurveyAsync();
         Task<Result<SurveyResponse>> GetSurveyByIdAsync(Guid id);
         Task<Result<bool>> DeleteSurveyByIdAsync(Guid id);
