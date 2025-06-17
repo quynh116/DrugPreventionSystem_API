@@ -1,7 +1,6 @@
 ﻿using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Survey;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
-using DrugPreventionSystem.BusinessLogic.Models.Responses.Survey;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

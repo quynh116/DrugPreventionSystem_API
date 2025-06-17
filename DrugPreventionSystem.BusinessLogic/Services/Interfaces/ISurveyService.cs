@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Survey;
-using DrugPreventionSystem.BusinessLogic.Models.Responses.Survey;
+using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.DataAccess.Models;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces

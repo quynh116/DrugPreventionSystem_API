@@ -82,7 +82,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     return Result<ConsultantReadResponse>.NotFound($"Consultant with ID {consultantId} not found.");
                 }
 
-                // Cập nhật nếu có dữ liệu mới
                 if (!string.IsNullOrEmpty(request.LicenseNumber))
                     consultant.LicenseNumber = request.LicenseNumber;
 

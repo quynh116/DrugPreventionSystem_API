@@ -17,17 +17,17 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             _context = context;
         }
-        //Lay danh sach Consultant (User flow 2)
+        
         public async Task<IEnumerable<Consultant>> GetAllConsultantsAsync()
         {
             return await _context.Consultants.ToListAsync();
         }
-        //Lay consultant biet id
+        
         public async Task<Consultant?> GetConsultantByIdAsync(Guid id)
         {
             return await _context.Consultants.FirstOrDefaultAsync(c => c.ConsultantId == id);
         }
-        //Update consultant
+        
         public async Task UpdateConsultantAsync(Consultant consultant)
         {
             _context.Consultants.Update(consultant);

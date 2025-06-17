@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrugPreventionSystem.BusinessLogic.Models.Responses.Survey
+namespace DrugPreventionSystem.BusinessLogic.Models.Responses
 {
     public class SurveyResponse
     {
