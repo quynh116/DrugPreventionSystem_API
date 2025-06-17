@@ -14,6 +14,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
     public interface ISurveyQuestionService
     {
+        Task<Result<SurveyQuestionResponse>> AddSurveyQuestionAsync(SurveyQuestionCreateRequest request);
         Task<Result<IEnumerable<SurveyQuestionResponse>>> GetAllSurveyQuestionsAsync();
         Task<Result<SurveyQuestionResponse>> GetSurveyQuestionByIdAsync(Guid surveyQuestionId);
         Task<Result<IEnumerable<SurveyQuestionResponse>>> GetSurveyQuestionsBySurveyIdAsync(Guid surveyId);
