@@ -21,7 +21,7 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             await _context.UserSurveyResponses.AddAsync(response);
             await _context.SaveChangesAsync();
-            return new UserSurveyResponse();
+            return response;
         }
         public async Task<IEnumerable<UserSurveyResponse>> GetAllAsync()
         {
