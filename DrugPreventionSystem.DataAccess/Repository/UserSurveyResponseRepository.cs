@@ -45,6 +45,15 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 await _context.SaveChangesAsync();
             }
         }
-        
+
+        public async Task<UserSurveyResponse?> GetByIdWithAnswersAsync(Guid id)
+        {
+            return await _context.UserSurveyResponses
+                                 .Include(r => r.UserSurveyAnswers)
+                                     .ThenInclude(a => a.SurveyOption) 
+                                 .Include(r => r.UserSurveyAnswers)
+                                     .ThenInclude(a => a.SurveyQuestion) 
+                                 .FirstOrDefaultAsync(r => r.ResponseId == id);
+        }
     }
 }

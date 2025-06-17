@@ -1,8 +1,10 @@
 ﻿using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Survey;
 using DrugPreventionSystem.BusinessLogic.Models.Request.SurveyQuestion;
 using DrugPreventionSystem.BusinessLogic.Models.Request.UserSurveyResponse;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.UserSurveyResponse;
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -17,11 +19,11 @@ namespace DrugPreventionSystem.API.Controllers
     {
         private readonly IUserSurveyResponseService _userSurveyResponseService;
 
-        public UserSurveyResponseController (IUserSurveyResponseService userSurveyResponseService)
+        public UserSurveyResponseController(IUserSurveyResponseService userSurveyResponseService)
         {
             _userSurveyResponseService = userSurveyResponseService;
         }
-       
+
         [HttpPost]
         public async Task<ActionResult<Result<UserSurveyResponseResponse>>> Add([FromBody] UserSurveyResponseCreateRequest request)
         {
@@ -71,5 +73,42 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpPost("start-session")]
+        public async Task<ActionResult<Result<StartSurveyResponseDto>>> StartSurveySession([FromBody] StartSurveyRequestDto request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<StartSurveyResponseDto>.Invalid("Dữ liệu không hợp lệ.", errors));
+            }
+            var result = await _userSurveyResponseService.StartNewSurveySession(request);
+            return HandleResult(result);
+        }
+
+        [HttpPost("save-answer")]
+        public async Task<ActionResult<Result<SaveSingleAnswerResponseDto>>> SaveAnswer([FromBody] SaveSingleAnswerRequestDto requestDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<SaveSingleAnswerResponseDto>.Invalid("Dữ liệu câu trả lời không hợp lệ.", errors));
+            }
+            var result = await _userSurveyResponseService.SaveSingleAnswer(requestDto);
+            return HandleResult(result);
+        }
+
+        [HttpPost("complete/{responseId}")]
+        public async Task<ActionResult<Result<SurveyResultResponseDto>>> CompleteSurvey(Guid responseId)
+        {
+            var result = await _userSurveyResponseService.CompleteSurvey(responseId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{responseId}/result")]
+        public async Task<ActionResult<Result<SurveyResultResponseDto>>> GetSurveyResult(Guid responseId)
+        {
+            var result = await _userSurveyResponseService.GetSurveyResult(responseId);
+            return HandleResult(result);
+        }
     }
 }

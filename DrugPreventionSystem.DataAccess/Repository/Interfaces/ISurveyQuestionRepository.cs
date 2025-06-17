@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<SurveyQuestion> AddSurveyQuestionAsync(SurveyQuestion question);
         Task UpdateSurveyQuestion(SurveyQuestion question);
         Task DeleteSurveyQuestionAsync(Guid id);
+        Task<IEnumerable<SurveyQuestion>> GetSurveyQuestionsWithAllDetailsBySurveyIdAsync(Guid surveyId);
     }
 }

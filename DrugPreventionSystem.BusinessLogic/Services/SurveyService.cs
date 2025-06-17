@@ -4,10 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Survey;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
+using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
@@ -15,10 +17,14 @@ namespace DrugPreventionSystem.BusinessLogic.Services
     public class SurveyService : ISurveyService
     {
         private readonly ISurveyRepository _surveyRepository;
+        private readonly ISurveyQuestionRepository _surveyQuestionRepository;
+        private readonly ISurveyOptionRepository _surveyOptionRepository;
 
-        public SurveyService(ISurveyRepository surveyRepository)
+        public SurveyService(ISurveyRepository surveyRepository, ISurveyQuestionRepository surveyQuestionRepository, ISurveyOptionRepository surveyOptionRepository)
         {
             _surveyRepository = surveyRepository;
+            _surveyQuestionRepository = surveyQuestionRepository;
+            _surveyOptionRepository = surveyOptionRepository;
         }
 
         private SurveyResponse MapToSurveyReponse(Survey survey)
@@ -33,6 +39,33 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 UpdatedAt = survey.UpdatedAt
             };
         }
+
+        private SurveyQuestionResponse MapToSurveyQuestionResponse(SurveyQuestion question)
+        {
+            if (question == null) return null;
+            return new SurveyQuestionResponse
+            {
+                QuestionId = question.QuestionId,
+                SurveyId = question.SurveyId,
+                QuestionText = question.QuestionText,
+                QuestionType = question.QuestionType,
+                Sequence = question.Sequence,
+                CreatedAt = question.CreatedAt,
+                UpdatedAt = question.UpdatedAt,
+                Options = question.SurveyOptions? // Map options if available
+                                .Select(o => new SurveyOptionDTO
+                                {
+                                    OptionId = o.OptionId,
+                                    QuestionId = o.QuestionId,
+                                    OptionText = o.OptionText,
+                                    ScoreValue = o.ScoreValue,
+                                    CreatedAt = o.CreatedAt,
+                                    UpdatedAt = o.UpdatedAt
+                                })
+                                .ToList() ?? new List<SurveyOptionDTO>()
+            };
+        }
+
         public async Task<Result<bool>> DeleteSurveyByIdAsync(Guid id)
         {
             try
@@ -138,6 +171,32 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             catch (Exception ex)
             {
                 return Result<SurveyResponse>.Error($"Error adding survey: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<IEnumerable<SurveyQuestionResponse>>> GetSurveyQuestionsWithAllDetailsAsync(Guid surveyId)
+        {
+            try
+            {
+                var survey = await _surveyRepository.GetSurveyByIdAsync(surveyId);
+                if (survey == null)
+                {
+                    return Result<IEnumerable<SurveyQuestionResponse>>.NotFound("Không tìm thấy khảo sát.");
+                }
+
+                var questions = await _surveyQuestionRepository.GetSurveyQuestionsWithAllDetailsBySurveyIdAsync(surveyId);
+                var questionResponses = questions.Select(q => MapToSurveyQuestionResponse(q)).ToList();
+
+                if (!questionResponses.Any())
+                {
+                    return Result<IEnumerable<SurveyQuestionResponse>>.NotFound($"Không tìm thấy câu hỏi nào cho khảo sát ID {surveyId}.");
+                }
+
+                return Result<IEnumerable<SurveyQuestionResponse>>.Success(questionResponses);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<SurveyQuestionResponse>>.Error($"Lỗi khi lấy câu hỏi khảo sát: {ex.Message}");
             }
         }
     }

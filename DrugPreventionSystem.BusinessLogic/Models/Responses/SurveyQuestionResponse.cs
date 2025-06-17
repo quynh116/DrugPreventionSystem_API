@@ -14,6 +14,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses
           public string QuestionType { get; set; } = string.Empty;
           public int Sequence { get; set; }
           public DateTime CreatedAt { get; set; }
-          public DateTime? UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
+        public List<SurveyOptionDTO> Options { get; set; } = new List<SurveyOptionDTO>();
     }
 }

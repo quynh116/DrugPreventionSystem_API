@@ -48,6 +48,15 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return result;
         }
 
+        public async Task<IEnumerable<UserSurveyAnswer>> GetUserSurveyAnswerByResponseIdAsync(Guid responseId)
+        {
+            return await _context.UserSurveyAnswers
+                                 .Where(a => a.ResponseId == responseId)
+                                 .Include(a => a.SurveyQuestion) 
+                                 .Include(a => a.SurveyOption)   
+                                 .ToListAsync();
+        }
+
         public async Task<IEnumerable<UserSurveyAnswer>> GetUserSurveyAnswerByUserIdAsync(Guid userId)
         {
             var result = await _context.UserSurveyAnswers.Include(usa => usa.UserSurveyResponse)

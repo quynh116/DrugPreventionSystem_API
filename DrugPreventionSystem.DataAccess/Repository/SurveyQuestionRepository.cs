@@ -52,6 +52,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return question;
         }
 
+        public async Task<IEnumerable<SurveyQuestion>> GetSurveyQuestionsWithAllDetailsBySurveyIdAsync(Guid surveyId)
+        {
+            return await _context.SurveyQuestions
+                .Where(q => q.SurveyId == surveyId)
+                .Include(q => q.SurveyOptions.OrderBy(o => o.CreatedAt))
+                .OrderBy(q => q.Sequence)
+                .ToListAsync();
+        }
     }
    
 }

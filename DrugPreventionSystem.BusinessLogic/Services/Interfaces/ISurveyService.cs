@@ -17,5 +17,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<SurveyResponse>> GetSurveyByIdAsync(Guid id);
         Task<Result<bool>> DeleteSurveyByIdAsync(Guid id);
         Task<Result<SurveyResponse>> UpdateSurveyAsync(Guid id, SurveyUpdateRequest request);
+        Task<Result<IEnumerable<SurveyQuestionResponse>>> GetSurveyQuestionsWithAllDetailsAsync(Guid surveyId);
     }
 }
