@@ -12,7 +12,7 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<IEnumerable<SurveyQuestion>> GetAllSurveyQuestionsAsync();
         Task<SurveyQuestion?> GetSurveyQuestionByIdAsync(Guid id);
         Task<IEnumerable<SurveyQuestion>> GetSurveyQuestionsBySurveyIdAsync(Guid surveyId);
-        Task<SurveyQuestion> AddSurveyQuestion(SurveyQuestion question);
+        Task<SurveyQuestion> AddSurveyQuestionAsync(SurveyQuestion question);
         Task UpdateSurveyQuestion(SurveyQuestion question);
         Task DeleteSurveyQuestionAsync(Guid id);
     }

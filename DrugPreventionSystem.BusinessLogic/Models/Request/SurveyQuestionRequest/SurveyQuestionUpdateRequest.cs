@@ -9,7 +9,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.SurveyQuestion
 {
     public class SurveyQuestionUpdateRequest
     {
-        
         public string QuestionText { get; set; } = string.Empty;
         public string QuestionType { get; set; } = string.Empty;
         public int Sequence { get; set; }

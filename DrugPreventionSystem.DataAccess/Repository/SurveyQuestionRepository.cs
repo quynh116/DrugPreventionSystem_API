@@ -45,7 +45,7 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 await _context.SaveChangesAsync();
             }
         }
-        public async Task<SurveyQuestion> AddSurveyQuestion(SurveyQuestion question)
+        public async Task<SurveyQuestion> AddSurveyQuestionAsync(SurveyQuestion question)
         {
             await _context.SurveyQuestions.AddAsync(question);
             await _context.SaveChangesAsync();

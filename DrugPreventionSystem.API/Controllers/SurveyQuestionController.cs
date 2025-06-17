@@ -79,7 +79,7 @@ namespace DrugPreventionSystem.API.Controllers
                 UpdatedAt = DateTime.UtcNow
             };
 
-            await _surveyQuestionRepository.AddSurveyQuestion(newQuestion);
+            await _surveyQuestionRepository.AddSurveyQuestionAsync(newQuestion);
 
             return Result<SurveyQuestionResponse>.Success(MapToResponse(newQuestion), "Survey question added.");
           }

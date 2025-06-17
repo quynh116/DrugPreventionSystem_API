@@ -40,8 +40,22 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 UpdatedAt = question.UpdatedAt
             };
 
-
         }
+
+        public async Task<SurveyQuestionResponse> AddSurveyQuestionAsync(SurveyQuestionCreateRequest request)
+        {
+            var newQuestion = new SurveyQuestion
+            {
+                QuestionId = Guid.NewGuid(),
+                SurveyId = Guid.NewGuid(),
+                QuestionText = request.QuestionText,
+                QuestionType = request.QuestionType,
+                Sequence = request.Sequence,
+            };
+            var createdQuestion = await _surveyQuestionRepository.AddSurveyQuestionAsync(newQuestion);
+                return MapToResponse(newQuestion);
+        }
+
         public async Task<Result<IEnumerable<SurveyQuestionResponse>>> GetAllSurveyQuestionsAsync()
         {
             try
@@ -81,8 +95,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<SurveyQuestionResponse>.NotFound($"Survey question with ID {questionId} not found.");
                 }
-
-                // Cập nhật tất cả các trường từ request
                 
                 question.QuestionText = request.QuestionText;
                 question.QuestionType = request.QuestionType;
