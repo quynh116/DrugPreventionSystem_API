@@ -26,6 +26,21 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<SurveyOption> SurveyOptions { get; set; } = null!;
         public DbSet<UserSurveyResponse> UserSurveyResponses { get; set; } = null!;
         public DbSet<UserSurveyAnswer> UserSurveyAnswers { get; set; } = null!;
+        public DbSet<Instructor> Instructors { get; set; } = null!;
+        public DbSet<Course> Courses { get; set; } = null!;
+        public DbSet<CourseWeek> CourseWeeks { get; set; } = null!;
+        public DbSet<Lesson> Lessons { get; set; } = null!;
+        public DbSet<LessonResource> LessonResources { get; set; } = null!;
+        public DbSet<Quiz> Quizzes { get; set; } = null!;
+        public DbSet<QuizQuestion> QuizQuestions { get; set; } = null!;
+        public DbSet<QuizOption> QuizOptions { get; set; } = null!;
+        public DbSet<PracticeExercise> PracticeExercises { get; set; } = null!;
+        public DbSet<UserLessonProgress> UserLessonProgresses { get; set; } = null!;
+        public DbSet<UserQuizAnswer> UserQuizAnswers { get; set; } = null!;
+        public DbSet<UserModuleQuizResult> UserModuleQuizResults { get; set; } = null!;
+        public DbSet<CourseCertificate> CourseCertificates { get; set; } = null!;
+        public DbSet<SurveyCourseRecommendation> SurveyCourseRecommendations { get; set; } = null!;
+        public DbSet<UserResponseCourseRecommendation> UserResponseCourseRecommendations { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -111,8 +126,141 @@ namespace DrugPreventionSystem.DataAccess.Context
                 .HasOne(usa => usa.SurveyOption)
                 .WithMany(so => so.UserSurveyAnswers)
                 .HasForeignKey(usa => usa.OptionId)
-                .OnDelete(DeleteBehavior.Restrict); 
+                .OnDelete(DeleteBehavior.Restrict);
+            // Instructor có nhiều Courses
+            modelBuilder.Entity<Course>()
+                .HasOne(c => c.Instructor)
+                .WithMany(i => i.Courses)
+                .HasForeignKey(c => c.InstructorId)
+                .OnDelete(DeleteBehavior.Restrict); // Không xóa Instructor nếu còn Course
 
+            // Course có nhiều CourseWeeks
+            modelBuilder.Entity<CourseWeek>()
+                .HasOne(cw => cw.Course)
+                .WithMany(c => c.CourseWeeks)
+                .HasForeignKey(cw => cw.CourseId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Course, Weeks cũng bị xóa
+
+            // CourseWeek có nhiều Lessons
+            modelBuilder.Entity<Lesson>()
+                .HasOne(l => l.CourseWeek)
+                .WithMany(cw => cw.Lessons)
+                .HasForeignKey(l => l.WeekId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Week, Lessons cũng bị xóa
+
+            // Lesson có nhiều LessonResources
+            modelBuilder.Entity<LessonResource>()
+                .HasOne(lr => lr.Lesson)
+                .WithMany(l => l.LessonResources)
+                .HasForeignKey(lr => lr.LessonId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Lesson, Resources cũng bị xóa
+
+            // Lesson có một Quiz (One-to-One)
+            modelBuilder.Entity<Quiz>()
+                .HasOne(q => q.Lesson)
+                .WithOne(l => l.Quiz)
+                .HasForeignKey<Quiz>(q => q.LessonId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Lesson, Quiz cũng bị xóa
+
+            // Quiz có nhiều QuizQuestions
+            modelBuilder.Entity<QuizQuestion>()
+                .HasOne(qq => qq.Quiz)
+                .WithMany(q => q.QuizQuestions)
+                .HasForeignKey(qq => qq.QuizId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Quiz, Questions cũng bị xóa
+
+            // QuizQuestion có nhiều QuizOptions
+            modelBuilder.Entity<QuizOption>()
+                .HasOne(qo => qo.QuizQuestion)
+                .WithMany(qq => qq.QuizOptions)
+                .HasForeignKey(qo => qo.QuestionId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Question, Options cũng bị xóa
+
+            // Lesson có nhiều PracticeExercises
+            modelBuilder.Entity<PracticeExercise>()
+                .HasOne(pe => pe.Lesson)
+                .WithMany(l => l.PracticeExercises)
+                .HasForeignKey(pe => pe.LessonId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Lesson, PracticeExercises cũng bị xóa
+
+            // UserLessonProgress liên kết với User và Lesson
+            modelBuilder.Entity<UserLessonProgress>()
+                .HasOne(ulp => ulp.User)
+                .WithMany(u => u.UserLessonProgresses)
+                .HasForeignKey(ulp => ulp.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // Không xóa User nếu còn tiến độ bài học
+            modelBuilder.Entity<UserLessonProgress>()
+                .HasOne(ulp => ulp.Lesson)
+                .WithMany(l => l.UserLessonProgresses)
+                .HasForeignKey(ulp => ulp.LessonId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi xóa Lesson, tiến độ cũng bị xóa
+
+            // UserQuizAnswer liên kết với User, QuizQuestion, QuizOption
+            modelBuilder.Entity<UserQuizAnswer>()
+                .HasOne(uqa => uqa.User)
+                .WithMany(u => u.UserQuizAnswers)
+                .HasForeignKey(uqa => uqa.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<UserQuizAnswer>()
+                .HasOne(uqa => uqa.QuizQuestion)
+                .WithMany(qq => qq.UserQuizAnswers)
+                .HasForeignKey(uqa => uqa.QuestionId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<UserQuizAnswer>()
+                .HasOne(uqa => uqa.SelectedOption)
+                .WithMany(qo => qo.UserQuizAnswers)
+                .HasForeignKey(uqa => uqa.SelectedOptionId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // UserModuleQuizResult liên kết với User và Lesson
+            modelBuilder.Entity<UserModuleQuizResult>()
+                .HasOne(umqr => umqr.User)
+                .WithMany(u => u.UserModuleQuizResults) // Cần thêm Navigation Property này vào User
+                .HasForeignKey(umqr => umqr.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<UserModuleQuizResult>()
+                .HasOne(umqr => umqr.Lesson)
+                .WithMany(l => l.UserModuleQuizResults) // Cần thêm Navigation Property này vào Lesson
+                .HasForeignKey(umqr => umqr.LessonId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // CourseCertificate liên kết với User và Course
+            modelBuilder.Entity<CourseCertificate>()
+                .HasOne(cc => cc.User)
+                .WithMany(u => u.CourseCertificates) // Cần thêm Navigation Property này vào User
+                .HasForeignKey(cc => cc.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<CourseCertificate>()
+                .HasOne(cc => cc.Course)
+                .WithMany(c => c.CourseCertificates)
+                .HasForeignKey(cc => cc.CourseId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+            // Cấu hình Mối quan hệ cho Đề xuất khóa học từ khảo sát
+            modelBuilder.Entity<SurveyCourseRecommendation>()
+                .HasOne(scr => scr.Survey)
+                .WithMany(s => s.SurveyCourseRecommendations)
+                .HasForeignKey(scr => scr.SurveyId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi Survey bị xóa, các quy tắc đề xuất cũng bị xóa
+
+            modelBuilder.Entity<SurveyCourseRecommendation>()
+                .HasOne(scr => scr.Course)
+                .WithMany(c => c.SurveyCourseRecommendations)
+                .HasForeignKey(scr => scr.CourseId)
+                .OnDelete(DeleteBehavior.Restrict); // Không xóa Course nếu còn được đề xuất trong quy tắc
+
+            modelBuilder.Entity<UserResponseCourseRecommendation>()
+                .HasOne(urcr => urcr.UserSurveyResponse)
+                .WithMany(usr => usr.UserResponseCourseRecommendations) // Cần thêm Navigation Property này vào UserSurveyResponse
+                .HasForeignKey(urcr => urcr.ResponseId)
+                .OnDelete(DeleteBehavior.Cascade); // Khi UserSurveyResponse bị xóa, các đề xuất liên quan cũng bị xóa
+
+            modelBuilder.Entity<UserResponseCourseRecommendation>()
+                .HasOne(urcr => urcr.Course)
+                .WithMany(c => c.UserResponseCourseRecommendations)
+                .HasForeignKey(urcr => urcr.CourseId)
+                .OnDelete(DeleteBehavior.Restrict); // Không xóa Course nếu đã được đề xuất cho người dùng
 
             // Seed initial data
             SeedData(modelBuilder);
