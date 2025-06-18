@@ -23,6 +23,10 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("description")]
         public string? Description { get; set; }
 
+        [MaxLength(255)] 
+        [Column("target_audience")]
+        public string? TargetAudience { get; set; }
+
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
 
@@ -32,5 +36,6 @@ namespace DrugPreventionSystem.DataAccess.Models
         // Navigation property
         public virtual ICollection<SurveyQuestion> SurveyQuestions { get; set; } = new List<SurveyQuestion>();
         public virtual ICollection<UserSurveyResponse> UserSurveyResponses { get; set; } = new List<UserSurveyResponse>();
+        public virtual ICollection<SurveyCourseRecommendation> SurveyCourseRecommendations { get; set; } = new List<SurveyCourseRecommendation>();
     }
 }
