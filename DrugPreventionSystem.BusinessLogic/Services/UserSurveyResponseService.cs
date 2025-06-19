@@ -19,18 +19,23 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         private readonly ISurveyRepository _surveyRepository;
         private readonly ISurveyQuestionRepository _surveyQuestionRepository;
         private readonly ISurveyOptionRepository _surveyOptionRepository;
+        private readonly ISurveyCourseRecommendationRepository _surveyCourseRecommendationRepository;
+        private readonly IUserResponseCourseRecommendationRepository _userResponseCourseRecommendationRepository;
 
         public UserSurveyResponseService(IUserSurveyResponseRepository userSurveyResponseRepository, IUserSurveyAnswerRepository userSurveyAnswerRepository,
             ISurveyRepository surveyRepository,
             ISurveyQuestionRepository surveyQuestionRepository,
-            ISurveyOptionRepository surveyOptionRepository)
+            ISurveyOptionRepository surveyOptionRepository,
+            ISurveyCourseRecommendationRepository surveyCourseRecommendationRepository,
+            IUserResponseCourseRecommendationRepository userResponseCourseRecommendationRepository)
         {
             _userSurveyResponseRepository = userSurveyResponseRepository;
             _userSurveyAnswerRepository = userSurveyAnswerRepository;
             _surveyRepository = surveyRepository;
             _surveyQuestionRepository = surveyQuestionRepository;
             _surveyOptionRepository = surveyOptionRepository;
-
+            _surveyCourseRecommendationRepository = surveyCourseRecommendationRepository;
+            _userResponseCourseRecommendationRepository = userResponseCourseRecommendationRepository;
         }
 
         public UserSurveyResponseResponse MapToResponse(UserSurveyResponse user)
@@ -289,37 +294,55 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
                 // Tính toán Risk Level và Recommended Actions dựa trên TotalScore (logic ASSIST)
                 string riskLevel;
-                List<string> recommendedActions = new List<string>();
-
                 if (totalScore >= 0 && totalScore <= 3)
                 {
                     riskLevel = "Nguy cơ thấp";
-                    recommendedActions.Add("Duy trì hành vi hiện tại và nâng cao nhận thức về tác hại của chất gây nghiện.");
                 }
                 else if (totalScore >= 4 && totalScore <= 26)
                 {
                     riskLevel = "Nguy cơ trung bình";
-                    recommendedActions.Add("Tham gia khóa học về nhận thức ma túy.");
-                    recommendedActions.Add("Tham khảo ý kiến chuyên viên tư vấn để có hướng dẫn cụ thể.");
-                    recommendedActions.Add("Giảm thiểu việc sử dụng chất gây nghiện một cách có ý thức.");
-                    recommendedActions.Add("Tìm hiểu và thực hành các kỹ năng từ chối và đối phó với áp lực.");
                 }
                 else if (totalScore >= 27)
                 {
                     riskLevel = "Nguy cơ cao";
-                    recommendedActions.Add("Tham gia khóa học về nhận thức ma túy chuyên sâu.");
-                    recommendedActions.Add("Tham gia liệu pháp tâm lý và các chương trình hỗ trợ cai nghiện.");
-                    recommendedActions.Add("Được giới thiệu đến các dịch vụ điều trị nghiện chuyên sâu.");
-                    recommendedActions.Add("Nhận hỗ trợ xã hội và gia đình để tăng cường khả năng phục hồi.");
                 }
                 else
                 {
                     riskLevel = "Không xác định";
-                    recommendedActions.Add("Đã xảy ra lỗi trong quá trình tính toán điểm. Vui lòng liên hệ hỗ trợ.");
+                }
+
+                var recommendedCoursesFromRules = await _surveyCourseRecommendationRepository
+                                                    .GetRecommendationsBySurveyAndRiskLevelAsync(userSurveyResponse.SurveyId, riskLevel);
+
+                List<string> recommendedActionsDisplay = new List<string>();
+                List<UserResponseCourseRecommendation> userSpecificRecommendations = new List<UserResponseCourseRecommendation>();
+
+                foreach (var recRule in recommendedCoursesFromRules)
+                {
+                    if (recRule.Course != null)
+                    {
+                        // Thêm tên khóa học vào danh sách để hiển thị trong DTO phản hồi
+                        recommendedActionsDisplay.Add($"{recRule.Course.Title}");
+
+                        // 2. Tạo đối tượng UserResponseCourseRecommendation để lưu vào DB
+                        var userRec = new UserResponseCourseRecommendation
+                        {
+                            ResponseId = userSurveyResponse.ResponseId,
+                            CourseId = recRule.CourseId,
+                            RecommendedAt = DateTime.Now // Thời điểm đề xuất cho người dùng này
+                            // Bạn có thể thêm các trường khác nếu cần thiết trong tương lai (ví dụ: RecommendationSourceId = recRule.RecommendationId)
+                        };
+                        userSpecificRecommendations.Add(userRec);
+                    }
+                }
+
+                foreach (var userRec in userSpecificRecommendations)
+                {
+                    await _userResponseCourseRecommendationRepository.AddUserResponseAsync(userRec);
                 }
 
                 userSurveyResponse.RiskLevel = riskLevel;
-                userSurveyResponse.RecommendedAction = string.Join(";", recommendedActions); // Lưu vào DB dưới dạng chuỗi
+                userSurveyResponse.RecommendedAction = string.Join(";", recommendedActionsDisplay);
 
                 await _userSurveyResponseRepository.UpdateAsync(userSurveyResponse);
 
@@ -331,7 +354,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     TakenAt = userSurveyResponse.TakenAt,
                     TotalScore = totalScore,
                     RiskLevel = riskLevel,
-                    RecommendedActions = recommendedActions,
+                    RecommendedActions = recommendedActionsDisplay,
                     Disclaimer = "Lưu ý: Kết quả này chỉ mang tính chất tham khảo và không thay thế cho chẩn đoán chuyên nghiệp. Nếu bạn lo lắng về việc sử dụng chất gây nghiện, vui lòng tham khảo ý kiến của chuyên viên tư vấn."
                 }, "Khảo sát đã được hoàn thành và kết quả đã được tính toán.");
             }

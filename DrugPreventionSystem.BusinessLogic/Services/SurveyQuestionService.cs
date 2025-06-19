@@ -53,7 +53,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Sequence = request.Sequence,
             };
             var createdQuestion = await _surveyQuestionRepository.AddSurveyQuestionAsync(newQuestion);
-                return Result<SurveyQuestionResponse>.Success(MapToResponse(newQuestion));
+                return Result<SurveyQuestionResponse>.Success(MapToResponse(createdQuestion));
         }
 
         public async Task<Result<IEnumerable<SurveyQuestionResponse>>> GetAllSurveyQuestionsAsync()
