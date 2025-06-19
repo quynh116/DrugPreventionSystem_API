@@ -84,8 +84,10 @@ builder.Services.AddScoped<ISurveyQuestionRepository, SurveyQuestionRepository>(
 builder.Services.AddScoped<ISurveyRepository, SurveyRepository>();
 builder.Services.AddScoped<IUserSurveyResponseRepository, UserSurveyResponseRepository>();
 builder.Services.AddScoped<IUserSurveyAnswerRepository, UserSurveyAnswerRepository>();
+builder.Services.AddScoped<ISurveyCourseRecommendationRepository, SurveyCourseRecommendationRepository>();
+builder.Services.AddScoped<IUserResponseCourseRecommendationRepository, UserResponseCourseRecommendationRepository>();
 
-//sercice
+//service
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddScoped<IConsultantService, ConsultantService>();
@@ -94,6 +96,8 @@ builder.Services.AddScoped<ISurveyQuestionService, SurveyQuestionService>();
 builder.Services.AddScoped<ISurveyService, SurveyService>();
 builder.Services.AddScoped<IUserSurveyResponseService, UserSurveyResponseService>();
 builder.Services.AddScoped<IUserSurveyAnswerService, UserSurveyAnswerService>();
+builder.Services.AddScoped<ISurveyCourseRecommendationService, SurveyCourseRecommendationService>();
+builder.Services.AddScoped<IUserResponseCourseRecommendationService, UserResponseCourseRecommendationService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
