@@ -56,6 +56,15 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return recommendations;
         }
 
+        public async Task<IEnumerable<SurveyCourseRecommendation>> GetRecommendationsBySurveyAndRiskLevelAsync(Guid surveyId, string riskLevel)
+        {
+            return await _context.SurveyCourseRecommendations
+                                 .Include(scr => scr.Course) 
+                                 .Where(scr => scr.SurveyId == surveyId && scr.RiskLevel == riskLevel)
+                                 .OrderBy(scr => scr.Priority) 
+                                 .ToListAsync();
+        }
+
         public async Task<SurveyCourseRecommendation> UpdateRecommendation(SurveyCourseRecommendation recommendation)
         {
             _context.Update(recommendation);

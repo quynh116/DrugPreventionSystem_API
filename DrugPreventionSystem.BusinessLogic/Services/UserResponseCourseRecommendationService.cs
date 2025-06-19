@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.UserResponseCourseRecommendation;
+using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.UserResponseCourseRecommendation;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
@@ -20,6 +21,27 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         public UserResponseCourseRecommendationService(IUserResponseCourseRecommendationRepository userResponseCourseRecommendationRepository)
         {
             _userResponseCourseRecommendationRepository = userResponseCourseRecommendationRepository;
+        }
+
+        private CourseResponse MapToCourseResponse(Course course)
+        {
+            if (course == null) return null;
+            return new CourseResponse
+            {
+                CourseId = course.CourseId,
+                Title = course.Title,
+                Description = course.Description,
+                AgeGroup = course.AgeGroup,
+                IsActive = course.IsActive,
+                TotalDuration = course.TotalDuration,
+                LessonCount = course.LessonCount,
+                StudentCount = course.StudentCount,
+                InstructorId = course.InstructorId,
+                Requirements = course.Requirements,
+                CertificateAvailable = course.CertificateAvailable,
+                CreatedAt = course.CreatedAt,
+                UpdatedAt = course.UpdatedAt
+            };
         }
         private UserResponseCourseRecommendationResponse MapToUserResponseCourseRecommendationResponse(UserResponseCourseRecommendation userResponse)
         {
@@ -145,6 +167,33 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             catch (Exception ex)
             {
                 return Result<UserResponseCourseRecommendationResponse>.Error($"An error occurred while updating the user response: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<IEnumerable<CourseResponse>>> GetRecommendedCoursesByResponseIdAsync(Guid responseId)
+        {
+            try
+            {
+                
+                var userRecommendations = await _userResponseCourseRecommendationRepository
+                                                .GetUsersResponseByResponseIdWithCoursesAsync(responseId);
+
+                if (userRecommendations == null || !userRecommendations.Any())
+                {
+                    return Result<IEnumerable<CourseResponse>>.NotFound("Không tìm thấy khóa học được đề xuất cho phản hồi này.");
+                }
+
+                
+                var courseResponses = userRecommendations
+                                        .Select(ur => MapToCourseResponse(ur.Course))
+                                        .Where(c => c != null) // Đảm bảo Course không null sau khi mapping
+                                        .ToList();
+
+                return Result<IEnumerable<CourseResponse>>.Success(courseResponses, "Danh sách khóa học đề xuất đã được truy xuất thành công.");
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<CourseResponse>>.Error($"Lỗi khi lấy danh sách khóa học đề xuất: {ex.Message}");
             }
         }
     }

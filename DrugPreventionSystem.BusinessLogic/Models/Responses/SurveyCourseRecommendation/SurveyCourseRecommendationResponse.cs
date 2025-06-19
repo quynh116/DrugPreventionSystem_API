@@ -8,6 +8,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.SurveyCourseRecomm
 {
     public class SurveyCourseRecommendationResponse
     {
+        public Guid RecommendationId { get; set; }
         public Guid SurveyId { get; set; }
         public string RiskLevel { get; set; } = string.Empty;
         public string? RecommendedActionKeyword { get; set; }

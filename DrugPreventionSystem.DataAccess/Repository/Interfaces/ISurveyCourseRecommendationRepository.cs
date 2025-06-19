@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<SurveyCourseRecommendation> AddRecommendation(SurveyCourseRecommendation recommendation);
         Task<SurveyCourseRecommendation> UpdateRecommendation(SurveyCourseRecommendation recommendation);
         Task DeleteRecommendation(Guid recommendationId);
+        Task<IEnumerable<SurveyCourseRecommendation>> GetRecommendationsBySurveyAndRiskLevelAsync(Guid surveyId, string riskLevel);
     }
 }

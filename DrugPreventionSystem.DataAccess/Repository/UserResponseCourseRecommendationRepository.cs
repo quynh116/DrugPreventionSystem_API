@@ -55,6 +55,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<UserResponseCourseRecommendation>> GetUsersResponseByResponseIdWithCoursesAsync(Guid responseId)
+        {
+            return await _context.UserResponseCourseRecommendations
+                .Include(ur => ur.Course) 
+                .Where(ur => ur.ResponseId == responseId)
+                .ToListAsync();
+        }
+
         public async Task<UserResponseCourseRecommendation> UpdateUserResponseAsync(UserResponseCourseRecommendation userResponseCourseRecommendation)
         {
             _context.UserResponseCourseRecommendations.Update(userResponseCourseRecommendation);

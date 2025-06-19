@@ -1,5 +1,6 @@
 ﻿using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.UserResponseCourseRecommendation;
+using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.UserResponseCourseRecommendation;
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
@@ -53,6 +54,17 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _userResponseCourseRecommendationService.GetUsersByResponseIdAsync(responseId);
             return HandleResult(result);
         }
+
+        [HttpGet("recommended-courses/response/{responseId}")]
+        public async Task<ActionResult<Result<IEnumerable<CourseResponse>>>> GetRecommendedCoursesByResponseId(Guid responseId)
+        {
+            
+            var result = await _userResponseCourseRecommendationService.GetRecommendedCoursesByResponseIdAsync(responseId);
+
+            
+            return HandleResult(result);
+        }
+
         [HttpPut("{userRecId}")]
         public async Task<ActionResult<Result<UserResponseCourseRecommendationResponse>>> UpdateUserResponseAsync(Guid userRecId, [FromBody] UserResponseCourseRecommendationUpdateRequest request)
         {

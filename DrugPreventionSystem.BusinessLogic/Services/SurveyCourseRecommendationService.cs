@@ -29,6 +29,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
             return new SurveyCourseRecommendationResponse
             {
+                RecommendationId = recommendation.RecommendationId,
                 SurveyId = recommendation.SurveyId,
                 RiskLevel = recommendation.RiskLevel,
                 RecommendedActionKeyword = recommendation.RecommendedActionKeyword,
