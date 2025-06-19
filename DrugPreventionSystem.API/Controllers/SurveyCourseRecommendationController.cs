@@ -40,12 +40,22 @@ namespace DrugPreventionSystem.API.Controllers
         [HttpPost]
         public async Task<ActionResult<Result<SurveyCourseRecommendationResponse>>> AddRecommendation([FromBody] SurveyCourseRecommendationCreateRequest request)
         {
+            if(!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<SurveyCourseRecommendationResponse>.Invalid("Invalid request data.", errors));
+            }
             var result = await _surveyCourseRecommendationService.AddRecommendationAsync(request);
             return HandleResult(result);
         }
         [HttpPut("{recommendationId}")]
         public async Task<ActionResult<Result<SurveyCourseRecommendationResponse>>> UpdateRecommendation(Guid recommendationId, [FromBody] SurveyCourseRecommendationUpdateRequest request)
-        {
+        {   
+            if(!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<SurveyCourseRecommendationResponse>.Invalid("Invalid request data.", errors));
+            }
             var result = await _surveyCourseRecommendationService.UpdateRecommendationAsync(recommendationId, request);
             return HandleResult(result);
         }

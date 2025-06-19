@@ -13,6 +13,7 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<UserResponseCourseRecommendation> DeleteUserResponseAsync(Guid userRecId);
         Task<UserResponseCourseRecommendation> GetRecommendationsByUserRecIdAsync(Guid userRecId);
         Task<IEnumerable<UserResponseCourseRecommendation>> GetUsersResponseByResponseIdAsync(Guid responseId);
+        Task<UserResponseCourseRecommendation> UpdateUserResponseAsync(UserResponseCourseRecommendation userResponseCourseRecommendation);
 
     }
 }

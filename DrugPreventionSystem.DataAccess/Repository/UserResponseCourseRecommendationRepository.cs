@@ -54,5 +54,12 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 .Where(ur => ur.ResponseId == responseId)
                 .ToListAsync();
         }
+
+        public async Task<UserResponseCourseRecommendation> UpdateUserResponseAsync(UserResponseCourseRecommendation userResponseCourseRecommendation)
+        {
+            _context.UserResponseCourseRecommendations.Update(userResponseCourseRecommendation);
+            await _context.SaveChangesAsync();
+            return userResponseCourseRecommendation;
+        }
     }
 }

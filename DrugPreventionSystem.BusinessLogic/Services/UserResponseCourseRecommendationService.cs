@@ -117,5 +117,35 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<IEnumerable<UserResponseCourseRecommendationResponse>>.Error($"An error occurred while retrieving user responses: {ex.Message}");
             }
         }
+
+        public async Task<Result<UserResponseCourseRecommendationResponse>> UpdateUserResponseAsync(Guid id, UserResponseCourseRecommendationUpdateRequest request)
+        {
+            try
+            {
+                var userResponse = await _userResponseCourseRecommendationRepository.GetRecommendationsByUserRecIdAsync(id);
+                if(userResponse == null)
+                {
+                    return Result<UserResponseCourseRecommendationResponse>.Invalid("User response not found.");
+                }
+                if (request.CourseId == null)
+                {
+                    return Result<UserResponseCourseRecommendationResponse>.Invalid("Course ID is required.");
+                }
+                if (request.ResponseId == null)
+                {
+                    return Result<UserResponseCourseRecommendationResponse>.Invalid("Response ID is required.");
+                }
+                userResponse.ResponseId = request.ResponseId;
+                userResponse.CourseId = request.CourseId;
+                userResponse.RecommendedAt = DateTime.Now;
+                var updatedResponse = await _userResponseCourseRecommendationRepository.UpdateUserResponseAsync(userResponse);
+                return Result<UserResponseCourseRecommendationResponse>
+                    .Success(MapToUserResponseCourseRecommendationResponse(updatedResponse), "User response updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                return Result<UserResponseCourseRecommendationResponse>.Error($"An error occurred while updating the user response: {ex.Message}");
+            }
+        }
     }
 }

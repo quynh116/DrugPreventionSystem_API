@@ -19,8 +19,13 @@ namespace DrugPreventionSystem.API.Controllers
             _userResponseCourseRecommendationService = userResponseCourseRecommendationService;
         }
         [HttpPost]
-        public async Task<ActionResult<Result<UserResponseCourseRecommendationResponse>>> AddUserResponseAsync(UserResponseCourseRecommendationCreateRequest request)
+        public async Task<ActionResult<Result<UserResponseCourseRecommendationResponse>>> AddUserResponseAsync([FromBody] UserResponseCourseRecommendationCreateRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<UserResponseCourseRecommendationResponse>.Invalid("Invalid request data.", errors));
+            }
             var result = await _userResponseCourseRecommendationService.AddUserResponseAsync(request);
             return HandleResult(result);
         }
@@ -28,6 +33,11 @@ namespace DrugPreventionSystem.API.Controllers
         [HttpDelete("{userRecId}")]
         public async Task<ActionResult<Result<UserResponseCourseRecommendationResponse>>> DeleteUserResponseAsync(Guid userRecId)
         {
+            var rec = await _userResponseCourseRecommendationService.GetRecommendationsByUserRecIdAsync(userRecId);
+            if (rec == null)
+            {
+                return NoContent();
+            }
             var result = await _userResponseCourseRecommendationService.DeleteUserResponseAsync(userRecId);
             return HandleResult(result);
         }
@@ -41,6 +51,17 @@ namespace DrugPreventionSystem.API.Controllers
         public async Task<ActionResult<Result<IEnumerable<UserResponseCourseRecommendationResponse>>>> GetUsersByResponseIdAsync(Guid responseId)
         {
             var result = await _userResponseCourseRecommendationService.GetUsersByResponseIdAsync(responseId);
+            return HandleResult(result);
+        }
+        [HttpPut("{userRecId}")]
+        public async Task<ActionResult<Result<UserResponseCourseRecommendationResponse>>> UpdateUserResponseAsync(Guid userRecId, [FromBody] UserResponseCourseRecommendationUpdateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToArray();
+                return BadRequest(Result<UserResponseCourseRecommendationResponse>.Invalid("Invalid request data.", errors));
+            }
+            var result = await _userResponseCourseRecommendationService.UpdateUserResponseAsync(userRecId, request);
             return HandleResult(result);
         }
     }

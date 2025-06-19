@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<UserResponseCourseRecommendationResponse>> DeleteUserResponseAsync(Guid userRecId);
         Task<Result<UserResponseCourseRecommendationResponse>> GetRecommendationsByUserRecIdAsync(Guid userRecId);
         Task<Result<IEnumerable<UserResponseCourseRecommendationResponse>>> GetUsersByResponseIdAsync(Guid responseId);
+        Task<Result<UserResponseCourseRecommendationResponse>> UpdateUserResponseAsync(Guid id, UserResponseCourseRecommendationUpdateRequest request);
     }
 }
