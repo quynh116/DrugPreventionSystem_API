@@ -19,6 +19,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses
         public int? LessonCount { get; set; }
         public int? StudentCount { get; set; }
         public Guid InstructorId { get; set; }
+        public string? InstructorName { get; set; }
         public string? Requirements { get; set; }
         public bool CertificateAvailable { get; set; } = false;
         public DateTime CreatedAt { get; set; } = DateTime.Now;

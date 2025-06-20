@@ -88,6 +88,9 @@ builder.Services.AddScoped<ISurveyCourseRecommendationRepository, SurveyCourseRe
 builder.Services.AddScoped<IUserResponseCourseRecommendationRepository, UserResponseCourseRecommendationRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<ICourseWeekRepository, CourseWeekRepository>();
+builder.Services.AddScoped<ILessonRepository, LessonRepository>();
+builder.Services.AddScoped<ILessonResourceRepository, LessonResourceRepository>();
 
 
 //service
@@ -103,6 +106,9 @@ builder.Services.AddScoped<ISurveyCourseRecommendationService, SurveyCourseRecom
 builder.Services.AddScoped<IUserResponseCourseRecommendationService, UserResponseCourseRecommendationService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<ICourseWeekService, CourseWeekService>();
+builder.Services.AddScoped<ILessonService, LessonService>();
+builder.Services.AddScoped<ILessonResourceService, LessonResourceService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 

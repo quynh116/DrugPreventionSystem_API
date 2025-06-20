@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Azure;
 using DrugPreventionSystem.DataAccess.Context;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -54,6 +55,26 @@ namespace DrugPreventionSystem.DataAccess.Repository
                                  .Include(r => r.UserSurveyAnswers)
                                      .ThenInclude(a => a.SurveyQuestion) 
                                  .FirstOrDefaultAsync(r => r.ResponseId == id);
+        }
+
+        public async Task<UserSurveyResponse?> GetByIdWithAnswersAndSurveyAsync(Guid responseId)
+        {
+            return await _context.UserSurveyResponses
+                .Include(usr => usr.UserSurveyAnswers)
+                    .ThenInclude(usa => usa.SurveyOption) 
+                .Include(usr => usr.Survey) 
+                .FirstOrDefaultAsync(usr => usr.ResponseId == responseId);
+        }
+
+        public async Task<IEnumerable<UserSurveyResponse>> GetByUserIdWithSurveyAsync(Guid userId)
+        {
+            return await _context.UserSurveyResponses
+                 .Where(usr => usr.UserId == userId)
+                 .Include(usr => usr.Survey) 
+                 .Include(usr => usr.UserSurveyAnswers) 
+                     .ThenInclude(usa => usa.SurveyOption) 
+                 .OrderByDescending(usr => usr.TakenAt) 
+                 .ToListAsync();
         }
     }
 }

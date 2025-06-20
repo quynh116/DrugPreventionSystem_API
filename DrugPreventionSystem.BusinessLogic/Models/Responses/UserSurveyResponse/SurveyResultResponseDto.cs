@@ -16,5 +16,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.UserSurveyResponse
         public string RiskLevel { get; set; } = string.Empty;
         public List<string> RecommendedActions { get; set; } = new List<string>();
         public string Disclaimer { get; set; } = "Lưu ý: Kết quả này chỉ mang tính chất tham khảo và không thay thế cho chẩn đoán chuyên nghiệp. Nếu bạn lo lắng về việc sử dụng chất gây nghiện, vui lòng tham khảo ý kiến của chuyên viên tư vấn.";
+        public List<string> ScoreInterpretation { get; set; } = new List<string>();
     }
 }

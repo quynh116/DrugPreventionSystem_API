@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Course;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
@@ -18,11 +19,13 @@ namespace DrugPreventionSystem.BusinessLogic.Services
     {
         private readonly ICourseRepository _courseRepository;
         private readonly ProvideToken _provideToken;
+        private readonly ICourseWeekRepository _courseWeekRepository;
 
-        public CourseService(ICourseRepository courseRepository, ProvideToken provideToken)
+        public CourseService(ICourseRepository courseRepository, ICourseWeekRepository courseWeekRepository,ProvideToken provideToken)
         {
             _courseRepository = courseRepository;
             _provideToken = provideToken;
+            _courseWeekRepository = courseWeekRepository;
         }
         private CourseResponse MapToResponse(Course course)
         {
@@ -41,6 +44,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 LessonCount = course.LessonCount,
                 StudentCount = course.StudentCount,
                 InstructorId = course.InstructorId,
+                InstructorName = course.Instructor?.FullName,
                 Requirements = course.Requirements,
                 CertificateAvailable = course.CertificateAvailable,
                 CreatedAt = course.CreatedAt,
@@ -62,6 +66,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 StudentCount = request.StudentCount,
                 InstructorId = request.InstructorId,
                 Requirements = request.Requirements,
+                ThumbnailUrl = request.ThumbnailUrl,
                 CertificateAvailable = request.CertificateAvailable,
                 CreatedAt = request.CreatedAt,
             };
@@ -149,6 +154,58 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
+        public async Task<Result<IEnumerable<CourseResponse>>> GetCoursesByAgeGroupAsync(string ageGroup)
+        {
+            try
+            {
+                var courses = await _courseRepository.GetAllActiveCoursesWithInstructorsAsync(ageGroup);
+                var courseResponses = courses.Select(c => MapToResponse(c)).ToList();
+                return Result<IEnumerable<CourseResponse>>.Success(courseResponses);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<CourseResponse>>.Error($"Lỗi khi lấy khóa học theo nhóm tuổi: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<CourseContentResponse>> GetCourseContentAsync(Guid courseId)
+        {
+            try
+            {
+                var course = await _courseRepository.GetByIdAsync(courseId); // Lấy thông tin khóa học cơ bản
+                if (course == null)
+                {
+                    return Result<CourseContentResponse>.NotFound($"Course with ID {courseId} not found.");
+                }
+
+                var courseWeeks = await _courseWeekRepository.GetCourseWeeksByCourseIdWithLessonsAsync(courseId);
+
+                var courseContent = new CourseContentResponse
+                {
+                    CourseId = course.CourseId,
+                    CourseTitle = course.Title,
+                    CourseWeeks = courseWeeks.Select(cw => new CourseWeekDto
+                    {
+                        CourseWeekId = cw.WeekId,
+                        Title = cw.Title,
+                        WeekNumber = cw.WeekNumber,
+                        Lessons = cw.Lessons.Select(l => new LessonDto
+                        {
+                            LessonId = l.LessonId,
+                            Title = l.Title,
+                            DurationMinutes = l.DurationMinutes,
+                            Sequence = l.Sequence
+                        }).ToList()
+                    }).ToList()
+                };
+
+                return Result<CourseContentResponse>.Success(courseContent);
+            }
+            catch (Exception ex)
+            {
+                return Result<CourseContentResponse>.Error($"Lỗi khi lấy nội dung khóa học: {ex.Message}");
+            }
+        }
     }
 }
     

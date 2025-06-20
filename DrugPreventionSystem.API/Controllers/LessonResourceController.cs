@@ -1,4 +1,6 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Lesson;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -33,8 +35,15 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("byLesson/{lessonId}")]
+        public async Task<ActionResult<Result<IEnumerable<LessonResourceResponse>>>> GetResourcesByLessonId(Guid lessonId)
+        {
+            var result = await _lessonResourceService.GetResourcesByLessonIdAsync(lessonId);
+            return HandleResult(result);
+        }
+
         [HttpPost]
-        public async Task<ActionResult<Result<LessonResource>>> Create([FromBody] LessonResource lessonResource)
+        public async Task<ActionResult<Result<LessonResource>>> Create([FromBody] LessonResourceRequest lessonResource)
         {
             var result = await _lessonResourceService.AddNewLessonResourceAsync(lessonResource);
             return HandleResult(result);

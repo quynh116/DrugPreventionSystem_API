@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Course;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
@@ -16,6 +17,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<CourseResponse>> GetByIdAsync(Guid id);
         Task<Result<CourseResponse>> UpdateAsync(CourseUpdateRequest request, Guid id);
         Task<Result<bool>> DeleteAsync(Guid id);
-
+        Task<Result<IEnumerable<CourseResponse>>> GetCoursesByAgeGroupAsync(string ageGroup);
+        Task<Result<CourseContentResponse>> GetCourseContentAsync(Guid courseId);
     }
 }

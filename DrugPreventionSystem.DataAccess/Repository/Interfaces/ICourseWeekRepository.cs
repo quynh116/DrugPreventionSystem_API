@@ -12,5 +12,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<CourseWeek?> GetCourseWeekByIdAsync(Guid id);
         Task DeleteCourseWeekByIdAsync(Guid id);
         Task UpdateCourseWeekAsync(CourseWeek courseWeek);
+        Task<IEnumerable<CourseWeek>> GetCourseWeeksByCourseIdWithLessonsAsync(Guid courseId);
     }
 } 

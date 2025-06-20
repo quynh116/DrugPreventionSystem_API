@@ -49,6 +49,15 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("user/{userId}")]
+        public async Task<ActionResult<Result<List<SurveyResultSummaryResponse>>>> GetUserSurveyResults(Guid userId)
+        {
+            
+
+            var result = await _userSurveyResponseService.GetSurveyResultsByUserId(userId);
+            return HandleResult(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<UserSurveyResponseResponse>>> UpdateSurveyQuestion(Guid id, [FromBody] UserSurveyResponseUpdateRequest request)
         {

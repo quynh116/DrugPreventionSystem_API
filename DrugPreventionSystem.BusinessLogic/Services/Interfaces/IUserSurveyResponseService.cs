@@ -24,5 +24,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<SaveSingleAnswerResponseDto>> SaveSingleAnswer(SaveSingleAnswerRequestDto request);
         Task<Result<SurveyResultResponseDto>> CompleteSurvey(Guid responseId);
         Task<Result<SurveyResultResponseDto>> GetSurveyResult(Guid responseId);
+
+        Task<Result<List<SurveyResultSummaryResponse>>> GetSurveyResultsByUserId(Guid userId);
     }
 }

@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Lesson;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,7 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Result<Lesson>>> Create([FromBody] Lesson lesson)
+        public async Task<ActionResult<Result<Lesson>>> Create([FromBody] LessonRequest lesson)
         {
             var result = await _lessonService.AddNewLessonAsync(lesson);
             return HandleResult(result);

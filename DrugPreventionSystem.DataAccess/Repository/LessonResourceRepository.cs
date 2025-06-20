@@ -49,5 +49,12 @@ namespace DrugPreventionSystem.DataAccess.Repository
             _context.LessonResources.Update(lessonResource);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<LessonResource>> GetResourcesByLessonIdAsync(Guid lessonId)
+        {
+            return await _context.LessonResources
+                            .Where(lr => lr.LessonId == lessonId)
+                            .ToListAsync();
+        }
     }
 } 

@@ -26,11 +26,16 @@ namespace DrugPreventionSystem.DataAccess.Repository
 
         public async Task<IEnumerable<Course>> GetAllAsync()
         {
-           return await _context.Courses.ToListAsync();
+           return await _context.Courses
+                .Include(c => c.Instructor)
+                .Where(c => c.IsActive)
+                .ToListAsync();
         }
         public async Task<Course?> GetByIdAsync(Guid id)
         {
-            return await _context.Courses.FirstOrDefaultAsync(c => c.CourseId == id);
+            return await _context.Courses
+                .Include(c => c.Instructor)
+                .FirstOrDefaultAsync(c => c.CourseId == id);
         }
         public async Task UpdateAsync(Course response)
         {
@@ -47,5 +52,15 @@ namespace DrugPreventionSystem.DataAccess.Repository
             }
         }
 
+        public async Task<IEnumerable<Course>> GetAllActiveCoursesWithInstructorsAsync(string? ageGroup = null)
+        {
+            var query = _context.Courses.Include(c => c.Instructor).Where(c => c.IsActive);
+            if (!string.IsNullOrEmpty(ageGroup))
+            {
+                query = query.Where(c => c.AgeGroup != null &&
+                                 EF.Functions.Like(c.AgeGroup, $"%{ageGroup}%"));
+            }
+            return await query.ToListAsync();
+        }
     }
 }

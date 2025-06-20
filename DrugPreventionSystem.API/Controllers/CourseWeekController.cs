@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Course;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -34,7 +35,7 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Result<CourseWeek>>> Create([FromBody] CourseWeek courseWeek)
+        public async Task<ActionResult<Result<CourseWeek>>> Create([FromBody] CourseWeekRequest courseWeek)
         {
             var result = await _courseWeekService.AddNewCourseWeekAsync(courseWeek);
             return HandleResult(result);

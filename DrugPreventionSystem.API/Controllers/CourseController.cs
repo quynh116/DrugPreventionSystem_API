@@ -3,6 +3,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Request.Course;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Instructor;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Consultant;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -44,6 +45,41 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _courseService.GetByIdAsync(id);
             return HandleResult(result);
         }
+
+        [HttpGet("byAgeGroup")]
+        public async Task<ActionResult<Result<IEnumerable<CourseResponse>>>> GetCoursesByAgeGroup([FromQuery] string ageGroup)
+        {
+            var result = await _courseService.GetCoursesByAgeGroupAsync(ageGroup);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{courseId}/weeks-with-lessons")]
+        public async Task<ActionResult<Result<CourseContentResponse>>> GetWeeksWithLessonsByCourseId(Guid courseId)
+        {
+            var result = await _courseService.GetCourseContentAsync(courseId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{id}/requirements")]
+        public async Task<IActionResult> GetCourseRequirements(Guid id)
+        {
+            var result = await _courseService.GetByIdAsync(id);
+
+            if (string.IsNullOrEmpty(result.Data?.Requirements))
+            {
+                return Ok(Result<string>.Success("Không có yêu cầu cụ thể nào được liệt kê."));
+            }
+            var requirementsList = result.Data.Requirements
+        .Split(';', StringSplitOptions.RemoveEmptyEntries)
+        .Select(r => r.Trim())
+        .ToList();
+
+            return Ok(Result<List<string>>.Success(requirementsList));
+
+
+
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<CourseResponse>>> UpdateAsync(Guid id, [FromBody] CourseUpdateRequest request)
         {

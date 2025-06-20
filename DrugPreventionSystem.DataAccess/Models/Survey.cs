@@ -23,9 +23,13 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("description")]
         public string? Description { get; set; }
 
-        [MaxLength(255)] 
+        [MaxLength(255)]
         [Column("target_audience")]
         public string? TargetAudience { get; set; }
+        [MaxLength(50)]
+        [Column("estimated_duration")]
+        public string? EstimatedDuration { get; set; }
+
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

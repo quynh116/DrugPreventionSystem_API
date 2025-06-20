@@ -49,5 +49,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
             _context.CourseWeeks.Update(courseWeek);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<CourseWeek>> GetCourseWeeksByCourseIdWithLessonsAsync(Guid courseId)
+        {
+            return await _context.CourseWeeks
+                             .Where(cw => cw.CourseId == courseId)
+                             .OrderBy(cw => cw.WeekNumber)
+                             .Include(cw => cw.Lessons.OrderBy(l => l.Sequence)) 
+                             .ToListAsync();
+        }
     }
 } 

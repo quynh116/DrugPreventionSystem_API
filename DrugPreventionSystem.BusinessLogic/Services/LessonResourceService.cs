@@ -1,4 +1,6 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Lesson;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -17,9 +19,30 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             _lessonResourceRepository = lessonResourceRepository;
         }
 
-        public async Task<Result<LessonResource>> AddNewLessonResourceAsync(LessonResource lessonResource)
+        private LessonResourceResponse MapToResponse(LessonResource resource)
         {
-            var added = await _lessonResourceRepository.AddNewLessonResource(lessonResource);
+            // Tri?n khai mapping c?a b?n
+            return new LessonResourceResponse
+            {
+                ResourceId = resource.ResourceId,
+                LessonId = resource.LessonId,
+                ResourceType = resource.ResourceType,
+                ResourceUrl = resource.ResourceUrl,
+                Description = resource.Description
+            };
+        }
+
+        public async Task<Result<LessonResource>> AddNewLessonResourceAsync(LessonResourceRequest lessonResource)
+        {
+            var newLessonResource = new LessonResource
+            {
+                LessonId = lessonResource.LessonId,
+                ResourceType = lessonResource.ResourceType,
+                ResourceUrl = lessonResource.ResourceUrl,
+                Description = lessonResource.Description
+            };
+
+            var added = await _lessonResourceRepository.AddNewLessonResource(newLessonResource);
             return Result<LessonResource>.Success(added, "Added successfully");
         }
 
@@ -53,6 +76,24 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             existing.Description = lessonResource.Description;
             await _lessonResourceRepository.UpdateLessonResourceAsync(existing);
             return Result<LessonResource>.Success(existing, "Updated successfully");
+        }
+
+        public async Task<Result<IEnumerable<LessonResourceResponse>>> GetResourcesByLessonIdAsync(Guid lessonId)
+        {
+            try
+            {
+                var resources = await _lessonResourceRepository.GetResourcesByLessonIdAsync(lessonId);
+                if (resources == null || !resources.Any())
+                {
+                    return Result<IEnumerable<LessonResourceResponse>>.NotFound("Không tìm th?y tài nguyên nào cho bài h?c này.");
+                }
+                var resourceResponses = resources.Select(r => MapToResponse(r)).ToList();
+                return Result<IEnumerable<LessonResourceResponse>>.Success(resourceResponses);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<LessonResourceResponse>>.Error($"L?i khi l?y tài nguyên bài h?c: {ex.Message}");
+            }
         }
     }
 } 

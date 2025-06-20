@@ -56,6 +56,10 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
+        [MaxLength(1000)]
+        [Column("thumbnail_url")]
+        public string? ThumbnailUrl { get; set; }
+
         // Navigation properties
         public virtual Instructor Instructor { get; set; } = null!;
         public virtual ICollection<CourseWeek> CourseWeeks { get; set; } = new List<CourseWeek>();

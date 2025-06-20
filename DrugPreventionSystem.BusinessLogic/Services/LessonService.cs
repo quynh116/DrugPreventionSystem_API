@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Lesson;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -17,9 +18,20 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             _lessonRepository = lessonRepository;
         }
 
-        public async Task<Result<Lesson>> AddNewLessonAsync(Lesson lesson)
+        public async Task<Result<Lesson>> AddNewLessonAsync(LessonRequest lesson)
         {
-            var added = await _lessonRepository.AddNewLesson(lesson);
+            var newLesson = new Lesson()
+            {
+                WeekId = lesson.WeekId,
+                Title = lesson.Title,
+                DurationMinutes = lesson.DurationMinutes,
+                Sequence = lesson.Sequence,
+                HasQuiz = lesson.HasQuiz,
+                HasPractice = lesson.HasPractice,
+                CreatedAt = lesson.CreatedAt,
+            };
+
+            var added = await _lessonRepository.AddNewLesson(newLesson);
             return Result<Lesson>.Success(added, "Added successfully");
         }
 

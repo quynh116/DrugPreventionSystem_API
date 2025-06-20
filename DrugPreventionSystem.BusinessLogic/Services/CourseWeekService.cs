@@ -1,4 +1,5 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Course;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
@@ -17,9 +18,15 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             _courseWeekRepository = courseWeekRepository;
         }
 
-        public async Task<Result<CourseWeek>> AddNewCourseWeekAsync(CourseWeek courseWeek)
+        public async Task<Result<CourseWeek>> AddNewCourseWeekAsync(CourseWeekRequest courseWeek)
         {
-            var added = await _courseWeekRepository.AddNewCourseWeek(courseWeek);
+            var newCourseWeek = new CourseWeek()
+            {
+                CourseId = courseWeek.CourseId,
+                Title = courseWeek.Title,
+                WeekNumber = courseWeek.WeekNumber,
+            };
+            var added = await _courseWeekRepository.AddNewCourseWeek(newCourseWeek);
             return Result<CourseWeek>.Success(added, "Added successfully");
         }
 
