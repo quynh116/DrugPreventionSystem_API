@@ -41,6 +41,7 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<CourseCertificate> CourseCertificates { get; set; } = null!;
         public DbSet<SurveyCourseRecommendation> SurveyCourseRecommendations { get; set; } = null!;
         public DbSet<UserResponseCourseRecommendation> UserResponseCourseRecommendations { get; set; } = null!;
+        public DbSet<UserCourseEnrollment> UserCourseEnrollments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -261,6 +262,29 @@ namespace DrugPreventionSystem.DataAccess.Context
                 .WithMany(c => c.UserResponseCourseRecommendations)
                 .HasForeignKey(urcr => urcr.CourseId)
                 .OnDelete(DeleteBehavior.Restrict); // Không xóa Course nếu đã được đề xuất cho người dùng
+
+            modelBuilder.Entity<UserCourseEnrollment>()
+                .Property(e => e.Status)
+                .HasConversion<string>(); // Lưu enum dưới dạng chuỗi trong DB
+
+            
+            modelBuilder.Entity<UserCourseEnrollment>()
+                .HasIndex(uce => new { uce.UserId, uce.CourseId })
+                .IsUnique();
+
+            // Cấu hình mối quan hệ 1-nhiều giữa User và UserCourseEnrollment
+            modelBuilder.Entity<User>()
+                .HasMany(u => u.UserCourseEnrollments)
+                .WithOne(uce => uce.User)
+                .HasForeignKey(uce => uce.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            // Cấu hình mối quan hệ 1-nhiều giữa Course và UserCourseEnrollment
+            modelBuilder.Entity<Course>()
+                .HasMany(c => c.UserCourseEnrollments)
+                .WithOne(uce => uce.Course)
+                .HasForeignKey(uce => uce.CourseId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Seed initial data
             SeedData(modelBuilder);

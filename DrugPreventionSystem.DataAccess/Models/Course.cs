@@ -66,5 +66,6 @@ namespace DrugPreventionSystem.DataAccess.Models
         public virtual ICollection<CourseCertificate> CourseCertificates { get; set; } = new List<CourseCertificate>();
         public virtual ICollection<SurveyCourseRecommendation> SurveyCourseRecommendations { get; set; } = new List<SurveyCourseRecommendation>();
         public virtual ICollection<UserResponseCourseRecommendation> UserResponseCourseRecommendations { get; set; } = new List<UserResponseCourseRecommendation>();
+        public virtual ICollection<UserCourseEnrollment> UserCourseEnrollments { get; set; } = new List<UserCourseEnrollment>();
     }
 }
