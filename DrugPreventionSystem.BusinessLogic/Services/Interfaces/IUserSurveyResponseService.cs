@@ -26,5 +26,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<SurveyResultResponseDto>> GetSurveyResult(Guid responseId);
 
         Task<Result<List<SurveyResultSummaryResponse>>> GetSurveyResultsByUserId(Guid userId);
+        Task<Result<List<SurveyQuestionAnswerResponse>>> GetSurveyQuestionAnswersByResponseIdAsync(Guid responseId);
     }
 }

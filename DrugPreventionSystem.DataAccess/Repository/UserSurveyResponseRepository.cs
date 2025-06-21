@@ -61,7 +61,9 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             return await _context.UserSurveyResponses
                 .Include(usr => usr.UserSurveyAnswers)
-                    .ThenInclude(usa => usa.SurveyOption) 
+                    .ThenInclude(usa => usa.SurveyOption)
+                .Include(usr => usr.UserSurveyAnswers)       
+            .ThenInclude(usa => usa.SurveyQuestion)
                 .Include(usr => usr.Survey) 
                 .FirstOrDefaultAsync(usr => usr.ResponseId == responseId);
         }

@@ -555,5 +555,40 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<List<SurveyResultSummaryResponse>>.Error($"Lỗi khi lấy danh sách kết quả khảo sát: {ex.Message}");
             }
         }
+
+        public async Task<Result<List<SurveyQuestionAnswerResponse>>> GetSurveyQuestionAnswersByResponseIdAsync(Guid responseId)
+        {
+            try
+            {
+                var userSurveyResponse = await _userSurveyResponseRepository.GetByIdWithAnswersAndSurveyAsync(responseId);
+
+                if (userSurveyResponse == null)
+                {
+                    return Result<List<SurveyQuestionAnswerResponse>>.NotFound("Không tìm thấy kết quả khảo sát với ID này.");
+                }
+
+                if (userSurveyResponse.UserSurveyAnswers == null || !userSurveyResponse.UserSurveyAnswers.Any())
+                {
+                    return Result<List<SurveyQuestionAnswerResponse>>.NotFound("Không có câu trả lời nào được tìm thấy cho phản hồi này.");
+                }
+
+                var questionAnswersList = userSurveyResponse.UserSurveyAnswers
+                    .Where(a => a.SurveyQuestion != null && a.SurveyOption != null)
+                    .OrderBy(a => a.SurveyQuestion!.Sequence)
+                    .Select(a => new SurveyQuestionAnswerResponse
+                    {
+                        QuestionText = a.SurveyQuestion!.QuestionText,
+                        ChosenAnswerText = a.SurveyOption!.OptionText, 
+                        Score = a.SurveyOption.ScoreValue
+                    })
+                    .ToList();
+
+                return Result<List<SurveyQuestionAnswerResponse>>.Success(questionAnswersList, "Lấy chi tiết câu hỏi và câu trả lời thành công.");
+            }
+            catch (Exception ex)
+            {
+                return Result<List<SurveyQuestionAnswerResponse>>.Error($"Lỗi khi lấy chi tiết câu hỏi và câu trả lời: {ex.Message}");
+            }
+        }
     }
 }

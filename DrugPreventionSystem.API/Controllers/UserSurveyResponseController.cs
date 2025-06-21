@@ -52,7 +52,7 @@ namespace DrugPreventionSystem.API.Controllers
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<Result<List<SurveyResultSummaryResponse>>>> GetUserSurveyResults(Guid userId)
         {
-            
+
 
             var result = await _userSurveyResponseService.GetSurveyResultsByUserId(userId);
             return HandleResult(result);
@@ -117,6 +117,14 @@ namespace DrugPreventionSystem.API.Controllers
         public async Task<ActionResult<Result<SurveyResultResponseDto>>> GetSurveyResult(Guid responseId)
         {
             var result = await _userSurveyResponseService.GetSurveyResult(responseId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{responseId}/question-answers")]
+        public async Task<ActionResult<Result<List<SurveyQuestionAnswerResponse>>>> GetSurveyQuestionAnswers(Guid responseId)
+        {
+            var result = await _userSurveyResponseService.GetSurveyQuestionAnswersByResponseIdAsync(responseId);
+
             return HandleResult(result);
         }
     }
