@@ -91,7 +91,9 @@ builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
 builder.Services.AddScoped<ICourseWeekRepository, CourseWeekRepository>();
 builder.Services.AddScoped<ILessonRepository, LessonRepository>();
 builder.Services.AddScoped<ILessonResourceRepository, LessonResourceRepository>();
-
+builder.Services.AddScoped<IPracticeExerciseRepository, PracticeExerciseRepository>();
+builder.Services.AddScoped<ICourseCertificateRepository, CourseCertificateRepository>();
+builder.Services.AddScoped<IUserCourseEnrollmentRepository, UserCourseEnrollmentRepository>();
 
 //service
 builder.Services.AddScoped<IUserService, UserService>();
@@ -109,6 +111,9 @@ builder.Services.AddScoped<IInstructorService, InstructorService>();
 builder.Services.AddScoped<ICourseWeekService, CourseWeekService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<ILessonResourceService, LessonResourceService>();
+builder.Services.AddScoped<IPracticeExerciseService, PracticeExerciseService>();
+builder.Services.AddScoped<ICourseCertificateService, CourseCertificateService>();
+builder.Services.AddScoped<IUserCourseEnrollmentService, UserCourseEnrollmentService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
