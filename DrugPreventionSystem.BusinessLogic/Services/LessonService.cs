@@ -6,6 +6,7 @@ using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -35,17 +36,22 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<Lesson>.Success(added, "Added successfully");
         }
 
-        public async Task<Result<IEnumerable<Lesson>>> GetAllLessonsAsync()
+        public async Task<Result<IEnumerable<LessonResponse>>> GetAllLessonsAsync()
         {
             var list = await _lessonRepository.GetAllLessonsAsync();
-            return Result<IEnumerable<Lesson>>.Success(list);
+            var responseList = new List<LessonResponse>();
+            foreach (var l in list)
+            {
+                responseList.Add(MapLessonToResponse(l));
+            }
+            return Result<IEnumerable<LessonResponse>>.Success(responseList);
         }
 
-        public async Task<Result<Lesson>> GetLessonByIdAsync(Guid id)
+        public async Task<Result<LessonResponse>> GetLessonByIdAsync(Guid id)
         {
             var lesson = await _lessonRepository.GetLessonByIdAsync(id);
-            if (lesson == null) return Result<Lesson>.NotFound($"Not found Lesson with id: {id}");
-            return Result<Lesson>.Success(lesson);
+            if (lesson == null) return Result<LessonResponse>.NotFound($"Not found Lesson with id: {id}");
+            return Result<LessonResponse>.Success(MapLessonToResponse(lesson));
         }
 
         public async Task<Result<bool>> DeleteLessonByIdAsync(Guid id)
@@ -67,6 +73,28 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             existing.HasPractice = lesson.HasPractice;
             await _lessonRepository.UpdateLessonAsync(existing);
             return Result<Lesson>.Success(existing, "Updated successfully");
+        }
+
+        private LessonResponse MapLessonToResponse(Lesson l)
+        {
+            return new LessonResponse
+            {
+                LessonId = l.LessonId,
+                Title = l.Title,
+                DurationMinutes = l.DurationMinutes,
+                Sequence = l.Sequence,
+                HasQuiz = l.HasQuiz,
+                HasPractice = l.HasPractice,
+                CreatedAt = l.CreatedAt,
+                Resources = l.LessonResources?.Select(r => new LessonResourceResponse
+                {
+                    ResourceId = r.ResourceId,
+                    LessonId = r.LessonId,
+                    ResourceType = r.ResourceType,
+                    ResourceUrl = r.ResourceUrl,
+                    Description = r.Description
+                }).ToList() ?? new List<LessonResourceResponse>()
+            };
         }
     }
 } 

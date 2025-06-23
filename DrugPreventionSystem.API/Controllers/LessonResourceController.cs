@@ -22,14 +22,14 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Result<IEnumerable<LessonResource>>>> GetAll()
+        public async Task<ActionResult<Result<IEnumerable<LessonResourceResponse>>>> GetAll()
         {
             var result = await _lessonResourceService.GetAllLessonResourcesAsync();
             return HandleResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<LessonResource>>> GetById(Guid id)
+        public async Task<ActionResult<Result<LessonResourceResponse>>> GetById(Guid id)
         {
             var result = await _lessonResourceService.GetLessonResourceByIdAsync(id);
             return HandleResult(result);

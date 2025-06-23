@@ -7,6 +7,7 @@ using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -46,17 +47,18 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<LessonResource>.Success(added, "Added successfully");
         }
 
-        public async Task<Result<IEnumerable<LessonResource>>> GetAllLessonResourcesAsync()
+        public async Task<Result<IEnumerable<LessonResourceResponse>>> GetAllLessonResourcesAsync()
         {
             var list = await _lessonResourceRepository.GetAllLessonResourcesAsync();
-            return Result<IEnumerable<LessonResource>>.Success(list);
+            var responseList = list.Select(MapToResponse).ToList();
+            return Result<IEnumerable<LessonResourceResponse>>.Success(responseList);
         }
 
-        public async Task<Result<LessonResource>> GetLessonResourceByIdAsync(Guid id)
+        public async Task<Result<LessonResourceResponse>> GetLessonResourceByIdAsync(Guid id)
         {
             var lr = await _lessonResourceRepository.GetLessonResourceByIdAsync(id);
-            if (lr == null) return Result<LessonResource>.NotFound($"Not found LessonResource with id: {id}");
-            return Result<LessonResource>.Success(lr);
+            if (lr == null) return Result<LessonResourceResponse>.NotFound($"Not found LessonResource with id: {id}");
+            return Result<LessonResourceResponse>.Success(MapToResponse(lr));
         }
 
         public async Task<Result<bool>> DeleteLessonResourceByIdAsync(Guid id)
@@ -85,14 +87,14 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 var resources = await _lessonResourceRepository.GetResourcesByLessonIdAsync(lessonId);
                 if (resources == null || !resources.Any())
                 {
-                    return Result<IEnumerable<LessonResourceResponse>>.NotFound("Không tìm th?y tài nguyên nào cho bài h?c này.");
+                    return Result<IEnumerable<LessonResourceResponse>>.NotFound("Khï¿½ng tï¿½m th?y tï¿½i nguyï¿½n nï¿½o cho bï¿½i h?c nï¿½y.");
                 }
                 var resourceResponses = resources.Select(r => MapToResponse(r)).ToList();
                 return Result<IEnumerable<LessonResourceResponse>>.Success(resourceResponses);
             }
             catch (Exception ex)
             {
-                return Result<IEnumerable<LessonResourceResponse>>.Error($"L?i khi l?y tài nguyên bài h?c: {ex.Message}");
+                return Result<IEnumerable<LessonResourceResponse>>.Error($"L?i khi l?y tï¿½i nguyï¿½n bï¿½i h?c: {ex.Message}");
             }
         }
     }
