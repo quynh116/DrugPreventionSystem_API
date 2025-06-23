@@ -1,11 +1,15 @@
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
+using DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes;
+using DrugPreventionSystem.BusinessLogic.Services.Quizzes;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Context;
 using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces.IQuizzes;
+using DrugPreventionSystem.DataAccess.Repository.Quizzes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -86,6 +90,9 @@ builder.Services.AddScoped<IUserSurveyResponseRepository, UserSurveyResponseRepo
 builder.Services.AddScoped<IUserSurveyAnswerRepository, UserSurveyAnswerRepository>();
 builder.Services.AddScoped<ICourseRepository, CourseRepository>();
 builder.Services.AddScoped<IInstructorRepository, InstructorRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
+builder.Services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
 
 
 //sercice
@@ -99,6 +106,9 @@ builder.Services.AddScoped<IUserSurveyResponseService, UserSurveyResponseService
 builder.Services.AddScoped<IUserSurveyAnswerService, UserSurveyAnswerService>();
 builder.Services.AddScoped<ICourseService, CourseService>();
 builder.Services.AddScoped<IInstructorService, InstructorService>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IQuizQuestionService, QuizQuestionService>();
+builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
