@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
+using DrugPreventionSystem.BusinessLogic.Token;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -32,6 +33,15 @@ namespace DrugPreventionSystem.API.Controllers
         public async Task<ActionResult<Result<LessonResponse>>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonByIdAsync(id);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{lessonId}/details")]
+        public async Task<ActionResult<Result<LessonDetailResponse>>> GetLessonDetails(Guid userId, Guid lessonId)
+        {
+            
+
+            var result = await _lessonService.GetLessonDetailsForUserAsync(lessonId, userId);
             return HandleResult(result);
         }
 

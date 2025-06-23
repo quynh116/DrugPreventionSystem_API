@@ -37,6 +37,15 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return null;
         }
 
+        public async Task<List<UserLessonProgress>> GetAllUserLessonProgressesByUserIdAsync(Guid userId)
+        {
+            return await _context.UserLessonProgresses
+           .Where(ulp => ulp.UserId == userId)
+           .Include(ulp => ulp.Lesson)
+               .ThenInclude(l => l.CourseWeek)
+           .ToListAsync();
+        }
+
         public async Task<UserLessonProgress?> GetUserLessonProgressByIdAsync(Guid progressId)
         {
             return await _context.UserLessonProgresses.FirstOrDefaultAsync(ulp => ulp.ProgressId == progressId);
@@ -46,6 +55,13 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             return await _context.UserLessonProgresses.Where(ulp => ulp.LessonId == lessonId).ToListAsync();
             
+        }
+
+        public async Task<List<UserLessonProgress>> GetUserLessonProgressByUserIdAndCourseIdAsync(Guid userId, Guid courseId)
+        {
+            return await _context.UserLessonProgresses
+            .Where(ulp => ulp.UserId == userId && ulp.Lesson.CourseWeek.CourseId == courseId)
+            .ToListAsync();
         }
 
         public async Task<IEnumerable<UserLessonProgress>> GetUserLessonProgressByUserIdAsync(Guid userId)

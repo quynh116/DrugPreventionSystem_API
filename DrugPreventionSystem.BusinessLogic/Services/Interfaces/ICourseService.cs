@@ -19,5 +19,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<bool>> DeleteAsync(Guid id);
         Task<Result<IEnumerable<CourseResponse>>> GetCoursesByAgeGroupAsync(string ageGroup);
         Task<Result<CourseContentResponse>> GetCourseContentAsync(Guid courseId);
+        Task<Result<List<UserCourseResponse>>> GetMyCoursesAsync(Guid userId);
+        Task<Result<CourseProgressDetailResponse>> GetCourseProgressDetailsForUserAsync(Guid courseId, Guid userId);
+        Task<Result<CourseDetailForUserResponse>> GetCourseDetailForUserAsync(Guid courseId, Guid userId);
     }
 }

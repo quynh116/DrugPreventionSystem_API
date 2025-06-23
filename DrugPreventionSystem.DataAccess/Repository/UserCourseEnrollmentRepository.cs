@@ -46,11 +46,22 @@ namespace DrugPreventionSystem.DataAccess.Repository
         }
         public async Task<IEnumerable<UserCourseEnrollment>> GetByUserIdAsync(Guid userId)
         {
-            return await _context.UserCourseEnrollments.Where(x => x.UserId == userId).ToListAsync();
+            return await _context.UserCourseEnrollments.Where(x => x.UserId == userId)
+                .Include(uce => uce.Course) 
+                .ThenInclude(c => c.CourseWeeks)
+                    .ThenInclude(cw => cw.Lessons)
+                .Include(uce => uce.Course.Instructor)
+                .ToListAsync();
         }
         public async Task<IEnumerable<UserCourseEnrollment>> GetByCourseIdAsync(Guid courseId)
         {
             return await _context.UserCourseEnrollments.Where(x => x.CourseId == courseId).ToListAsync();
+        }
+
+        public async Task<UserCourseEnrollment?> GetByUserIdAndCourseIdAsync(Guid userId, Guid courseId)
+        {
+            return await _context.UserCourseEnrollments
+           .FirstOrDefaultAsync(uce => uce.UserId == userId && uce.CourseId == courseId);
         }
     }
 } 

@@ -31,7 +31,13 @@ namespace DrugPreventionSystem.DataAccess.Repository
 
         public async Task<Lesson?> GetLessonByIdAsync(Guid id)
         {
-            return await _context.Lessons.Include(l => l.LessonResources).FirstOrDefaultAsync(l => l.LessonId == id);
+            return await _context.Lessons.Include(l => l.LessonResources)
+                .Include(l => l.CourseWeek) 
+                .ThenInclude(cw => cw.Course) 
+                    .ThenInclude(c => c.CourseWeeks) 
+                        .ThenInclude(cw => cw.Lessons) 
+            .Include(l => l.UserLessonProgresses)
+                .FirstOrDefaultAsync(l => l.LessonId == id);
         }
 
         public async Task DeleteLessonByIdAsync(Guid id)

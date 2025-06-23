@@ -7,15 +7,21 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
+using DrugPreventionSystem.DataAccess.Repository;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
     public class LessonService : ILessonService
     {
         private readonly ILessonRepository _lessonRepository;
+        private readonly IUserLessonProgressRepository _userLessonProgressRepository;
+        private readonly IUserCourseEnrollmentRepository _userCourseEnrollmentRepository;
 
-        public LessonService(ILessonRepository lessonRepository)
+        public LessonService(ILessonRepository lessonRepository, IUserLessonProgressRepository userLessonProgressRepository,
+        IUserCourseEnrollmentRepository userCourseEnrollmentRepository)
         {
+            _userLessonProgressRepository = userLessonProgressRepository;
+            _userCourseEnrollmentRepository = userCourseEnrollmentRepository;
             _lessonRepository = lessonRepository;
         }
 
@@ -95,6 +101,67 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     Description = r.Description
                 }).ToList() ?? new List<LessonResourceResponse>()
             };
+        }
+
+        public async Task<Result<LessonDetailResponse>> GetLessonDetailsForUserAsync(Guid lessonId, Guid userId)
+        {
+            try
+            {
+                var lesson = await _lessonRepository.GetLessonByIdAsync(lessonId);
+
+                if (lesson == null)
+                {
+                    return Result<LessonDetailResponse>.NotFound($"Lesson with ID {lessonId} not found.");
+                }
+
+                if (lesson.CourseWeek?.Course == null)
+                {
+                    return Result<LessonDetailResponse>.Error("Course or CourseWeek information missing for this lesson.");
+                }
+
+                var course = lesson.CourseWeek.Course;
+
+                
+
+
+                
+                var videoResource = lesson.LessonResources
+                                          .FirstOrDefault(lr => lr.ResourceType.Equals("video", StringComparison.OrdinalIgnoreCase));
+
+                
+                int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
+
+                
+                var userProgressesInCourse = await _userLessonProgressRepository.GetUserLessonProgressByUserIdAndCourseIdAsync(userId, course.CourseId);
+                int completedLessonsByUser = userProgressesInCourse.Count(ulp => ulp.Passed);
+
+                float courseProgressPercentage = totalLessonsInCourse > 0 ? (float)completedLessonsByUser / totalLessonsInCourse * 100 : 0;
+
+                
+                var currentUserLessonProgress = userProgressesInCourse.FirstOrDefault(ulp => ulp.LessonId == lessonId);
+                bool isLessonCompleted = currentUserLessonProgress?.Passed ?? false;
+
+                var response = new LessonDetailResponse
+                {
+                    LessonId = lesson.LessonId,
+                    Title = lesson.Title,
+                    DurationMinutes = lesson.DurationMinutes,
+                    VideoUrl = videoResource?.ResourceUrl,
+                    Description = videoResource?.Description, 
+                    CourseTitle = course.Title,
+                    CourseId = course.CourseId,
+                    CourseProgressPercentage = courseProgressPercentage,
+                    IsCompleted = isLessonCompleted,
+                    
+                    
+                };
+
+                return Result<LessonDetailResponse>.Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<LessonDetailResponse>.Error($"Error getting lesson details: {ex.Message}");
+            }
         }
     }
 } 

@@ -1,7 +1,9 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request;
-using DrugPreventionSystem.BusinessLogic.Models.Responses;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.UserCourseEnrollment;
+using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
+using DrugPreventionSystem.BusinessLogic.Token;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -37,7 +39,7 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<Result<UserCourseEnrollmentResponse>>> Update(Guid id, [FromBody] UserCourseEnrollmentRequest request)
+        public async Task<ActionResult<Result<UserCourseEnrollmentResponse>>> Update(Guid id, [FromBody] UserCourseEnrollmentUpdateRequest request)
         {
             var result = await _service.UpdateAsync(id, request);
             return HandleResult(result);
@@ -62,5 +64,15 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _service.GetByCourseIdAsync(courseId);
             return HandleResult(result);
         }
+
+        [HttpGet("{courseId}/enrollment-status")]
+        public async Task<ActionResult<Result<UserCourseEnrollmentStatusResponse>>> GetEnrollmentStatus(Guid userId, Guid courseId)
+        {
+            
+
+            var result = await _service.CheckUserCourseEnrollmentStatusAsync(courseId, userId);
+            return HandleResult(result);
+        }
+
     }
-} 
+}

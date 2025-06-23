@@ -1,6 +1,6 @@
 using System;
 
-namespace DrugPreventionSystem.BusinessLogic.Models.Responses
+namespace DrugPreventionSystem.BusinessLogic.Models.Responses.UserCourseEnrollment
 {
     public class UserCourseEnrollmentResponse
     {
@@ -12,4 +12,4 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses
         public DateTime? CompletedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
-} 
+}

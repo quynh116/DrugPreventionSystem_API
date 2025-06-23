@@ -34,6 +34,8 @@ namespace DrugPreventionSystem.DataAccess.Repository
         public async Task<Course?> GetByIdAsync(Guid id)
         {
             return await _context.Courses
+                .Include(c => c.CourseWeeks)
+                .ThenInclude(cw => cw.Lessons)
                 .Include(c => c.Instructor)
                 .FirstOrDefaultAsync(c => c.CourseId == id);
         }

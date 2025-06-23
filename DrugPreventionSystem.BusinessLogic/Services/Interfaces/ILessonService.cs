@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<LessonResponse>> GetLessonByIdAsync(Guid id);
         Task<Result<bool>> DeleteLessonByIdAsync(Guid id);
         Task<Result<Lesson>> UpdateLessonAsync(Guid id, Lesson lesson);
+        Task<Result<LessonDetailResponse>> GetLessonDetailsForUserAsync(Guid lessonId, Guid userId);
     }
 } 
