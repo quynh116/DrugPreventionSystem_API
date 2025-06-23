@@ -6,15 +6,22 @@ using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
+using DrugPreventionSystem.DataAccess.Repository;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
     public class LessonService : ILessonService
     {
         private readonly ILessonRepository _lessonRepository;
+        private readonly IUserLessonProgressRepository _userLessonProgressRepository;
+        private readonly IUserCourseEnrollmentRepository _userCourseEnrollmentRepository;
 
-        public LessonService(ILessonRepository lessonRepository)
+        public LessonService(ILessonRepository lessonRepository, IUserLessonProgressRepository userLessonProgressRepository,
+        IUserCourseEnrollmentRepository userCourseEnrollmentRepository)
         {
+            _userLessonProgressRepository = userLessonProgressRepository;
+            _userCourseEnrollmentRepository = userCourseEnrollmentRepository;
             _lessonRepository = lessonRepository;
         }
 
@@ -35,17 +42,22 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<Lesson>.Success(added, "Added successfully");
         }
 
-        public async Task<Result<IEnumerable<Lesson>>> GetAllLessonsAsync()
+        public async Task<Result<IEnumerable<LessonResponse>>> GetAllLessonsAsync()
         {
             var list = await _lessonRepository.GetAllLessonsAsync();
-            return Result<IEnumerable<Lesson>>.Success(list);
+            var responseList = new List<LessonResponse>();
+            foreach (var l in list)
+            {
+                responseList.Add(MapLessonToResponse(l));
+            }
+            return Result<IEnumerable<LessonResponse>>.Success(responseList);
         }
 
-        public async Task<Result<Lesson>> GetLessonByIdAsync(Guid id)
+        public async Task<Result<LessonResponse>> GetLessonByIdAsync(Guid id)
         {
             var lesson = await _lessonRepository.GetLessonByIdAsync(id);
-            if (lesson == null) return Result<Lesson>.NotFound($"Not found Lesson with id: {id}");
-            return Result<Lesson>.Success(lesson);
+            if (lesson == null) return Result<LessonResponse>.NotFound($"Not found Lesson with id: {id}");
+            return Result<LessonResponse>.Success(MapLessonToResponse(lesson));
         }
 
         public async Task<Result<bool>> DeleteLessonByIdAsync(Guid id)
@@ -67,6 +79,89 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             existing.HasPractice = lesson.HasPractice;
             await _lessonRepository.UpdateLessonAsync(existing);
             return Result<Lesson>.Success(existing, "Updated successfully");
+        }
+
+        private LessonResponse MapLessonToResponse(Lesson l)
+        {
+            return new LessonResponse
+            {
+                LessonId = l.LessonId,
+                Title = l.Title,
+                DurationMinutes = l.DurationMinutes,
+                Sequence = l.Sequence,
+                HasQuiz = l.HasQuiz,
+                HasPractice = l.HasPractice,
+                CreatedAt = l.CreatedAt,
+                Resources = l.LessonResources?.Select(r => new LessonResourceResponse
+                {
+                    ResourceId = r.ResourceId,
+                    LessonId = r.LessonId,
+                    ResourceType = r.ResourceType,
+                    ResourceUrl = r.ResourceUrl,
+                    Description = r.Description
+                }).ToList() ?? new List<LessonResourceResponse>()
+            };
+        }
+
+        public async Task<Result<LessonDetailResponse>> GetLessonDetailsForUserAsync(Guid lessonId, Guid userId)
+        {
+            try
+            {
+                var lesson = await _lessonRepository.GetLessonByIdAsync(lessonId);
+
+                if (lesson == null)
+                {
+                    return Result<LessonDetailResponse>.NotFound($"Lesson with ID {lessonId} not found.");
+                }
+
+                if (lesson.CourseWeek?.Course == null)
+                {
+                    return Result<LessonDetailResponse>.Error("Course or CourseWeek information missing for this lesson.");
+                }
+
+                var course = lesson.CourseWeek.Course;
+
+                
+
+
+                
+                var videoResource = lesson.LessonResources
+                                          .FirstOrDefault(lr => lr.ResourceType.Equals("video", StringComparison.OrdinalIgnoreCase));
+
+                
+                int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
+
+                
+                var userProgressesInCourse = await _userLessonProgressRepository.GetUserLessonProgressByUserIdAndCourseIdAsync(userId, course.CourseId);
+                int completedLessonsByUser = userProgressesInCourse.Count(ulp => ulp.Passed);
+
+                float courseProgressPercentage = totalLessonsInCourse > 0 ? (float)completedLessonsByUser / totalLessonsInCourse * 100 : 0;
+
+                
+                var currentUserLessonProgress = userProgressesInCourse.FirstOrDefault(ulp => ulp.LessonId == lessonId);
+                bool isLessonCompleted = currentUserLessonProgress?.Passed ?? false;
+
+                var response = new LessonDetailResponse
+                {
+                    LessonId = lesson.LessonId,
+                    Title = lesson.Title,
+                    DurationMinutes = lesson.DurationMinutes,
+                    VideoUrl = videoResource?.ResourceUrl,
+                    Description = videoResource?.Description, 
+                    CourseTitle = course.Title,
+                    CourseId = course.CourseId,
+                    CourseProgressPercentage = courseProgressPercentage,
+                    IsCompleted = isLessonCompleted,
+                    
+                    
+                };
+
+                return Result<LessonDetailResponse>.Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<LessonDetailResponse>.Error($"Error getting lesson details: {ex.Message}");
+            }
         }
     }
 } 

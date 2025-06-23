@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -21,14 +22,14 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Result<IEnumerable<CourseWeek>>>> GetAll()
+        public async Task<ActionResult<Result<IEnumerable<CourseWeekResponse>>>> GetAll()
         {
             var result = await _courseWeekService.GetAllCourseWeeksAsync();
             return HandleResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<CourseWeek>>> GetById(Guid id)
+        public async Task<ActionResult<Result<CourseWeekResponse>>> GetById(Guid id)
         {
             var result = await _courseWeekService.GetCourseWeekByIdAsync(id);
             return HandleResult(result);

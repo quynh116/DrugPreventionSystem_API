@@ -6,6 +6,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.Consultant;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
+using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -57,6 +58,33 @@ namespace DrugPreventionSystem.API.Controllers
         public async Task<ActionResult<Result<CourseContentResponse>>> GetWeeksWithLessonsByCourseId(Guid courseId)
         {
             var result = await _courseService.GetCourseContentAsync(courseId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{courseId}/lesson-progress-details")]
+        public async Task<ActionResult<Result<CourseProgressDetailResponse>>> GetCourseProgressDetails( Guid userId, Guid courseId)
+        {
+            
+
+            var result = await _courseService.GetCourseProgressDetailsForUserAsync(courseId, userId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("my-courses")]
+        public async Task<ActionResult<Result<List<UserCourseResponse>>>> GetMyCourses(Guid userId)
+        {
+
+
+            var result = await _courseService.GetMyCoursesAsync(userId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{courseId}/detail-for-user")]
+        public async Task<ActionResult<Result<CourseDetailForUserResponse>>> GetCourseDetailForUser(Guid userId, Guid courseId)
+        {
+            
+
+            var result = await _courseService.GetCourseDetailForUserAsync(courseId, userId);
             return HandleResult(result);
         }
 

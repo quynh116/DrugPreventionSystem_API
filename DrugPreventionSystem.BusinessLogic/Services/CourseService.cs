@@ -20,12 +20,17 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         private readonly ICourseRepository _courseRepository;
         private readonly ProvideToken _provideToken;
         private readonly ICourseWeekRepository _courseWeekRepository;
+        private readonly IUserCourseEnrollmentRepository _userCourseEnrollmentRepository;
+        private readonly IUserLessonProgressRepository _userLessonProgressRepository;
 
-        public CourseService(ICourseRepository courseRepository, ICourseWeekRepository courseWeekRepository,ProvideToken provideToken)
+        public CourseService(ICourseRepository courseRepository, ICourseWeekRepository courseWeekRepository,ProvideToken provideToken, IUserCourseEnrollmentRepository userCourseEnrollmentRepository,
+        IUserLessonProgressRepository userLessonProgressRepository)
         {
             _courseRepository = courseRepository;
             _provideToken = provideToken;
             _courseWeekRepository = courseWeekRepository;
+            _userCourseEnrollmentRepository = userCourseEnrollmentRepository;
+            _userLessonProgressRepository = userLessonProgressRepository;
         }
         private CourseResponse MapToResponse(Course course)
         {
@@ -204,6 +209,172 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             catch (Exception ex)
             {
                 return Result<CourseContentResponse>.Error($"Lỗi khi lấy nội dung khóa học: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<List<UserCourseResponse>>> GetMyCoursesAsync(Guid userId)
+        {
+            try
+            {
+                var enrollments = await _userCourseEnrollmentRepository.GetByUserIdAsync(userId);
+
+                if (!enrollments.Any())
+                {
+                    return Result<List<UserCourseResponse>>.Success(new List<UserCourseResponse>()); 
+                }
+
+                var userCourses = new List<UserCourseResponse>();
+
+                // Lấy tất cả tiến độ bài học của user cho tất cả các khóa học đã đăng ký trong một lần để tối ưu
+                var allUserProgresses = await _userLessonProgressRepository.GetAllUserLessonProgressesByUserIdAsync(userId);
+                // Bạn cần thêm method GetAllUserLessonProgressesByUserIdAsync vào IUserLessonProgressRepository
+
+                foreach (var enrollment in enrollments)
+                {
+                    var course = enrollment.Course;
+                    if (course == null) continue; // Bỏ qua nếu thông tin khóa học bị thiếu
+
+                    int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
+
+                    // Lọc tiến độ bài học của user cho khóa học hiện tại
+                    int completedLessonsByUser = allUserProgresses
+                        .Count(ulp => ulp.Lesson?.CourseWeek?.CourseId == course.CourseId && ulp.Passed);
+
+                    float courseProgressPercentage = totalLessonsInCourse > 0 ? (float)completedLessonsByUser / totalLessonsInCourse * 100 : 0;
+
+                    
+                    DateTime? lastAccessed = allUserProgresses
+                    .Where(ulp => ulp.Lesson?.CourseWeek?.CourseId == course.CourseId)
+                    .OrderByDescending(ulp => ulp.CompletedAt) 
+                    .Select(ulp => ulp.UpdatedAt) 
+                    .FirstOrDefault();
+
+                    userCourses.Add(new UserCourseResponse
+                    {
+                        CourseId = course.CourseId,
+                        Title = course.Title,
+                        ThumbnailUrl = course.ThumbnailUrl,
+                        TotalLessons = totalLessonsInCourse,
+                        CompletedLessons = completedLessonsByUser,
+                        ProgressPercentage = (int)Math.Round(courseProgressPercentage), 
+                        InstructorName = course.Instructor?.FullName,
+                        DurationWeeks = course.TotalDuration,
+                        LastAccessed = lastAccessed
+                    });
+                }
+
+                return Result<List<UserCourseResponse>>.Success(userCourses);
+            }
+            catch (Exception ex)
+            {
+                return Result<List<UserCourseResponse>>.Error($"Error getting user courses: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<CourseProgressDetailResponse>> GetCourseProgressDetailsForUserAsync(Guid courseId, Guid userId)
+        {
+            try
+            {
+                
+                var course = await _courseRepository.GetByIdAsync(courseId);
+                if (course == null)
+                {
+                    return Result<CourseProgressDetailResponse>.NotFound($"Course with ID {courseId} not found.");
+                }
+
+                
+                var courseWeeks = await _courseWeekRepository.GetCourseWeeksByCourseIdWithLessonsAsync(courseId);
+
+                
+                var userProgresses = await _userLessonProgressRepository.GetUserLessonProgressByUserIdAndCourseIdAsync(userId, courseId);
+                
+                var userProgressDict = userProgresses.ToDictionary(ulp => ulp.LessonId);
+
+                var response = new CourseProgressDetailResponse
+                {
+                    CourseId = course.CourseId,
+                    CourseTitle = course.Title,
+                    CourseWeeks = new List<CourseWeekProgressDto>()
+                };
+
+                foreach (var cw in courseWeeks)
+                {
+                    var courseWeekDto = new CourseWeekProgressDto
+                    {
+                        CourseWeekId = cw.WeekId,
+                        Title = cw.Title,
+                        WeekNumber = cw.WeekNumber,
+                        Lessons = new List<LessonProgressDto>()
+                    };
+
+                    foreach (var l in cw.Lessons.OrderBy(l => l.Sequence))
+                    {
+                        var lessonProgressDto = new LessonProgressDto
+                        {
+                            LessonId = l.LessonId,
+                            Title = l.Title,
+                            DurationMinutes = l.DurationMinutes,
+                            Sequence = l.Sequence,
+                            IsCompleted = userProgressDict.TryGetValue(l.LessonId, out var progress) ? progress.Passed : false
+                        };
+                        courseWeekDto.Lessons.Add(lessonProgressDto);
+                    }
+                    response.CourseWeeks.Add(courseWeekDto);
+                }
+
+                return Result<CourseProgressDetailResponse>.Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<CourseProgressDetailResponse>.Error($"Lỗi khi lấy chi tiết tiến độ khóa học: {ex.Message}");
+            }
+        }
+
+        public async Task<Result<CourseDetailForUserResponse>> GetCourseDetailForUserAsync(Guid courseId, Guid userId)
+        {
+            try
+            {
+                var course = await _courseRepository.GetByIdAsync(courseId);
+
+                if (course == null)
+                {
+                    return Result<CourseDetailForUserResponse>.NotFound($"Course with ID {courseId} not found.");
+                }
+
+                // Kiểm tra trạng thái đăng ký của người dùng
+                var userEnrollment = await _userCourseEnrollmentRepository.GetByUserIdAndCourseIdAsync(userId, courseId);
+                bool isEnrolled = (userEnrollment != null);
+
+                // Tính toán tiến độ khóa học
+                int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
+                int completedLessonsByUser = 0;
+                if (isEnrolled) 
+                {
+                    var userProgressesInCourse = await _userLessonProgressRepository.GetUserLessonProgressByUserIdAndCourseIdAsync(userId, courseId);
+                    completedLessonsByUser = userProgressesInCourse.Count(ulp => ulp.Passed);
+                }
+
+                float courseProgressPercentage = totalLessonsInCourse > 0 ? (float)completedLessonsByUser / totalLessonsInCourse * 100 : 0;
+
+                var response = new CourseDetailForUserResponse
+                {
+                    CourseId = course.CourseId,
+                    Title = course.Title,
+                    Description = course.Description,
+                    ThumbnailUrl = course.ThumbnailUrl,
+                    InstructorName = course.Instructor?.FullName, // Sử dụng ?. để an toàn
+                    DurationWeeks = course.TotalDuration,
+                    CourseProgressPercentage = courseProgressPercentage,
+                    TotalLessonsInCourse = totalLessonsInCourse,
+                    CompletedLessonsByUser = completedLessonsByUser,
+                    IsEnrolled = isEnrolled
+                };
+
+                return Result<CourseDetailForUserResponse>.Success(response);
+            }
+            catch (Exception ex)
+            {
+                return Result<CourseDetailForUserResponse>.Error($"Error getting course details for user: {ex.Message}");
             }
         }
     }

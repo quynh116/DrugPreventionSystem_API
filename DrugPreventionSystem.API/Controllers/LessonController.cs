@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
+using DrugPreventionSystem.BusinessLogic.Token;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -21,16 +23,25 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<Result<IEnumerable<Lesson>>>> GetAll()
+        public async Task<ActionResult<Result<IEnumerable<LessonResponse>>>> GetAll()
         {
             var result = await _lessonService.GetAllLessonsAsync();
             return HandleResult(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<Result<Lesson>>> GetById(Guid id)
+        public async Task<ActionResult<Result<LessonResponse>>> GetById(Guid id)
         {
             var result = await _lessonService.GetLessonByIdAsync(id);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{lessonId}/details")]
+        public async Task<ActionResult<Result<LessonDetailResponse>>> GetLessonDetails(Guid userId, Guid lessonId)
+        {
+            
+
+            var result = await _lessonService.GetLessonDetailsForUserAsync(lessonId, userId);
             return HandleResult(result);
         }
 
