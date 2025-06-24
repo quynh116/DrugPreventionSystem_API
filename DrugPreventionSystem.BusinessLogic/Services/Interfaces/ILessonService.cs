@@ -5,6 +5,8 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
+using DrugPreventionSystem.BusinessLogic.Services.Quizzes;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
@@ -16,5 +18,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<bool>> DeleteLessonByIdAsync(Guid id);
         Task<Result<Lesson>> UpdateLessonAsync(Guid id, Lesson lesson);
         Task<Result<LessonDetailResponse>> GetLessonDetailsForUserAsync(Guid lessonId, Guid userId);
+        Task<Result<QuestionAndOptionResponse>> GetQuizQuestionsAndAnswersByLessonIdAsync(Guid lessonId);
     }
 } 

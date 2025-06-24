@@ -14,5 +14,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces.IQuizzes
         Task<Quiz> CreateAsync(Quiz quiz);
         Task UpdateAsync(Quiz quiz);
         Task DeleteAsync(Guid id);
+        Task<Quiz?> GetQuizByLessonIdAsync(Guid lessonId);
     }
 }
