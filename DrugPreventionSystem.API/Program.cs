@@ -1,11 +1,15 @@
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
+using DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes;
+using DrugPreventionSystem.BusinessLogic.Services.Quizzes;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Context;
 using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces.IQuizzes;
+using DrugPreventionSystem.DataAccess.Repository.Quizzes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -97,6 +101,9 @@ builder.Services.AddScoped<IUserCourseEnrollmentRepository, UserCourseEnrollment
 builder.Services.AddScoped<IUserQuizAnswerRepository, UserQuizAnswerRepository>();
 builder.Services.AddScoped<IUserLessonProgressRepository, UserLessonProgressRepository>();
 builder.Services.AddScoped<IUserModuleQuizResultRepository, UserModuleQuizResultRepository>();
+builder.Services.AddScoped<IQuizRepository, QuizRepository>();
+builder.Services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
+builder.Services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
 
 
 //service
@@ -121,6 +128,9 @@ builder.Services.AddScoped<IUserCourseEnrollmentService, UserCourseEnrollmentSer
 builder.Services.AddScoped<IUserQuizAnswerService, UserQuizAnswerService>();
 builder.Services.AddScoped<IUserLessonProgressService, UserLessonProgressService>();
 builder.Services.AddScoped<IUserModuleQuizResultService, UserModuleQuizResultService>();
+builder.Services.AddScoped<IQuizService, QuizService>();
+builder.Services.AddScoped<IQuizQuestionService, QuizQuestionService>();
+builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 

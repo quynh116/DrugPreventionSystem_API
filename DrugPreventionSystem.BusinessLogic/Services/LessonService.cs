@@ -8,21 +8,27 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 using DrugPreventionSystem.DataAccess.Repository;
+using DrugPreventionSystem.BusinessLogic.Services.Quizzes;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces.IQuizzes;
+using DrugPreventionSystem.DataAccess.Repository.Quizzes;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
     public class LessonService : ILessonService
     {
         private readonly ILessonRepository _lessonRepository;
+        private readonly IQuizRepository _quizRepository;
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
         private readonly IUserCourseEnrollmentRepository _userCourseEnrollmentRepository;
 
         public LessonService(ILessonRepository lessonRepository, IUserLessonProgressRepository userLessonProgressRepository,
-        IUserCourseEnrollmentRepository userCourseEnrollmentRepository)
+        IUserCourseEnrollmentRepository userCourseEnrollmentRepository, IQuizRepository quizRepository)
         {
             _userLessonProgressRepository = userLessonProgressRepository;
             _userCourseEnrollmentRepository = userCourseEnrollmentRepository;
             _lessonRepository = lessonRepository;
+            _quizRepository = quizRepository;
         }
 
         public async Task<Result<Lesson>> AddNewLessonAsync(LessonRequest lesson)
@@ -162,6 +168,37 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 return Result<LessonDetailResponse>.Error($"Error getting lesson details: {ex.Message}");
             }
+        }
+
+        public async Task<Result<QuestionAndOptionResponse>> GetQuizQuestionsAndAnswersByLessonIdAsync(Guid lessonId)
+        {
+            var quiz = await _quizRepository.GetQuizByLessonIdAsync(lessonId);
+
+            if (quiz == null)
+            {
+                return Result<QuestionAndOptionResponse>.NotFound($"Quiz not found for Lesson with ID {lessonId}.");
+            }
+
+            var quizResponse = new QuestionAndOptionResponse
+            {
+                QuizId = quiz.QuizId,
+                LessonId = quiz.LessonId,
+                Questions = quiz.QuizQuestions.Select(qq => new QuizQuestionResponse1
+                {
+                    QuestionId = qq.QuestionId,
+                    QuestionText = qq.QuestionText,
+                    QuestionType = qq.QuestionType,
+                    Sequence = qq.Sequence,
+                    Options = qq.QuizOptions.Select(qo => new QuizOptionResponse1
+                    {
+                        OptionId = qo.OptionId,
+                        OptionText = qo.OptionText,
+                        IsCorrect = qo.IsCorrect // Bao g?m c? IsCorrect ?? tr? l?i
+                    }).ToList()
+                }).ToList()
+            };
+
+            return Result<QuestionAndOptionResponse>.Success(quizResponse);
         }
     }
 } 
