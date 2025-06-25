@@ -42,6 +42,9 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<SurveyCourseRecommendation> SurveyCourseRecommendations { get; set; } = null!;
         public DbSet<UserResponseCourseRecommendation> UserResponseCourseRecommendations { get; set; } = null!;
         public DbSet<UserCourseEnrollment> UserCourseEnrollments { get; set; } = null!;
+        public DbSet<CommunityProgram> CommunityPrograms { get; set; } = null!;
+        public DbSet<ProgramParticipant> ProgramParticipants { get; set; } = null!;
+        public DbSet<ProgramFeedback> ProgramFeedbacks { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -285,6 +288,35 @@ namespace DrugPreventionSystem.DataAccess.Context
                 .WithOne(uce => uce.Course)
                 .HasForeignKey(uce => uce.CourseId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            // CommunityProgram và ProgramParticipant (Một chương trình có nhiều người tham gia)
+            modelBuilder.Entity<CommunityProgram>()
+                .HasMany(cp => cp.ProgramParticipants)
+                .WithOne(pp => pp.CommunityProgram)
+                .HasForeignKey(pp => pp.ProgramId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            // User và ProgramParticipant (Một người dùng có thể tham gia nhiều chương trình)
+            modelBuilder.Entity<User>() 
+                .HasMany(u => u.ProgramParticipants)
+                .WithOne(pp => pp.User)
+                .HasForeignKey(pp => pp.UserId)
+                .OnDelete(DeleteBehavior.Restrict); 
+
+            // CommunityProgram và ProgramFeedback (Một chương trình có nhiều feedback)
+            modelBuilder.Entity<CommunityProgram>()
+                .HasMany(cp => cp.ProgramFeedbacks)
+                .WithOne(pf => pf.CommunityProgram)
+                .HasForeignKey(pf => pf.ProgramId)
+                .OnDelete(DeleteBehavior.Cascade); 
+
+            // User và ProgramFeedback (Một người dùng có thể gửi nhiều feedback)
+            modelBuilder.Entity<User>() 
+                .HasMany(u => u.ProgramFeedbacks)
+                .WithOne(pf => pf.User)
+                .HasForeignKey(pf => pf.UserId)
+                .OnDelete(DeleteBehavior.Restrict); // Không xóa user khi xóa feedback của họ
+
 
             // Seed initial data
             SeedData(modelBuilder);
