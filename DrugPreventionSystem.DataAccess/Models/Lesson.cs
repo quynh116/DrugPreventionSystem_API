@@ -25,6 +25,9 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("title")]
         public string Title { get; set; } = string.Empty;
 
+        [Column("content")]
+        public string? Content { get; set; }
+
         [Column("duration_minutes")]
         public int? DurationMinutes { get; set; }
 

@@ -16,5 +16,8 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<UserQuizAnswer> AddUserQuizAnswerAsync(UserQuizAnswer userQuizAnswer);
         Task<UserQuizAnswer> UpdateUserQuizAnswerAsync(UserQuizAnswer userQuizAnswer);
         Task<UserQuizAnswer> DeleteUserQuizAnswerAsync(Guid userQuizAnswerId);
+        Task<IEnumerable<UserQuizAnswer>> GetUserQuizAnswersByUserIdAndQuizIdAsync(Guid userId, Guid quizId);
+
+        Task<IEnumerable<UserQuizAnswer>> GetUserQuizAnswersForQuizAttemptAsync(Guid userId, Guid quizId, DateTime takenAt);
     }
 }

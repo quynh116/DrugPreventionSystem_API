@@ -1,4 +1,4 @@
-using DrugPreventionSystem.BusinessLogic.Commons;
+﻿using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Lesson;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
@@ -10,6 +10,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
 using DrugPreventionSystem.BusinessLogic.Services.Quizzes;
+using DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -51,6 +52,46 @@ namespace DrugPreventionSystem.API.Controllers
         public async Task<ActionResult<Result<QuestionAndOptionResponse>>> GetQuizForLesson(Guid lessonId)
         {
             var result = await _lessonService.GetQuizQuestionsAndAnswersByLessonIdAsync(lessonId);
+            return HandleResult(result);
+        }
+
+        [HttpPost("submit")]
+        public async Task<ActionResult<Result<QuizResultResponse>>> SubmitQuiz([FromBody] SubmitQuizRequest request)
+        {
+
+            var result = await _lessonService.SubmitQuizAttemptAsync(request);
+            return HandleResult(result);
+        }
+
+        [HttpPost("{lessonId}/complete")]
+        public async Task<ActionResult<Result<bool>>> CompleteLesson(Guid lessonId, [FromBody] CompleteLessonRequest request)
+        {
+            
+            if (lessonId != request.LessonId)
+            {
+                return BadRequest(Result<bool>.Error("LessonId trong URL và request body không khớp."));
+            }
+
+            
+
+            var result = await _lessonService.CompleteLessonAsync(request);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{lessonId}/user/{userId}/result")]
+        public async Task<ActionResult<Result<QuizResultResponse>>> GetUserQuizResult(Guid lessonId, Guid userId)
+        {
+
+
+
+            var result = await _lessonService.GetUserQuizResultForLessonAsync(userId, lessonId);
+            return HandleResult(result);
+        }
+
+        [HttpGet("{lessonId}/initial-state")]
+        public async Task<ActionResult<Result<QuizStatusResponse>>> GetQuizInitialState(Guid lessonId, [FromQuery] Guid userId)
+        {
+            var result = await _lessonService.GetQuizInitialStateForUserAsync(lessonId, userId);
             return HandleResult(result);
         }
 

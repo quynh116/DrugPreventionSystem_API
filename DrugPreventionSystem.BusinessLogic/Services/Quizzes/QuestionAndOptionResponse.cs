@@ -11,6 +11,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
     {
         public Guid QuizId { get; set; }
         public Guid LessonId { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public int? TotalQuestions { get; set; }
+        public float? PassingScore { get; set; }
         public ICollection<QuizQuestionResponse1> Questions { get; set; } = new List<QuizQuestionResponse1>();
     }
 

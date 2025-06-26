@@ -50,11 +50,29 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 .ToListAsync();
         }
 
+        public async Task<IEnumerable<UserQuizAnswer>> GetUserQuizAnswersByUserIdAndQuizIdAsync(Guid userId, Guid quizId)
+        {
+            return await _context.UserQuizAnswers
+                                 .Where(ua => ua.UserId == userId &&
+                                              ua.QuizQuestion.QuizId == quizId) 
+                                 .ToListAsync();
+        }
+
         public async Task<IEnumerable<UserQuizAnswer>> GetUserQuizAnswersByUserIdAsync(Guid userId)
         {
             return await _context.UserQuizAnswers
                 .Where(qa => qa.UserId == userId)
                 .ToListAsync();
+        }
+
+        public async Task<IEnumerable<UserQuizAnswer>> GetUserQuizAnswersForQuizAttemptAsync(Guid userId, Guid quizId, DateTime takenAt)
+        {
+            return await _context.UserQuizAnswers
+                                 .Include(ua => ua.QuizQuestion) 
+                                 .Where(ua => ua.UserId == userId &&
+                                              ua.QuizQuestion.QuizId == quizId && 
+                                              ua.AnsweredAt == takenAt)          
+                                 .ToListAsync();
         }
 
         public async Task<UserQuizAnswer> UpdateUserQuizAnswerAsync(UserQuizAnswer userQuizAnswer)

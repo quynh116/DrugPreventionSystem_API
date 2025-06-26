@@ -24,7 +24,10 @@ namespace DrugPreventionSystem.DataAccess.Repository.Quizzes
         }
         public async Task<Quiz?> GetByIdAsync(Guid id)
         {
-            return await _context.Quizzes.FirstOrDefaultAsync(q => q.QuizId == id);
+            return await _context.Quizzes
+                .Include(q => q.QuizQuestions.OrderBy(qq => qq.Sequence)) 
+                 .ThenInclude(qq => qq.QuizOptions)
+                .FirstOrDefaultAsync(q => q.QuizId == id);
         }
         public async Task<Quiz> CreateAsync(Quiz quiz)
         {

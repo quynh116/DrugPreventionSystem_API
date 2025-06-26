@@ -64,6 +64,12 @@ namespace DrugPreventionSystem.DataAccess.Repository
             .ToListAsync();
         }
 
+        public async Task<UserLessonProgress?> GetUserLessonProgressByUserIdAndLessonIdAsync(Guid userId, Guid lessonId)
+        {
+            return await _context.UserLessonProgresses
+                        .FirstOrDefaultAsync(ulp => ulp.UserId == userId && ulp.LessonId == lessonId);
+        }
+
         public async Task<IEnumerable<UserLessonProgress>> GetUserLessonProgressByUserIdAsync(Guid userId)
         {
             return await _context.UserLessonProgresses.Where(ulp => ulp.UserId == userId)
