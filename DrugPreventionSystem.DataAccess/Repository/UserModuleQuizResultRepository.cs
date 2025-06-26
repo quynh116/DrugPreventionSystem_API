@@ -37,6 +37,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return null;
         }
 
+        public async Task<UserModuleQuizResult?> GetLatestUserModuleQuizResultForLessonAsync(Guid userId, Guid lessonId)
+        {
+            return await _context.UserModuleQuizResults
+                                 .Where(r => r.UserId == userId && r.LessonId == lessonId)
+                                 .OrderByDescending(r => r.TakenAt) 
+                                 .FirstOrDefaultAsync();
+        }
+
         public async Task<UserModuleQuizResult?> GetUserModuleQuizResultByIdAsync(Guid resultId)
         {
             return await _context.UserModuleQuizResults.FirstOrDefaultAsync(umqr => umqr.ResultId == resultId);

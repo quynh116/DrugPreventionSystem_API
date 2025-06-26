@@ -16,5 +16,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<UserModuleQuizResult> AddUserModuleQuizResultAsync(UserModuleQuizResult userModuleQuizResult);
         Task<UserModuleQuizResult> UpdateUserModuleQuizResultAsync(UserModuleQuizResult userModuleQuizResult);
         Task<UserModuleQuizResult> DeleteUserModuleQuizResultAsync(Guid resultId);
+        Task<UserModuleQuizResult?> GetLatestUserModuleQuizResultForLessonAsync(Guid userId, Guid lessonId);
     }
 }
