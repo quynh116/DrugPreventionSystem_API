@@ -63,14 +63,11 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
-        [HttpPost("{lessonId}/complete")]
-        public async Task<ActionResult<Result<bool>>> CompleteLesson(Guid lessonId, [FromBody] CompleteLessonRequest request)
+        [HttpPost("complete")]
+        public async Task<ActionResult<Result<bool>>> CompleteLesson([FromBody] CompleteLessonRequest request)
         {
             
-            if (lessonId != request.LessonId)
-            {
-                return BadRequest(Result<bool>.Error("LessonId trong URL và request body không khớp."));
-            }
+            
 
             
 

@@ -17,6 +17,5 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes
     {
         public Guid QuestionId { get; set; }
         public Guid? SelectedOptionId { get; set; } 
-        public string? AnswerText { get; set; } 
     }
 }
