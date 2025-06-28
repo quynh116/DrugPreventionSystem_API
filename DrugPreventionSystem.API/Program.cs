@@ -9,6 +9,7 @@ using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces.IQuizzes;
+using DrugPreventionSystem.DataAccess.Repository.Participants;
 using DrugPreventionSystem.DataAccess.Repository.Quizzes;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -104,6 +105,7 @@ builder.Services.AddScoped<IUserModuleQuizResultRepository, UserModuleQuizResult
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
 builder.Services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
+builder.Services.AddScoped<IProgramParticipantRepository, ProgramParticipantRepository>();
 
 
 //service
@@ -131,6 +133,7 @@ builder.Services.AddScoped<IUserModuleQuizResultService, UserModuleQuizResultSer
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IQuizQuestionService, QuizQuestionService>();
 builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
+builder.Services.AddScoped<IProgramParticipantService, ProgramParticipantService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
