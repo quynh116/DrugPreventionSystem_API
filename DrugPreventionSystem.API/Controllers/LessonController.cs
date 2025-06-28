@@ -89,9 +89,9 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpGet("{lessonId}/initial-state")]
-        public async Task<ActionResult<Result<QuizStatusResponse>>> GetQuizInitialState(Guid lessonId, [FromQuery] Guid userId)
+        public async Task<ActionResult<Result<QuizStatusResponse>>> GetQuizInitialState(Guid lessonId, [FromQuery] Guid userId, [FromQuery] bool forceAttempt = false)
         {
-            var result = await _lessonService.GetQuizInitialStateForUserAsync(lessonId, userId);
+            var result = await _lessonService.GetQuizInitialStateForUserAsync(lessonId, userId, forceAttempt);
             return HandleResult(result);
         }
 
