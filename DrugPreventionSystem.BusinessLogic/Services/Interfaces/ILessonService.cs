@@ -24,6 +24,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<QuizResultResponse>> SubmitQuizAttemptAsync(SubmitQuizRequest request);
         Task<Result<QuizResultResponse>> GetUserQuizResultForLessonAsync(Guid userId, Guid lessonId);
         Task<Result<bool>> CompleteLessonAsync(CompleteLessonRequest request);
-        Task<Result<QuizStatusResponse>> GetQuizInitialStateForUserAsync(Guid lessonId, Guid userId);
+        Task<Result<QuizStatusResponse>> GetQuizInitialStateForUserAsync(Guid lessonId, Guid userId,bool forceAttempt = false);
     }
 }

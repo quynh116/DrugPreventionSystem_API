@@ -481,7 +481,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<bool>.Success(true, "Bài học đã được đánh dấu hoàn thành.");
         }
 
-        public async Task<Result<QuizStatusResponse>> GetQuizInitialStateForUserAsync(Guid lessonId, Guid userId)
+        public async Task<Result<QuizStatusResponse>> GetQuizInitialStateForUserAsync(Guid lessonId, Guid userId, bool forceAttempt = false)
         {
             var quiz = await _quizRepository.GetQuizByLessonIdAsync(lessonId);
             if (quiz == null)
@@ -489,66 +489,37 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<QuizStatusResponse>.NotFound($"Quiz not found for Lesson with ID {lessonId}.");
             }
 
+            var quizAttemptData = new QuestionAndOptionResponse
+            {
+                QuizId = quiz.QuizId,
+                LessonId = quiz.LessonId,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                TotalQuestions = quiz.QuizQuestions.Count,
+                PassingScore = quiz.PassingScore,
+                Questions = quiz.QuizQuestions.Select(qq => new QuizQuestionResponse1
+                {
+                    QuestionId = qq.QuestionId,
+                    QuestionText = qq.QuestionText,
+                    QuestionType = qq.QuestionType,
+                    Sequence = qq.Sequence,
+                    Options = qq.QuizOptions.Select(qo => new QuizOptionResponse1
+                    {
+                        OptionId = qo.OptionId,
+                        OptionText = qo.OptionText,
+                        // Luôn bao gồm IsCorrect ở Backend, Frontend sẽ không sử dụng để tránh gian lận
+                        IsCorrect = qo.IsCorrect
+                    }).ToList()
+                }).ToList()
+            };
+
             // 1. Kiểm tra xem người dùng đã từng làm quiz này chưa
             var latestUserQuizResult = await _userModuleQuizResultRepository.GetLatestUserModuleQuizResultForLessonAsync(userId, lessonId);
 
-            if (latestUserQuizResult != null)
+            // Logic chính: Nếu forceAttempt là true, hoặc người dùng chưa từng làm bài
+            if (forceAttempt || latestUserQuizResult == null)
             {
-                // Người dùng ĐÃ TỪNG làm bài này
-                // Luôn trả về kết quả gần nhất để họ xem lại điểm cũ (kể cả khi đã passed)
-                var resultResponse = await GetUserQuizResultForLessonAsync(userId, lessonId);
-
-                if (resultResponse.ResultStatus == ResultStatus.Success && resultResponse.Data != null)
-                {
-                    return Result<QuizStatusResponse>.Success(new QuizStatusResponse
-                    {
-                        QuizId = quiz.QuizId,
-                        LessonId = lessonId,
-                        QuizTitle = quiz.Title,
-                        DisplayMode = QuizDisplayMode.ViewResult,        // Frontend hiển thị kết quả
-                        LatestQuizResultData = resultResponse.Data, // Gửi dữ liệu kết quả
-                        QuizAttemptData = null                           // Không gửi dữ liệu câu hỏi
-                    });
-                }
-                else
-                {
-                    // Xử lý lỗi nếu không thể lấy kết quả dù đã có bản ghi
-                    return Result<QuizStatusResponse>.Error("Không thể lấy kết quả quiz gần nhất mặc dù đã có bản ghi.");
-                }
-            }
-            else
-            {
-                // Người dùng CHƯA BAO GIỜ làm bài này
-                // Trả về dữ liệu câu hỏi để họ bắt đầu làm bài mới
-                var quizQuestions = await _quizRepository.GetQuizByLessonIdAsync(lessonId);
-                if (quizQuestions == null)
-                {
-                    return Result<QuizStatusResponse>.NotFound($"Quiz questions not found for Lesson with ID {lessonId}.");
-                }
-
-                var quizAttemptData = new QuestionAndOptionResponse
-                {
-                    QuizId = quizQuestions.QuizId,
-                    LessonId = quizQuestions.LessonId,
-                    Title = quizQuestions.Title,
-                    Description = quizQuestions.Description,
-                    TotalQuestions = quizQuestions.QuizQuestions.Count,
-                    PassingScore = quizQuestions.PassingScore,
-                    Questions = quizQuestions.QuizQuestions.Select(qq => new QuizQuestionResponse1
-                    {
-                        QuestionId = qq.QuestionId,
-                        QuestionText = qq.QuestionText,
-                        QuestionType = qq.QuestionType,
-                        Sequence = qq.Sequence,
-                        Options = qq.QuizOptions.Select(qo => new QuizOptionResponse1
-                        {
-                            OptionId = qo.OptionId,
-                            OptionText = qo.OptionText,
-                            IsCorrect = qo.IsCorrect // Vẫn bao gồm IsCorrect, nhưng frontend không sử dụng để tránh gian lận
-                        }).ToList()
-                    }).ToList()
-                };
-
+                // Luôn trả về dữ liệu câu hỏi để họ bắt đầu làm bài mới
                 return Result<QuizStatusResponse>.Success(new QuizStatusResponse
                 {
                     QuizId = quiz.QuizId,
@@ -559,7 +530,30 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     QuizAttemptData = quizAttemptData          // Gửi dữ liệu câu hỏi
                 });
             }
+            else
+            {
+                
+                var resultResponse = await GetUserQuizResultForLessonAsync(userId, lessonId);
+
+                if (resultResponse.ResultStatus == ResultStatus.Success && resultResponse.Data != null)
+                {
+                    return Result<QuizStatusResponse>.Success(new QuizStatusResponse
+                    {
+                        QuizId = quiz.QuizId,
+                        LessonId = lessonId,
+                        QuizTitle = quiz.Title,
+                        DisplayMode = QuizDisplayMode.ViewResult,        
+                        LatestQuizResultData = resultResponse.Data, 
+                        QuizAttemptData = null                           
+                    });
+                }
+                else
+                {
+                   
+                    return Result<QuizStatusResponse>.Error("Không thể lấy kết quả quiz gần nhất mặc dù đã có bản ghi.");
+                }
+            }
         }
-    }
-    
+        }
+
 } 
