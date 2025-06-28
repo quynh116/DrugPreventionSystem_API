@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrugPreventionSystem.BusinessLogic.Models.Request.ProgramParticipant
+namespace DrugPreventionSystem.BusinessLogic.Models.Responses
 {
-    public class ProgramParticipantCreateRequest
+    public class ProgramParticipantResponse
     {
         public Guid ProgramId { get; set; }
         public Guid UserId { get; set; }
