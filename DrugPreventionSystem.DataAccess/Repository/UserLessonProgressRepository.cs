@@ -25,6 +25,12 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return userLessonProgress;
         }
 
+        public async Task<int> CountCompletedLessonsForUserInCourseAsync(Guid userId, Guid courseId)
+        {
+            return await _context.UserLessonProgresses
+                .CountAsync(ulp => ulp.UserId == userId && ulp.Passed && ulp.Lesson.CourseWeek.CourseId == courseId);
+        }
+
         public async Task<UserLessonProgress> DeleteUserLessonProgressAsync(Guid progressId)
         {
             var userLessonProgress = await _context.UserLessonProgresses.FirstOrDefaultAsync(ulp => ulp.ProgressId == progressId);
@@ -76,7 +82,7 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<UserLessonProgress>> GetUserLessonProgressesAsync()
+        public  async Task<IEnumerable<UserLessonProgress>> GetUserLessonProgressesAsync()
         {
             return await _context.UserLessonProgresses.ToListAsync();
         }

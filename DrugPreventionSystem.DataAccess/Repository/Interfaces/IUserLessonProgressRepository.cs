@@ -20,6 +20,8 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<List<UserLessonProgress>> GetAllUserLessonProgressesByUserIdAsync(Guid userId);
         Task<UserLessonProgress?> GetUserLessonProgressByUserIdAndLessonIdAsync(Guid userId, Guid lessonId);
 
+        Task<int> CountCompletedLessonsForUserInCourseAsync(Guid userId, Guid courseId);
+
     }
 }
 

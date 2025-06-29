@@ -14,5 +14,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task DeleteAsync(Guid id);
         Task<IEnumerable<CourseCertificate>> GetByUserIdAsync(Guid userId);
         Task<IEnumerable<CourseCertificate>> GetByCourseIdAsync(Guid courseId);
+        Task<CourseCertificate?> GetByUserIdAndCourseIdAsync(Guid userId, Guid courseId);
     }
 } 

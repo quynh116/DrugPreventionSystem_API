@@ -17,5 +17,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.Course
         public string? InstructorName { get; set; }
         public int? DurationWeeks { get; set; }
         public DateTime? LastAccessed { get; set; }
+        public bool HasCertificate { get; set; }
     }
 }

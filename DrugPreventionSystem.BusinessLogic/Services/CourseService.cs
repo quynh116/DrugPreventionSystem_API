@@ -249,6 +249,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     .Select(ulp => ulp.UpdatedAt) 
                     .FirstOrDefault();
 
+                    bool hasCertificate = (int)Math.Round(courseProgressPercentage) == 100;
+
                     userCourses.Add(new UserCourseResponse
                     {
                         CourseId = course.CourseId,
@@ -259,7 +261,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                         ProgressPercentage = (int)Math.Round(courseProgressPercentage), 
                         InstructorName = course.Instructor?.FullName,
                         DurationWeeks = course.TotalDuration,
-                        LastAccessed = lastAccessed
+                        LastAccessed = lastAccessed,
+                        HasCertificate = hasCertificate
                     });
                 }
 

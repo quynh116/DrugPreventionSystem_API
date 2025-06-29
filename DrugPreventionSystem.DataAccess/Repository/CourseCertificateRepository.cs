@@ -52,5 +52,11 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
             return await _context.CourseCertificates.Where(x => x.CourseId == courseId).ToListAsync();
         }
+
+        public async Task<CourseCertificate?> GetByUserIdAndCourseIdAsync(Guid userId, Guid courseId)
+        {
+            return await _context.CourseCertificates
+           .FirstOrDefaultAsync(cc => cc.UserId == userId && cc.CourseId == courseId);
+        }
     }
 } 

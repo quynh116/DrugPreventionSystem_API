@@ -1,6 +1,7 @@
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -36,6 +37,14 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _service.GetByIdAsync(id);
             return HandleResult(result);
         }
+
+        [HttpGet("{courseId}/certificate")]
+        public async Task<ActionResult<Result<CertificateDetailsResponse>>> GetOrCreateCertificateUrl(Guid courseId,Guid userId)
+        {
+            var result = await _service.GetOrCreateCertificateUrlAsync(userId, courseId);
+            return HandleResult(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<CourseCertificateResponse>>> Update(Guid id, [FromBody] CourseCertificateRequest request)
         {
