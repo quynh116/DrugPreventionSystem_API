@@ -104,7 +104,7 @@ builder.Services.AddScoped<IUserModuleQuizResultRepository, UserModuleQuizResult
 builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
 builder.Services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
-
+builder.Services.AddScoped<DrugPreventionSystem.DataAccess.Repository.Interfaces.IProgramFeedbackRepository, DrugPreventionSystem.DataAccess.Repository.ProgramFeedbackRepository>();
 
 //service
 builder.Services.AddScoped<IUserService, UserService>();
@@ -131,6 +131,7 @@ builder.Services.AddScoped<IUserModuleQuizResultService, UserModuleQuizResultSer
 builder.Services.AddScoped<IQuizService, QuizService>();
 builder.Services.AddScoped<IQuizQuestionService, QuizQuestionService>();
 builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
+builder.Services.AddScoped<DrugPreventionSystem.BusinessLogic.Services.Interfaces.IProgramFeedbackService, DrugPreventionSystem.BusinessLogic.Services.ProgramFeedbackService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
