@@ -162,7 +162,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 existingProgram.EndDate = program.EndDate;
                 existingProgram.Location = program.Location;
                 existingProgram.UpdatedAt = DateTime.Now;
-                var updatedProgram = await _communityProgramRepository.UpdateCommunityProgramAsync(existingProgram)
+                var updatedProgram = await _communityProgramRepository.UpdateCommunityProgramAsync(existingProgram);
                 return Result<CommunityProgramResponse>.Success(MapToResponse(updatedProgram), "Community program updated successfully.");
             }
             catch (Exception ex)
