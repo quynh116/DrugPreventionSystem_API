@@ -9,10 +9,10 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
 {
     public interface ICommunityProgramRepository
     {
-        Task<CommunityProgram> GetProgramById(Guid id);
-        Task<IEnumerable<CommunityProgram>> GetAllPrograms();
-        Task<CommunityProgram> AddCommunityProgram(CommunityProgram program);
-        Task<CommunityProgram> UpdateCommunityProgram(CommunityProgram program);
-        Task DeleteCommunityProgram(Guid communityProgramId);
+        Task<CommunityProgram> GetProgramByIdAsync(Guid id);
+        Task<IEnumerable<CommunityProgram>> GetAllProgramsAsync();
+        Task<CommunityProgram> AddCommunityProgramAsync(CommunityProgram program);
+        Task<CommunityProgram> UpdateCommunityProgramAsync(CommunityProgram program);
+        Task DeleteCommunityProgramAsync(Guid communityProgramId);
     }
 }

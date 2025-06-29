@@ -19,14 +19,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
             _context = context;
         }
 
-        public async Task<CommunityProgram> AddCommunityProgram(CommunityProgram program)
+        public async Task<CommunityProgram> AddCommunityProgramAsync(CommunityProgram program)
         {
             await _context.CommunityPrograms.AddAsync(program);
             await _context.SaveChangesAsync();
             return program;
         }
 
-        public async Task DeleteCommunityProgram(Guid communityProgramId)
+        public async Task DeleteCommunityProgramAsync(Guid communityProgramId)
         {
             var communityProgram = await _context.CommunityPrograms.FindAsync(communityProgramId);
             if (communityProgram != null)
@@ -37,17 +37,17 @@ namespace DrugPreventionSystem.DataAccess.Repository
             
         }
 
-        public async Task<IEnumerable<CommunityProgram>> GetAllPrograms()
+        public async Task<IEnumerable<CommunityProgram>> GetAllProgramsAsync()
         {
             return await _context.CommunityPrograms.ToListAsync();
         }
 
-        public async Task<CommunityProgram> GetProgramById(Guid id)
+        public async Task<CommunityProgram> GetProgramByIdAsync(Guid id)
         {
             return await _context.CommunityPrograms.FirstOrDefaultAsync(cp => cp.ProgramId == id);
         }
 
-        public async Task<CommunityProgram> UpdateCommunityProgram(CommunityProgram program)
+        public async Task<CommunityProgram> UpdateCommunityProgramAsync(CommunityProgram program)
         {
             _context.Update(program);
             await _context.SaveChangesAsync();
