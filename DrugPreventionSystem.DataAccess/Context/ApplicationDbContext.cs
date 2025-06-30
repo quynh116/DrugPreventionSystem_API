@@ -45,6 +45,8 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<CommunityProgram> CommunityPrograms { get; set; } = null!;
         public DbSet<ProgramParticipant> ProgramParticipants { get; set; } = null!;
         public DbSet<ProgramFeedback> ProgramFeedbacks { get; set; } = null!;
+        public DbSet<TimeSlot> TimeSlots { get; set; } = null!;
+        public DbSet<Appointment> Appointments { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -317,7 +319,40 @@ namespace DrugPreventionSystem.DataAccess.Context
                 .HasForeignKey(pf => pf.UserId)
                 .OnDelete(DeleteBehavior.Restrict); // Không xóa user khi xóa feedback của họ
 
+            // TimeSlot configurations
+            modelBuilder.Entity<TimeSlot>(entity =>
+            {
+                entity.HasIndex(ts => new { ts.ConsultantId, ts.SlotDate, ts.StartTime })
+                      .IsUnique();
 
+                entity.HasOne(ts => ts.Consultant)
+                      .WithMany(c => c.TimeSlots)
+                      .HasForeignKey(ts => ts.ConsultantId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // Appointment configurations
+            modelBuilder.Entity<Appointment>(entity =>
+            {
+                entity.HasOne(a => a.User)
+                      .WithMany(u => u.Appointments)
+                      .HasForeignKey(a => a.UserId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.Consultant)
+                      .WithMany(c => c.Appointments)
+                      .HasForeignKey(a => a.ConsultantId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne(a => a.TimeSlot)
+                      .WithOne(ts => ts.Appointment)
+                      .HasForeignKey<Appointment>(a => a.TimeSlotId)
+                      .IsRequired()
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasIndex(a => a.TimeSlotId)
+                      .IsUnique();
+            });
             // Seed initial data
             SeedData(modelBuilder);
         }
