@@ -31,6 +31,13 @@ namespace DrugPreventionSystem.API.Controllers.Quizzes
             return HandleResult(result);
         }
 
+        [HttpGet("lesson/{lessonId}")]
+        public async Task<ActionResult<Result<QuizFullEditDto>>> GetQuizForEdit(Guid lessonId)
+        {
+            var result = await _quizService.GetQuizByLessonIdForEditAsync(lessonId);
+            return HandleResult(result);
+        }
+
         [HttpPost]
         public async Task<ActionResult<Result<QuizResponse>>> CreateQuiz([FromBody] QuizCreateRequest request)
         {

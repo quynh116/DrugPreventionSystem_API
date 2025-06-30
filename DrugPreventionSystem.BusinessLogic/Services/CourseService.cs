@@ -380,6 +380,52 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<CourseDetailForUserResponse>.Error($"Error getting course details for user: {ex.Message}");
             }
         }
+
+        public async Task<Result<CourseContentForEditResponse>> GetCourseContentForEditAsync(Guid courseId)
+        {
+            var course = await _courseRepository.GetCourseContentForEditAsync(courseId); // Dùng phương thức mới
+            if (course == null)
+            {
+                return Result<CourseContentForEditResponse>.NotFound($"Course with ID {courseId} not found.");
+            }
+
+            var response = new CourseContentForEditResponse
+            {
+                CourseId = course.CourseId,
+                Title = course.Title,
+                Description = course.Description,
+                ThumbnailUrl = course.ThumbnailUrl,
+                InstructorId = course.InstructorId,
+                InstructorName = course.Instructor?.FullName ?? "N/A",
+                CourseWeeks = course.CourseWeeks.Select(cw => new CourseWeekEditDto2
+                {
+                    WeekId = cw.WeekId,
+                    CourseId = cw.CourseId,
+                    Title = cw.Title,
+                    WeekNumber = cw.WeekNumber,
+                    Lessons = cw.Lessons.Select(l => new LessonEditDto2
+                    {
+                        LessonId = l.LessonId,
+                        WeekId = l.WeekId,
+                        Title = l.Title,
+                        Content = l.Content,
+                        DurationMinutes = l.DurationMinutes,
+                        Sequence = l.Sequence,
+                        HasQuiz = l.HasQuiz,
+                        HasPractice = l.HasPractice,
+                        Resources = l.LessonResources.Select(lr => new LessonResourceDto2
+                        {
+                            ResourceId = lr.ResourceId,
+                            LessonId = lr.LessonId,
+                            ResourceType = lr.ResourceType,
+                            ResourceUrl = lr.ResourceUrl,
+                            Description = lr.Description
+                        }).ToList()
+                    }).ToList()
+                }).ToList()
+            };
+            return Result<CourseContentForEditResponse>.Success(response);
+        }
     }
 }
     

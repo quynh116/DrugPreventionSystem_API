@@ -58,5 +58,13 @@ namespace DrugPreventionSystem.DataAccess.Repository.Quizzes
                                      .ThenInclude(qq => qq.QuizOptions)
                                  .FirstOrDefaultAsync();
         }
+
+        public async Task<Quiz?> GetQuizWithQuestionsAndOptionsByLessonIdAsync(Guid lessonId)
+        {
+            return await _context.Quizzes
+        .Include(q => q.QuizQuestions.OrderBy(qq => qq.Sequence))
+            .ThenInclude(qq => qq.QuizOptions)
+        .FirstOrDefaultAsync(q => q.LessonId == lessonId);
+        }
     }
 }
