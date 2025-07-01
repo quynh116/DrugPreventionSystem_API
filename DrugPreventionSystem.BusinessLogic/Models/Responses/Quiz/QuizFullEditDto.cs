@@ -13,6 +13,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz
 
 
         public Guid LessonId { get; set; } // Liên kết với Lesson
+        public string TitleLesson { get; set; } = string.Empty;
 
         public string Title { get; set; } = string.Empty;
 

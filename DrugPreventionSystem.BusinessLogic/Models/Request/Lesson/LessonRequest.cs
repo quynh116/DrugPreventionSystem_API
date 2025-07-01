@@ -13,6 +13,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Lesson
         public Guid WeekId { get; set; }
 
         public string Title { get; set; } = string.Empty;
+        public string? Content { get; set; }
 
         public int? DurationMinutes { get; set; }
 
@@ -22,7 +23,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Lesson
 
         public bool HasPractice { get; set; } = false;
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
 
     }
 }

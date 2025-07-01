@@ -10,11 +10,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
     public interface ICourseWeekService
     {
-        Task<Result<CourseWeek>> AddNewCourseWeekAsync(CourseWeekRequest courseWeek);
+        Task<Result<CourseWeekResponse>> AddNewCourseWeekAsync(CourseWeekRequest courseWeek);
         Task<Result<IEnumerable<CourseWeekResponse>>> GetAllCourseWeeksAsync();
         Task<Result<CourseWeekResponse>> GetCourseWeekByIdAsync(Guid id);
         Task<Result<bool>> DeleteCourseWeekByIdAsync(Guid id);
-        Task<Result<CourseWeek>> UpdateCourseWeekAsync(Guid id, CourseWeek courseWeek);
+        Task<Result<CourseWeekResponse>> UpdateCourseWeekAsync(Guid id, CourseWeekRequest courseWeek);
         
     }
 } 

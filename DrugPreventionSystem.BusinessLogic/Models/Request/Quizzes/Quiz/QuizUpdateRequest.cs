@@ -10,7 +10,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes.Quiz
     {
         public string Title { get; set; } = string.Empty;
         public string? Description { get; set; }
-        public int? TotalQuestions { get; set; }
         public float? PassingScore { get; set; }
     }
 

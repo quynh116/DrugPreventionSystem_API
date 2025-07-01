@@ -67,7 +67,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<bool>.Success(true, "Deleted successfully");
         }
 
-        public async Task<Result<LessonResource>> UpdateLessonResourceAsync(Guid id, LessonResource lessonResource)
+        public async Task<Result<LessonResource>> UpdateLessonResourceAsync(Guid id, LessonResourceRequest lessonResource)
         {
             var existing = await _lessonResourceRepository.GetLessonResourceByIdAsync(id);
             if (existing == null) return Result<LessonResource>.NotFound($"Not found LessonResource with id: {id}");

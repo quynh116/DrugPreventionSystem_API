@@ -54,7 +54,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
                 LessonId = request.LessonId,
                 Title = request.Title,
                 Description = request.Description,
-                TotalQuestions = request.TotalQuestions,
+                TotalQuestions = 0,
                 PassingScore = request.PassingScore,
                 CreatedAt = DateTime.Now
             };
@@ -106,7 +106,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
 
                 quiz.Title = request.Title;
                 quiz.Description = request.Description;
-                quiz.TotalQuestions = request.TotalQuestions;
                 quiz.PassingScore = request.PassingScore;
 
                 await _quizRepository.UpdateAsync(quiz);
@@ -155,6 +154,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
             {
                 QuizId = quiz.QuizId,
                 LessonId = quiz.LessonId,
+                TitleLesson = lesson.Title,
                 Title = quiz.Title,
                 Description = quiz.Description,
                 PassingScore = quiz.PassingScore,

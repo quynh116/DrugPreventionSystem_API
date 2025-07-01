@@ -66,14 +66,14 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Description = request.Description,
                 AgeGroup = request.AgeGroup,
                 IsActive = request.IsActive,
-                TotalDuration = request.TotalDuration,
-                LessonCount = request.LessonCount,
-                StudentCount = request.StudentCount,
+                TotalDuration = 0, 
+                LessonCount = 0,
+                StudentCount = 0,
                 InstructorId = request.InstructorId,
                 Requirements = request.Requirements,
                 ThumbnailUrl = request.ThumbnailUrl,
-                CertificateAvailable = request.CertificateAvailable,
-                CreatedAt = request.CreatedAt,
+                CertificateAvailable = false,
+                CreatedAt = DateTime.Now,
             };
             var createdCourse = await _courseRepository.CreateAsync(newCourse);
             return Result<CourseResponse>.Success(MapToResponse(createdCourse));
@@ -124,12 +124,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 course.Description = request.Description;
                 course.AgeGroup = request.AgeGroup;
                 course.IsActive = request.IsActive;
-                course.TotalDuration = request.TotalDuration;
-                course.LessonCount = request.LessonCount;
-                course.StudentCount = request.StudentCount;
                 course.InstructorId = request.InstructorId;
                 course.Requirements = request.Requirements;
-                course.CertificateAvailable = request.CertificateAvailable;
+                course.CertificateAvailable = false;
                 course.UpdatedAt = DateTime.Now;
                 await _courseRepository.UpdateAsync(course);
                 return Result<CourseResponse>.Success(MapToResponse(course));
@@ -394,6 +391,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 CourseId = course.CourseId,
                 Title = course.Title,
                 Description = course.Description,
+                TotalDuration = course.TotalDuration,
+                LessonCount = course.LessonCount,
+                StudentCount = course.StudentCount,
                 ThumbnailUrl = course.ThumbnailUrl,
                 InstructorId = course.InstructorId,
                 InstructorName = course.Instructor?.FullName ?? "N/A",

@@ -8,20 +8,29 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Course;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
+using DrugPreventionSystem.DataAccess.Repository;
+using Azure.Core;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
     public class CourseWeekService : ICourseWeekService
     {
         private readonly ICourseWeekRepository _courseWeekRepository;
+        private readonly ICourseRepository _courseRepository;
 
-        public CourseWeekService(ICourseWeekRepository courseWeekRepository)
+        public CourseWeekService(ICourseWeekRepository courseWeekRepository, ICourseRepository courseRepository)
         {
             _courseWeekRepository = courseWeekRepository;
+            _courseRepository = courseRepository;
         }
 
-        public async Task<Result<CourseWeek>> AddNewCourseWeekAsync(CourseWeekRequest courseWeek)
+        public async Task<Result<CourseWeekResponse>> AddNewCourseWeekAsync(CourseWeekRequest courseWeek)
         {
+            var course = await _courseRepository.GetByIdAsync(courseWeek.CourseId);
+            if(course == null)
+            {
+                return Result<CourseWeekResponse>.NotFound($"Course with ID {courseWeek.CourseId} not found.");
+            }
             var newCourseWeek = new CourseWeek()
             {
                 CourseId = courseWeek.CourseId,
@@ -29,7 +38,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 WeekNumber = courseWeek.WeekNumber,
             };
             var added = await _courseWeekRepository.AddNewCourseWeek(newCourseWeek);
-            return Result<CourseWeek>.Success(added, "Added successfully");
+            course.TotalDuration = (course.TotalDuration ?? 0) + 1;
+            await _courseRepository.UpdateAsync(course);
+            return Result<CourseWeekResponse>.Success(MapCourseWeekToResponse(added), "Added successfully");
         }
 
         public async Task<Result<IEnumerable<CourseWeekResponse>>> GetAllCourseWeeksAsync()
@@ -56,16 +67,15 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<bool>.Success(true, "Deleted successfully");
         }
 
-        public async Task<Result<CourseWeek>> UpdateCourseWeekAsync(Guid id, CourseWeek courseWeek)
+        public async Task<Result<CourseWeekResponse>> UpdateCourseWeekAsync(Guid id, CourseWeekRequest courseWeek)
         {
             var existing = await _courseWeekRepository.GetCourseWeekByIdAsync(id);
-            if (existing == null) return Result<CourseWeek>.NotFound($"Not found CourseWeek with id: {id}");
+            if (existing == null) return Result<CourseWeekResponse>.NotFound($"Not found CourseWeek with id: {id}");
             // Update fields
             existing.Title = courseWeek.Title;
             existing.WeekNumber = courseWeek.WeekNumber;
-            existing.CourseId = courseWeek.CourseId;
             await _courseWeekRepository.UpdateCourseWeekAsync(existing);
-            return Result<CourseWeek>.Success(existing, "Updated successfully");
+            return Result<CourseWeekResponse>.Success(MapCourseWeekToResponse(existing), "Updated successfully");
         }
 
         private CourseWeekResponse MapCourseWeekToResponse(CourseWeek cw)

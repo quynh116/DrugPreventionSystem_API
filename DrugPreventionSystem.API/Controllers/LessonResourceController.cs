@@ -50,7 +50,7 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Result<LessonResource>>> Update(Guid id, [FromBody] LessonResource lessonResource)
+        public async Task<ActionResult<Result<LessonResource>>> Update(Guid id, [FromBody] LessonResourceRequest lessonResource)
         {
             var result = await _lessonResourceService.UpdateLessonResourceAsync(id, lessonResource);
             return HandleResult(result);
