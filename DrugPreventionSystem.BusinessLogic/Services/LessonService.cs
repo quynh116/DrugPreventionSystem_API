@@ -111,6 +111,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             // Update fields
             existing.Title = lesson.Title;
             existing.WeekId = lesson.WeekId;
+            existing.Content = lesson.Content;
             existing.DurationMinutes = lesson.DurationMinutes;
             existing.Sequence = lesson.Sequence;
             existing.HasQuiz = lesson.HasQuiz;
@@ -125,6 +126,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 LessonId = l.LessonId,
                 Title = l.Title,
+                Content = l.Content,
                 DurationMinutes = l.DurationMinutes,
                 Sequence = l.Sequence,
                 HasQuiz = l.HasQuiz,
