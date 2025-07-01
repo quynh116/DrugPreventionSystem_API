@@ -45,6 +45,9 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<CommunityProgram> CommunityPrograms { get; set; } = null!;
         public DbSet<ProgramParticipant> ProgramParticipants { get; set; } = null!;
         public DbSet<ProgramFeedback> ProgramFeedbacks { get; set; } = null!;
+        public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<BlogCategory> BlogCategories { get; set; } = null!;
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -316,6 +319,27 @@ namespace DrugPreventionSystem.DataAccess.Context
                 .WithOne(pf => pf.User)
                 .HasForeignKey(pf => pf.UserId)
                 .OnDelete(DeleteBehavior.Restrict); // Không xóa user khi xóa feedback của họ
+
+            // BlogCategory configurations
+            modelBuilder.Entity<BlogCategory>(entity =>
+            {
+                entity.HasIndex(bc => bc.Name)
+                      .IsUnique(); // Ensure category names are unique
+            });
+
+            // Blog configurations
+            modelBuilder.Entity<Blog>(entity =>
+            {
+                // Relationship: BlogCategory (One) to Blogs (Many)
+                entity.HasOne(b => b.Category)
+                      .WithMany(bc => bc.Blogs)
+                      .HasForeignKey(b => b.CategoryId)
+                      .IsRequired(false) // CategoryId is nullable
+                      .OnDelete(DeleteBehavior.SetNull); // Set CategoryId to NULL if category is deleted
+            });
+
+
+
 
 
             // Seed initial data
