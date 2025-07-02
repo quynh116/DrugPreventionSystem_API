@@ -42,6 +42,16 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             var program = await _programRepository.GetProgramByIdAsync(request.ProgramId);
             if (program == null) throw new ArgumentException("Program not found.");
 
+            // Kiểm tra số lượng người tham gia tối đa
+            if (program.MaxParticipants.HasValue)
+            {
+                var currentParticipantsCount = await _participantRepository.CountByProgramIdAsync(request.ProgramId);
+                if (currentParticipantsCount >= program.MaxParticipants.Value)
+                {
+                    throw new InvalidOperationException("Program is full. Cannot register for this program.");
+                }
+            }
+
             var existing = (await _participantRepository.GetAllAsync())
                 .FirstOrDefault(p => p.UserId == request.UserId && p.ProgramId == request.ProgramId);
             if (existing != null)

@@ -18,5 +18,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.CommunityProgram
         public string? Location { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
+        public int? MaxParticipants { get; set; }
     }
 }

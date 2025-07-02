@@ -38,7 +38,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 EndDate = program.EndDate,
                 Location = program.Location,
                 CreatedAt = program.CreatedAt,
-                UpdatedAt = program.UpdatedAt
+                UpdatedAt = program.UpdatedAt,
+                MaxParticipants = program.MaxParticipants
             };
         }
         public async Task<Result<CommunityProgramResponse>> AddCommunityProgram(CommunityProgramCreateRequest request)
@@ -66,7 +67,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     StartDate = request.StartDate,
                     EndDate = request.EndDate,
                     Location = request.Location,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    MaxParticipants = request.MaxParticipants
                 };
                 var addedProgram = await _communityProgramRepository.AddCommunityProgramAsync(communityProgram);
                 if (addedProgram == null)
@@ -162,6 +164,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 existingProgram.EndDate = program.EndDate;
                 existingProgram.Location = program.Location;
                 existingProgram.UpdatedAt = DateTime.Now;
+                existingProgram.MaxParticipants = program.MaxParticipants;
                 var updatedProgram = await _communityProgramRepository.UpdateCommunityProgramAsync(existingProgram);
                 return Result<CommunityProgramResponse>.Success(MapToResponse(updatedProgram), "Community program updated successfully.");
             }

@@ -31,7 +31,10 @@ namespace DrugPreventionSystem.DataAccess.Models
         public DateTime StartDate { get; set; } 
 
         [Column("end_date")]
-        public DateTime EndDate { get; set; } 
+        public DateTime EndDate { get; set; }
+
+        [Column("max_participants")]
+        public int? MaxParticipants { get; set; }
 
         [MaxLength(255)]
         [Column("location")]

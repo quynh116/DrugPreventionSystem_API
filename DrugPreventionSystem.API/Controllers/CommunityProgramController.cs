@@ -69,8 +69,19 @@ namespace DrugPreventionSystem.API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> RegisterForProgram([FromBody] ProgramParticipantCreateRequest request)
         {
-            var result = await _programService.RegisterForProgramAsync(request);
-            return Ok(result);
+            try
+            {
+                var result = await _programService.RegisterForProgramAsync(request);
+                return Ok(result);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
         }
 
         [HttpGet("user/{userId}/enrolled")]
