@@ -97,5 +97,24 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _programService.SubmitProgramFeedbackAsync(request);
             return Ok(result);
         }
+
+        [HttpDelete("cancel")]
+        public async Task<IActionResult> CancelRegistration([FromQuery] Guid programId, [FromQuery] Guid userId)
+        {
+            try
+            {
+                var request = new ProgramParticipantCancelRequest { ProgramId = programId, UserId = userId };
+                await _programService.CancelRegistrationAsync(request);
+                return Ok(new { message = "Cancel registration successfully." });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An unexpected error occurred." });
+            }
+        }
     }
 }

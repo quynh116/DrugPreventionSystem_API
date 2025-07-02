@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<ProgramParticipantResponse> RegisterForProgramAsync(ProgramParticipantCreateRequest request);
         Task<IEnumerable<CommunityProgramResponse>> GetProgramsUserEnrolledAsync(Guid userId);
         Task<ProgramFeedbackResponse> SubmitProgramFeedbackAsync(ProgramFeedbackCreateRequest request);
+        Task<bool> CancelRegistrationAsync(ProgramParticipantCancelRequest request);
     }
 } 

@@ -168,5 +168,17 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 SubmittedAt = feedback.SubmittedAt
             };
         }
+
+        public async Task<bool> CancelRegistrationAsync(ProgramParticipantCancelRequest request)
+        {
+            var participant = (await _participantRepository.GetAllAsync())
+                .FirstOrDefault(p => p.UserId == request.UserId && p.ProgramId == request.ProgramId);
+            if (participant == null)
+            {
+                throw new InvalidOperationException("User are not register for this program");
+            }
+            await _participantRepository.DeleteAsync(participant.ParticipantId);
+            return true;
+        }
     }
 } 
