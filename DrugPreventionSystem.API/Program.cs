@@ -138,6 +138,7 @@ builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
 builder.Services.AddScoped<DrugPreventionSystem.BusinessLogic.Services.Interfaces.IProgramFeedbackService, DrugPreventionSystem.BusinessLogic.Services.ProgramFeedbackService>();
 builder.Services.AddScoped<IProgramParticipantService, ProgramParticipantService>();
 builder.Services.AddScoped<ICommunityProgramService, CommunityProgramService>();
+builder.Services.AddScoped<IProgramService, ProgramService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 

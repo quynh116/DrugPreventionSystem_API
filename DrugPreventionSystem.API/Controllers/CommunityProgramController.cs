@@ -4,6 +4,9 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.CommunityProgram;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using DrugPreventionSystem.BusinessLogic.Models.Request.ProgramParticipant;
+using DrugPreventionSystem.BusinessLogic.Models.Request.ProgramFeedback;
+using DrugPreventionSystem.BusinessLogic.Services;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -12,10 +15,12 @@ namespace DrugPreventionSystem.API.Controllers
     public class CommunityProgramController : BaseApiController
     {
         private readonly ICommunityProgramService _communityProgramService;
+        private readonly IProgramService _programService;
 
-        public CommunityProgramController(ICommunityProgramService communityProgramService)
+        public CommunityProgramController(ICommunityProgramService communityProgramService, IProgramService programService)
         {
             _communityProgramService = communityProgramService;
+            _programService = programService;
         }
         [HttpGet]
         public async Task<ActionResult<Result<IEnumerable<CommunityProgramResponse>>>> GetAllCommunityPrograms()
@@ -60,6 +65,26 @@ namespace DrugPreventionSystem.API.Controllers
                 return NoContent();
             }
             return HandleResult(result);
+        }
+        [HttpPost("register")]
+        public async Task<IActionResult> RegisterForProgram([FromBody] ProgramParticipantCreateRequest request)
+        {
+            var result = await _programService.RegisterForProgramAsync(request);
+            return Ok(result);
+        }
+
+        [HttpGet("user/{userId}/enrolled")]
+        public async Task<IActionResult> GetProgramsUserEnrolled(Guid userId)
+        {
+            var result = await _programService.GetProgramsUserEnrolledAsync(userId);
+            return Ok(result);
+        }
+
+        [HttpPost("feedback")]
+        public async Task<IActionResult> SubmitProgramFeedback([FromBody] ProgramFeedbackCreateRequest request)
+        {
+            var result = await _programService.SubmitProgramFeedbackAsync(request);
+            return Ok(result);
         }
     }
 }
