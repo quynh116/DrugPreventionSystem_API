@@ -8,6 +8,9 @@ using DrugPreventionSystem.BusinessLogic.Models.Request.Appointment;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Appointment;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
+using DrugPreventionSystem.DataAccess.Repositories;
+using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
+using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
@@ -15,6 +18,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
     public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IUserRepository _userRepository;
+        private readonly IConsultantRepository _consultantRepository;
+        private readonly ITimeSlotRepository _timeSlotRepository;
 
         private AppointmentResponse MapToAppoinmentResponse(Appointment appointment)
         {
@@ -38,9 +44,15 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 UpdatedAt = appointment.UpdatedAt
             };
         }
-        public AppointmentService(IAppointmentRepository appointmentRepository)
+        public AppointmentService(IAppointmentRepository appointmentRepository, 
+                                  IUserRepository userRepository,
+                                  IConsultantRepository consultantRepository,
+                                  ITimeSlotRepository timeSlotRepository)
         {
             _appointmentRepository = appointmentRepository;
+            _userRepository = userRepository;
+            _consultantRepository = consultantRepository;
+            _timeSlotRepository = timeSlotRepository;
         }
 
         public async Task<Result<AppointmentResponse>> AddAppointmentAsync(AppointmentCreateRequest request)
@@ -51,13 +63,30 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<AppointmentResponse>.Invalid("User ID is required.");
                 }
+                var user = await _userRepository.GetUserByIdAsync(request.UserId);
+
+                if(user == null)
+                {
+                    return Result<AppointmentResponse>.NotFound("User not found.");
+                }
                 if (request.ConsultantId == Guid.Empty)
                 {
                     return Result<AppointmentResponse>.Invalid("Consultant ID is required.");
                 }
+                var consultant = await _consultantRepository.GetConsultantByIdAsync(request.ConsultantId);
+
+                if (consultant == null)
+                {
+                    return Result<AppointmentResponse>.NotFound("Consultant not found.");
+                }
                 if (request.TimeSlotId == Guid.Empty)
                 {
                     return Result<AppointmentResponse>.Invalid("Time slot ID is required.");
+                }
+                var timeSlot = await _timeSlotRepository.GetTimeSlotByIdAsync(request.TimeSlotId);
+                if (timeSlot == null)
+                {
+                    return Result<AppointmentResponse>.NotFound("Time slot not found.");
                 }
                 if (string.IsNullOrEmpty(request.ReasonForConsultation))
                 {
@@ -152,6 +181,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<IEnumerable<AppointmentResponse>>.Invalid("User ID is required.");
                 }
+                var user = await _userRepository.GetUserByIdAsync(userId);
+                if (user == null)
+                {
+                    return Result<IEnumerable<AppointmentResponse>>.NotFound("User not found.");
+                }
+                
                 var appointments = await _appointmentRepository.GetAppointmentsByUserIdAsync(userId);
                 if (appointments == null || !appointments.Any())
                 {
@@ -174,6 +209,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<AppointmentResponse>.Invalid("Appointment ID is required.");
                 }
+                var appointment = await _appointmentRepository.GetAppointmentByIdAsync(appoinmentId);
+                if (appointment == null)
+                {
+                    return Result<AppointmentResponse>.NotFound("Appointment not found.");
+                }
+
                 var existingAppointment = await _appointmentRepository.GetAppointmentByIdAsync(appoinmentId);
                 if (existingAppointment == null)
                 {
