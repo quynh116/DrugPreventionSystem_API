@@ -106,6 +106,9 @@ builder.Services.AddScoped<IQuizRepository, QuizRepository>();
 builder.Services.AddScoped<IQuizQuestionRepository, QuizQuestionRepository>();
 builder.Services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
 builder.Services.AddScoped<IProgramParticipantRepository, ProgramParticipantRepository>();
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+builder.Services.AddScoped<IBlogCategoryRepository, BlogCategoryRepository>();
+
 
 builder.Services.AddScoped<DrugPreventionSystem.DataAccess.Repository.Interfaces.IProgramFeedbackRepository, DrugPreventionSystem.DataAccess.Repository.ProgramFeedbackRepository>();
 builder.Services.AddScoped<ICommunityProgramRepository, CommunityProgramRepository>();
@@ -138,6 +141,8 @@ builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
 builder.Services.AddScoped<DrugPreventionSystem.BusinessLogic.Services.Interfaces.IProgramFeedbackService, DrugPreventionSystem.BusinessLogic.Services.ProgramFeedbackService>();
 builder.Services.AddScoped<IProgramParticipantService, ProgramParticipantService>();
 builder.Services.AddScoped<ICommunityProgramService, CommunityProgramService>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IBlogCategoryService, BlogCategoryService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
