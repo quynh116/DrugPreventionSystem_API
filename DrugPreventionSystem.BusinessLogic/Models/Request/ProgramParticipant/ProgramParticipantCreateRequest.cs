@@ -10,9 +10,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.ProgramParticipant
     {
         public Guid ProgramId { get; set; }
         public Guid UserId { get; set; }
-        public DateTime RegisteredAt { get; set; } = DateTime.Now;
-        public bool Attended { get; set; }
-        public bool FeedbackSubmitted { get; set; }
+        
 
     }
 }

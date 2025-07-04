@@ -98,13 +98,14 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 var program = await _programRepository.GetProgramByIdAsync(programId);
                 if (program != null)
-                    programs.Add(MapToCommunityProgramResponse(program));
+                    programs.Add(await MapToCommunityProgramResponse(program));
             }
             return programs;
         }
 
-        private CommunityProgramResponse MapToCommunityProgramResponse(CommunityProgram program)
+        private async Task<CommunityProgramResponse> MapToCommunityProgramResponse(CommunityProgram program)
         {
+            var count = await _participantRepository.CountByProgramIdAsync(program.ProgramId);
             return new CommunityProgramResponse
             {
                 ProgramId = program.ProgramId,
@@ -115,7 +116,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 EndDate = program.EndDate,
                 Location = program.Location,
                 CreatedAt = program.CreatedAt,
-                UpdatedAt = program.UpdatedAt
+                UpdatedAt = program.UpdatedAt,
+                MaxParticipants = program.MaxParticipants,
+                CurrentParticipantsCount = count
+
             };
         }
 
