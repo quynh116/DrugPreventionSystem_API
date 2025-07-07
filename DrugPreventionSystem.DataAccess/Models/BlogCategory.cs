@@ -13,7 +13,7 @@ namespace DrugPreventionSystem.DataAccess.Models
     {
         [Key]
         [Column("id")]
-        public Guid Id { get; set; } = Guid.NewGuid(); // Đổi từ int sang Guid
+        public Guid Id { get; set; } = Guid.NewGuid(); 
 
         [Required]
         [MaxLength(255)]
