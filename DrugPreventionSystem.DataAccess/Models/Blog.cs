@@ -13,7 +13,10 @@ namespace DrugPreventionSystem.DataAccess.Models
     {
         [Key]
         [Column("id")]
-        public Guid Id { get; set; } = Guid.NewGuid(); // Đổi từ int sang Guid
+        public Guid Id { get; set; } = Guid.NewGuid();
+
+        [Column("user_id")]
+        public Guid UserId { get; set; } 
 
         [Required]
         [MaxLength(500)]
@@ -32,7 +35,7 @@ namespace DrugPreventionSystem.DataAccess.Models
 
         [ForeignKey("Category")]
         [Column("category_id")]
-        public Guid? CategoryId { get; set; } // Đổi từ int? sang Guid?
+        public Guid? CategoryId { get; set; } 
 
         [Column("tags")]
         public string? Tags { get; set; }
@@ -54,5 +57,8 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
         public virtual BlogCategory? Category { get; set; }
+        
+        public virtual User User { get; set; } = null!;
+
     }
 }

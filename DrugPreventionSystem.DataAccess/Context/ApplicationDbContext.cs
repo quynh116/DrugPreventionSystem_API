@@ -354,6 +354,7 @@ namespace DrugPreventionSystem.DataAccess.Context
 
                 entity.HasIndex(a => a.TimeSlotId)
                       .IsUnique();
+
             });
 
             // BlogCategory configurations
@@ -372,7 +373,14 @@ namespace DrugPreventionSystem.DataAccess.Context
                       .HasForeignKey(b => b.CategoryId)
                       .IsRequired(false) // CategoryId is nullable
                       .OnDelete(DeleteBehavior.SetNull); // Set CategoryId to NULL if category is deleted
+
+               // Relationship: User (One) to Blogs (Many)
+                entity.HasOne(b => b.User)
+                      .WithMany(u => u.Blogs)
+                      .HasForeignKey(b => b.UserId)
+                      .IsRequired();
             });
+
 
 
             // Seed initial data
