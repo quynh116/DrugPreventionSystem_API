@@ -9,6 +9,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Blog
     public class BlogCreateRequest
     {
         public string Title { get; set; }
+        public Guid UserId { get; set; }
         public string? Content { get; set; }
         public string? Excerpt { get; set; }
         public string? ThumbnailUrl { get; set; }

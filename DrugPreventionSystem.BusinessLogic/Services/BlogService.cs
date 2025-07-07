@@ -29,6 +29,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return new BlogResponse
             {
                 Id = blog.Id,
+                UserId = blog.UserId,
                 Title = blog.Title,
                 Content = blog.Content,
                 Excerpt = blog.Excerpt,
@@ -48,6 +49,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             var newBlog = new Blog
             {
                 Id = Guid.NewGuid(),
+
                 Title = request.Title,
                 Content = request.Content,
                 Excerpt = request.Excerpt,
