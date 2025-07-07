@@ -63,5 +63,7 @@ namespace DrugPreventionSystem.DataAccess.Models
         public virtual ICollection<ProgramParticipant> ProgramParticipants { get; set; } = new List<ProgramParticipant>();
         public virtual ICollection<ProgramFeedback> ProgramFeedbacks { get; set; } = new List<ProgramFeedback>();
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
+        [InverseProperty("User")]
+        public virtual ICollection<ProgramSurveyResponse> ProgramSurveyResponses { get; set; } = new List<ProgramSurveyResponse>();
     }
 }

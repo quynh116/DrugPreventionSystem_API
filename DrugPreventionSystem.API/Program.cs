@@ -140,6 +140,9 @@ builder.Services.AddScoped<IProgramParticipantService, ProgramParticipantService
 builder.Services.AddScoped<ICommunityProgramService, CommunityProgramService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 
+builder.Services.AddScoped<ProgramSurveyRepository>();
+builder.Services.AddScoped<ProgramSurveyService>();
+
 builder.Services.AddSingleton<ProvideToken>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

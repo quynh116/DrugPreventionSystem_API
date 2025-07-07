@@ -46,6 +46,11 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
+        [ForeignKey("ProgramSurvey")]
+        [Column("survey_id")]
+        public Guid? SurveyId { get; set; }
+        public virtual ProgramSurvey? ProgramSurvey { get; set; }
+
         // Navigation properties
         public virtual ICollection<ProgramParticipant> ProgramParticipants { get; set; } = new List<ProgramParticipant>();
         public virtual ICollection<ProgramFeedback> ProgramFeedbacks { get; set; } = new List<ProgramFeedback>();

@@ -49,6 +49,11 @@ namespace DrugPreventionSystem.DataAccess.Context
         public DbSet<Appointment> Appointments { get; set; } = null!;
         public DbSet<Blog> Blogs { get; set; } = null!; 
         public DbSet<BlogCategory> BlogCategories { get; set; } = null!; 
+        public DbSet<ProgramSurvey> ProgramSurveys { get; set; } = null!;
+        public DbSet<ProgramSurveyQuestion> ProgramSurveyQuestions { get; set; } = null!;
+        public DbSet<ProgramSurveyAnswerOption> ProgramSurveyAnswerOptions { get; set; } = null!;
+        public DbSet<ProgramSurveyResponse> ProgramSurveyResponses { get; set; } = null!;
+        public DbSet<ProgramSurveyAnswer> ProgramSurveyAnswers { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -374,6 +379,81 @@ namespace DrugPreventionSystem.DataAccess.Context
                       .OnDelete(DeleteBehavior.SetNull); // Set CategoryId to NULL if category is deleted
             });
 
+            // Cấu hình mối quan hệ cho ProgramSurvey
+            modelBuilder.Entity<ProgramSurvey>(entity =>
+            {
+                entity.HasMany(s => s.Questions)
+                      .WithOne(q => q.ProgramSurvey)
+                      .HasForeignKey(q => q.SurveyId)
+                      .OnDelete(DeleteBehavior.Cascade); // Xóa các câu hỏi khi khảo sát bị xóa
+            });
+
+            // Cấu hình mối quan hệ cho ProgramSurveyQuestion
+            modelBuilder.Entity<ProgramSurveyQuestion>(entity =>
+            {
+                entity.HasOne(q => q.ProgramSurvey)
+                      .WithMany(s => s.Questions)
+                      .HasForeignKey(q => q.SurveyId)
+                      .OnDelete(DeleteBehavior.Restrict); // Giữ lại khảo sát nếu có câu hỏi
+                entity.HasMany(q => q.AnswerOptions)
+                      .WithOne(a => a.ProgramSurveyQuestion)
+                      .HasForeignKey(a => a.QuestionId)
+                      .OnDelete(DeleteBehavior.Cascade); // Xóa các tùy chọn trả lời khi câu hỏi bị xóa
+            });
+
+            // Cấu hình mối quan hệ cho ProgramSurveyAnswerOption
+            modelBuilder.Entity<ProgramSurveyAnswerOption>(entity =>
+            {
+                entity.HasOne(a => a.ProgramSurveyQuestion)
+                      .WithMany(q => q.AnswerOptions)
+                      .HasForeignKey(a => a.QuestionId)
+                      .OnDelete(DeleteBehavior.Restrict); // Giữ lại câu hỏi nếu có tùy chọn
+            });
+
+            // Cấu hình mối quan hệ cho CommunityProgram với ProgramSurvey (1-to-N hoặc 0-to-N)
+            modelBuilder.Entity<CommunityProgram>(entity =>
+            {
+                entity.HasOne(cp => cp.ProgramSurvey)
+                      .WithMany(ps => ps.Programs)
+                      .HasForeignKey(cp => cp.SurveyId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.SetNull);
+            });
+
+            // Cấu hình mối quan hệ cho ProgramSurveyResponse
+            modelBuilder.Entity<ProgramSurveyResponse>(entity =>
+            {
+                entity.HasOne(r => r.ProgramSurvey)
+                      .WithMany()
+                      .HasForeignKey(r => r.SurveyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(r => r.CommunityProgram)
+                      .WithMany()
+                      .HasForeignKey(r => r.ProgramId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasMany(r => r.Answers)
+                      .WithOne(a => a.ProgramSurveyResponse)
+                      .HasForeignKey(a => a.ResponseId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // Cấu hình mối quan hệ cho ProgramSurveyAnswer
+            modelBuilder.Entity<ProgramSurveyAnswer>(entity =>
+            {
+                entity.HasOne(a => a.ProgramSurveyResponse)
+                      .WithMany(r => r.Answers)
+                      .HasForeignKey(a => a.ResponseId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.ProgramSurveyQuestion)
+                      .WithMany()
+                      .HasForeignKey(a => a.QuestionId)
+                      .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne(a => a.ProgramSurveyAnswerOption)
+                      .WithMany()
+                      .HasForeignKey(a => a.SelectedOptionId)
+                      .IsRequired(false)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
 
             // Seed initial data
             SeedData(modelBuilder);
