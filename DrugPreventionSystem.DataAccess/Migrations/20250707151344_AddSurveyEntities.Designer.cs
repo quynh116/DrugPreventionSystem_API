@@ -4,6 +4,7 @@ using DrugPreventionSystem.DataAccess.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DrugPreventionSystem.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250707151344_AddSurveyEntities")]
+    partial class AddSurveyEntities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -145,10 +148,6 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnType("datetime2")
                         .HasColumnName("updated_at");
 
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnName("user_id");
-
                     b.Property<int>("ViewsCount")
                         .HasColumnType("int")
                         .HasColumnName("views_count");
@@ -156,8 +155,6 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("blogs");
                 });
@@ -805,6 +802,9 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnType("uniqueidentifier")
                         .HasColumnName("user_id");
 
+                    b.Property<Guid?>("UserId1")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("ResponseId");
 
                     b.HasIndex("ProgramId");
@@ -812,6 +812,8 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.HasIndex("SurveyId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("UserId1");
 
                     b.ToTable("program_survey_responses");
                 });
@@ -964,7 +966,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 1,
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 410, DateTimeKind.Local).AddTicks(3232),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 320, DateTimeKind.Local).AddTicks(4538),
                             Description = "System Administrator",
                             IsActive = true,
                             RoleName = "Admin"
@@ -972,7 +974,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 2,
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 410, DateTimeKind.Local).AddTicks(3253),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 320, DateTimeKind.Local).AddTicks(4627),
                             Description = "System Manager",
                             IsActive = true,
                             RoleName = "Manager"
@@ -980,7 +982,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 3,
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 410, DateTimeKind.Local).AddTicks(3255),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 320, DateTimeKind.Local).AddTicks(4631),
                             Description = "Staff Member",
                             IsActive = true,
                             RoleName = "Staff"
@@ -988,7 +990,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 4,
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 410, DateTimeKind.Local).AddTicks(3256),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 320, DateTimeKind.Local).AddTicks(4634),
                             Description = "Professional Consultant",
                             IsActive = true,
                             RoleName = "Consultant"
@@ -996,7 +998,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 5,
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 410, DateTimeKind.Local).AddTicks(3257),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 320, DateTimeKind.Local).AddTicks(4636),
                             Description = "Registered Member",
                             IsActive = true,
                             RoleName = "Member"
@@ -1270,45 +1272,45 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("365a61e7-594a-41d0-ac55-f47e805a8e8e"),
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 802, DateTimeKind.Local).AddTicks(1981),
+                            UserId = new Guid("8094ff79-029f-45e0-9c5f-b7807ab1a744"),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 688, DateTimeKind.Local).AddTicks(9887),
                             Email = "admin@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$nNJbE2qpk81MvMAORi15luB55.ELZ9NB3natUkLvuWSuyC0mwyCV2",
+                            PasswordHash = "$2a$11$713sEeYH5F.8lIS/aJsl2ewpp/wnahfgQZVGb4R7jArt1vO9C/tAu",
                             RoleId = 1,
                             Username = "admin_user"
                         },
                         new
                         {
-                            UserId = new Guid("827faccc-6774-4425-b33e-2da9bbc18544"),
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 802, DateTimeKind.Local).AddTicks(2068),
+                            UserId = new Guid("22d87189-c9bf-47d0-83c6-85e48170c8e9"),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 688, DateTimeKind.Local).AddTicks(9894),
                             Email = "manager@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$nNJbE2qpk81MvMAORi15luB55.ELZ9NB3natUkLvuWSuyC0mwyCV2",
+                            PasswordHash = "$2a$11$713sEeYH5F.8lIS/aJsl2ewpp/wnahfgQZVGb4R7jArt1vO9C/tAu",
                             RoleId = 2,
                             Username = "manager_user"
                         },
                         new
                         {
-                            UserId = new Guid("76e5e3d1-c625-43ef-842a-b9e9af0bcde0"),
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 802, DateTimeKind.Local).AddTicks(2072),
+                            UserId = new Guid("4db4493d-b742-47b7-809c-13402b1c96aa"),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 688, DateTimeKind.Local).AddTicks(9909),
                             Email = "staff@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$nNJbE2qpk81MvMAORi15luB55.ELZ9NB3natUkLvuWSuyC0mwyCV2",
+                            PasswordHash = "$2a$11$713sEeYH5F.8lIS/aJsl2ewpp/wnahfgQZVGb4R7jArt1vO9C/tAu",
                             RoleId = 3,
                             Username = "staff_user"
                         },
                         new
                         {
-                            UserId = new Guid("429cc640-d6df-418b-8a6d-980876270fa9"),
-                            CreatedAt = new DateTime(2025, 7, 7, 22, 43, 40, 802, DateTimeKind.Local).AddTicks(2076),
+                            UserId = new Guid("ac31395f-89b4-4754-865a-c4176bb0c0c9"),
+                            CreatedAt = new DateTime(2025, 7, 7, 22, 13, 43, 688, DateTimeKind.Local).AddTicks(9913),
                             Email = "consultant@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$nNJbE2qpk81MvMAORi15luB55.ELZ9NB3natUkLvuWSuyC0mwyCV2",
+                            PasswordHash = "$2a$11$713sEeYH5F.8lIS/aJsl2ewpp/wnahfgQZVGb4R7jArt1vO9C/tAu",
                             RoleId = 4,
                             Username = "consultant_user"
                         });
@@ -1704,15 +1706,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.SetNull);
 
-                    b.HasOne("DrugPreventionSystem.DataAccess.Models.User", "User")
-                        .WithMany("Blogs")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.CommunityProgram", b =>
@@ -1911,10 +1905,14 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .IsRequired();
 
                     b.HasOne("DrugPreventionSystem.DataAccess.Models.User", "User")
-                        .WithMany("ProgramSurveyResponses")
+                        .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.User", null)
+                        .WithMany("ProgramSurveyResponses")
+                        .HasForeignKey("UserId1");
 
                     b.Navigation("CommunityProgram");
 
@@ -2300,8 +2298,6 @@ namespace DrugPreventionSystem.DataAccess.Migrations
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.User", b =>
                 {
                     b.Navigation("Appointments");
-
-                    b.Navigation("Blogs");
 
                     b.Navigation("Consultant");
 

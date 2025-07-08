@@ -145,6 +145,9 @@ builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IBlogCategoryService, BlogCategoryService>();
 
+builder.Services.AddScoped<ProgramSurveyRepository>();
+builder.Services.AddScoped<ProgramSurveyService>();
+
 builder.Services.AddSingleton<ProvideToken>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
