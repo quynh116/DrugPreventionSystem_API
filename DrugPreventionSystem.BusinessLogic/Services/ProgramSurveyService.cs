@@ -5,10 +5,11 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Models;
 using System.Linq;
+using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
-    public class ProgramSurveyService
+    public class ProgramSurveyService : IProgramSurveyService
     {
         private readonly ProgramSurveyRepository _repository;
         public ProgramSurveyService(ProgramSurveyRepository repository)
