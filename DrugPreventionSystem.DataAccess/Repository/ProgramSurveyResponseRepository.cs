@@ -52,5 +52,14 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<ProgramSurveyResponse?> GetByUserIdProgramIdAndSurveyIdWithAnswersAsync(Guid userId, Guid programId, Guid surveyId)
+        {
+            return await _context.ProgramSurveyResponses
+                             .Include(psr => psr.Answers) 
+                             .FirstOrDefaultAsync(psr => psr.UserId == userId &&
+                                                         psr.ProgramId == programId &&
+                                                         psr.SurveyId == surveyId);
+        }
     }
 } 
