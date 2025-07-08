@@ -75,6 +75,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     QuestionId = question.QuestionId,
                     QuestionText = question.QuestionText,
+                    QuestionType = question.QuestionType,
                     AnswerText = answer.AnswerText,
                     SelectedOptionId = answer.SelectedOptionId,
                     SelectedOptionText = optionText
@@ -248,10 +249,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
             if (!program.SurveyId.HasValue || program.ProgramSurvey == null)
             {
-                return null; // Chương trình không có khảo sát đính kèm
+                return null; 
             }
 
-            var survey = program.ProgramSurvey; // Survey đã được tải kèm qua ProgramDetailsByIdAsync
+            var survey = program.ProgramSurvey; 
 
             var resultDto = new ProgramSurveyWithUserResponseDto
             {
@@ -283,33 +284,26 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             var user = await _userRepository.GetUserByIdAsync(userId);
             if (user == null) return false;
 
-            var program = await _programRepository.GetProgramDetailsByIdAsync(programId); // Lấy chi tiết program để có SurveyId
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId); 
             if (program == null || !program.SurveyId.HasValue)
             {
-                return false; // Chương trình không tồn tại hoặc không có khảo sát
+                return false; 
             }
 
             // Người dùng phải là người tham gia chương trình
             var participant = await GetUserProgramParticipationStatusAsync(userId, programId);
             if (participant == null)
             {
-                return false; // Người dùng chưa đăng ký chương trình này
+                return false; 
             }
 
             // Chương trình phải kết thúc
             if (DateTime.Now <= program.EndDate)
             {
-                return false; // Chương trình chưa kết thúc, chưa đến lúc làm khảo sát
+                return false; 
             }
 
-            // Người dùng chưa làm khảo sát này trước đó
-            var existingResponse = await _surveyResponseRepository.GetByIdAsync(program.SurveyId.Value); // Có thể cần thay đổi GetByIdAsync để tìm theo userId và programId
-            // Sửa lại: Dùng phương thức GetUserProgramSurveyResponseAsync bên dưới
-            var userSurveyResponse = await GetUserProgramSurveyResponseAsync(userId, programId);
-            if (userSurveyResponse != null)
-            {
-                return false; // Người dùng đã làm khảo sát này rồi
-            }
+            
 
             return true;
 

@@ -17,6 +17,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.CommunityProgram
     {
         public Guid QuestionId { get; set; }
         public string QuestionText { get; set; } = string.Empty;
+        public string QuestionType { get; set; } = "text";
         public string? AnswerText { get; set; }
         public Guid? SelectedOptionId { get; set; }
         public string? SelectedOptionText { get; set; }
