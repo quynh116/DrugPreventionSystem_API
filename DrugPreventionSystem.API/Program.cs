@@ -108,6 +108,13 @@ builder.Services.AddScoped<IQuizOptionRepository, QuizOptionRepository>();
 builder.Services.AddScoped<IProgramParticipantRepository, ProgramParticipantRepository>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlogCategoryRepository, BlogCategoryRepository>();
+builder.Services.AddScoped<IProgramSurveyAnswerOptionRepository, ProgramSurveyAnswerOptionRepository>();
+builder.Services.AddScoped<IProgramSurveyAnswerRepository, ProgramSurveyAnswerRepository>();
+builder.Services.AddScoped<IProgramSurveyQuestionRepository, ProgramSurveyQuestionRepository>();
+builder.Services.AddScoped<IProgramSurveyResponseRepository, ProgramSurveyResponseRepository>();
+builder.Services.AddScoped<IProgramSurveyRepository, ProgramSurveyRepository>();
+
+
 
 
 builder.Services.AddScoped<DrugPreventionSystem.DataAccess.Repository.Interfaces.IProgramFeedbackRepository, DrugPreventionSystem.DataAccess.Repository.ProgramFeedbackRepository>();

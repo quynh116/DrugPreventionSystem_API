@@ -1,4 +1,5 @@
 using DrugPreventionSystem.DataAccess.Models;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DrugPreventionSystem.DataAccess.Repository
 {
-    public class ProgramSurveyAnswerRepository
+    public class ProgramSurveyAnswerRepository : IProgramSurveyAnswerRepository
     {
         private readonly Context.ApplicationDbContext _context;
         public ProgramSurveyAnswerRepository(Context.ApplicationDbContext context)
