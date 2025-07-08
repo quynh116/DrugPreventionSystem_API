@@ -75,6 +75,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     Location = request.Location,
                     CreatedAt = DateTime.Now,
                     MaxParticipants = request.MaxParticipants,
+                    SurveyId = request.SurveyId,
                 };
                 var addedProgram = await _communityProgramRepository.AddCommunityProgramAsync(communityProgram);
                 if (addedProgram == null)

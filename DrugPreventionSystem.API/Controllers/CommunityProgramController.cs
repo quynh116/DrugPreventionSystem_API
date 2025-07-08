@@ -139,21 +139,23 @@ namespace DrugPreventionSystem.API.Controllers
             }
         }
 
-        [HttpGet("{programId}/can-take-survey")]
-        public async Task<IActionResult> CanTakeSurvey(Guid programId, Guid userId)
+        [HttpGet("{programId}/survey/completion-status")]
+        public async Task<IActionResult> GetProgramSurveyStatus(Guid programId, [FromQuery] Guid userId)
         {
             try
             {
-                var canTake = await _programService.CanUserTakeSurveyAsync(userId, programId);
-                return Ok(canTake);
+                
+
+                var hasSubmitted = await _programService.HasUserSubmittedProgramSurveyAsync(userId, programId);
+                return Ok(new { hasSubmitted = hasSubmitted }); 
             }
-            catch (InvalidOperationException ex)
+            catch (ArgumentException ex)
             {
-                return BadRequest(new { message = ex.Message }); // e.g., User ID invalid
+                return NotFound(new { message = ex.Message }); 
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { message = "An error occurred while checking survey eligibility.", error = ex.Message });
+                return StatusCode(500, new { message = "An error occurred while checking survey status.", error = ex.Message });
             }
         }
 

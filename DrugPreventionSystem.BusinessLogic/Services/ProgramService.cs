@@ -380,5 +380,31 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         {
             return await _participantRepository.GetByUserIdAndProgramIdAsync(userId, programId);
         }
+
+        public async Task<bool> HasUserSubmittedProgramSurveyAsync(Guid userId, Guid programId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId);
+            if (program == null)
+            {
+                throw new ArgumentException("Program not found.");
+            }
+
+            if (!program.SurveyId.HasValue || program.ProgramSurvey == null)
+            {
+                
+                return false;
+            }
+
+            
+            var userResponse = await GetUserProgramSurveyResponseAsync(userId, programId);
+
+            return userResponse != null;
+        }
     }
 }
