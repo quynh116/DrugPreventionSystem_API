@@ -9,6 +9,8 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Blog;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
+using DrugPreventionSystem.DataAccess.Repositories;
+using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
@@ -16,20 +18,24 @@ namespace DrugPreventionSystem.BusinessLogic.Services
     public class BlogService : IBlogService
     {
         private readonly IBlogRepository _blogRepository;
+        private readonly IUserRepository _userRepository;
 
-        public BlogService(IBlogRepository blogRepository)
+        public BlogService(IBlogRepository blogRepository, IUserRepository userRepository)
         {
             _blogRepository = blogRepository;
+            _userRepository = userRepository;
         }
 
-        private BlogResponse MapToResponse(Blog blog)
+        private async Task<BlogResponse> MapToResponseAsync(Blog blog)
         {
             if (blog == null) return null;
+            var user = await _userRepository.GetUserByIdAsync(blog.UserId);
 
             return new BlogResponse
             {
                 Id = blog.Id,
                 UserId = blog.UserId,
+                Username = user.Username,
                 Title = blog.Title,
                 Content = blog.Content,
                 Excerpt = blog.Excerpt,
@@ -63,7 +69,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             };
 
             var created = await _blogRepository.CreateAsync(newBlog);
-            return Result<BlogResponse>.Success(MapToResponse(created));
+            return Result<BlogResponse>.Success(await MapToResponseAsync(created));
         }
 
         public async Task<Result<IEnumerable<BlogResponse>>> GetAllAsync()
@@ -71,7 +77,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             try
             {
                 var blogs = await _blogRepository.GetAllAsync();
-                var responses = blogs.Select(MapToResponse).ToList();
+
+                var responseTasks = blogs.Select(blog => MapToResponseAsync(blog));
+                var responses = await Task.WhenAll(responseTasks); // Chạy song song
+
                 return Result<IEnumerable<BlogResponse>>.Success(responses);
             }
             catch (Exception ex)
@@ -87,7 +96,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 var blog = await _blogRepository.GetByIdAsync(id);
                 if (blog == null)
                     return Result<BlogResponse>.NotFound($"Blog with ID {id} not found.");
-                return Result<BlogResponse>.Success(MapToResponse(blog));
+
+                var response = await MapToResponseAsync(blog);
+                return Result<BlogResponse>.Success(response);
             }
             catch (Exception ex)
             {
@@ -113,7 +124,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 blog.UpdatedAt = DateTime.Now;
 
                 await _blogRepository.UpdateAsync(blog);
-                return Result<BlogResponse>.Success(MapToResponse(blog));
+                return Result<BlogResponse>.Success(await MapToResponseAsync(blog));
             }
             catch (Exception ex)
             {
