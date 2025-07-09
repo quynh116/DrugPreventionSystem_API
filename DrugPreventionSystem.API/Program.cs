@@ -119,6 +119,8 @@ builder.Services.AddScoped<IProgramSurveyRepository, ProgramSurveyRepository>();
 
 builder.Services.AddScoped<DrugPreventionSystem.DataAccess.Repository.Interfaces.IProgramFeedbackRepository, DrugPreventionSystem.DataAccess.Repository.ProgramFeedbackRepository>();
 builder.Services.AddScoped<ICommunityProgramRepository, CommunityProgramRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<ITimeSlotRepository, TimeSlotRepository>();
 
 //service
 builder.Services.AddScoped<IUserService, UserService>();
@@ -154,6 +156,8 @@ builder.Services.AddScoped<IBlogCategoryService, BlogCategoryService>();
 
 builder.Services.AddScoped<ProgramSurveyRepository>();
 builder.Services.AddScoped<ProgramSurveyService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
