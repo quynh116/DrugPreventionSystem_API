@@ -51,18 +51,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 QuestionType = question.QuestionType,
                 Sequence = question.Sequence,
                 CreatedAt = question.CreatedAt,
-                UpdatedAt = question.UpdatedAt,
-                Options = question.SurveyOptions? // Map options if available
-                                .Select(o => new SurveyOptionDTO
-                                {
-                                    OptionId = o.OptionId,
-                                    QuestionId = o.QuestionId,
-                                    OptionText = o.OptionText,
-                                    ScoreValue = o.ScoreValue,
-                                    CreatedAt = o.CreatedAt,
-                                    UpdatedAt = o.UpdatedAt
-                                })
-                                .ToList() ?? new List<SurveyOptionDTO>()
+                UpdatedAt = question.UpdatedAt
             };
         }
 

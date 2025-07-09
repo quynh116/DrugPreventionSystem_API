@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Models.Request;
 using System.Linq;
+using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 
 namespace DrugPreventionSystem.API.Controllers
 {
@@ -14,8 +15,8 @@ namespace DrugPreventionSystem.API.Controllers
     [Route("api/[controller]")]
     public class ProgramSurveyController : ControllerBase
     {
-        private readonly ProgramSurveyService _service;
-        public ProgramSurveyController(ProgramSurveyService service)
+        private readonly IProgramSurveyService _service;
+        public ProgramSurveyController(IProgramSurveyService service)
         {
             _service = service;
         }

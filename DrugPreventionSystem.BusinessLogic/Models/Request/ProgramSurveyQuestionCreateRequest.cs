@@ -1,10 +1,9 @@
 using System;
 
-namespace DrugPreventionSystem.BusinessLogic.Models
+namespace DrugPreventionSystem.BusinessLogic.Models.Request
 {
-    public class ProgramSurveyQuestionDto
+    public class ProgramSurveyQuestionCreateRequest
     {
-        public Guid QuestionId { get; set; }
         public Guid SurveyId { get; set; }
         public string QuestionText { get; set; } = string.Empty;
         public string QuestionType { get; set; } = "text";

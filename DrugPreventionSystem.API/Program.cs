@@ -153,11 +153,18 @@ builder.Services.AddScoped<ICommunityProgramService, CommunityProgramService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IBlogCategoryService, BlogCategoryService>();
+builder.Services.AddScoped<IProgramSurveyAnswerOptionService, ProgramSurveyAnswerOptionService>();
 
 builder.Services.AddScoped<ProgramSurveyRepository>();
 builder.Services.AddScoped<ProgramSurveyService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+
+builder.Services.AddScoped<IProgramSurveyQuestionService, ProgramSurveyQuestionService>();
+builder.Services.AddScoped<IProgramSurveyQuestionRepository, ProgramSurveyQuestionRepository>();
+
+builder.Services.AddScoped<IProgramSurveyService, ProgramSurveyService>();
+builder.Services.AddScoped<IProgramSurveyRepository, ProgramSurveyRepository>();
 
 builder.Services.AddSingleton<ProvideToken>();
 
