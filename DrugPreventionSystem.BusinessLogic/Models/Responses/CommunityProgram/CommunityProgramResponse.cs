@@ -21,5 +21,6 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.CommunityProgram
         public DateTime? UpdatedAt { get; set; }
         public int? MaxParticipants { get; set; }
         public int CurrentParticipantsCount { get; set; }
+        public Guid? SurveyId { get; set; }
     }
 }

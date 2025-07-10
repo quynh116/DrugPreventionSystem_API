@@ -3,6 +3,7 @@ using DrugPreventionSystem.BusinessLogic.Models;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using DrugPreventionSystem.BusinessLogic.Models.Request;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
@@ -15,5 +16,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task DeleteAsync(Guid id);
         Task<List<ProgramSurveyDto>> GetAllDtoAsync();
         Task<ProgramSurveyDto?> GetDtoByIdAsync(Guid id);
+
+        Task<ProgramSurveyDto> CreateProgramSurveyAndLinkToProgramAsync(ProgramSurveyCreateRequest request);
     }
 } 

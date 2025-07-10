@@ -161,10 +161,8 @@ builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 
 builder.Services.AddScoped<IProgramSurveyQuestionService, ProgramSurveyQuestionService>();
-builder.Services.AddScoped<IProgramSurveyQuestionRepository, ProgramSurveyQuestionRepository>();
 
 builder.Services.AddScoped<IProgramSurveyService, ProgramSurveyService>();
-builder.Services.AddScoped<IProgramSurveyRepository, ProgramSurveyRepository>();
 
 builder.Services.AddSingleton<ProvideToken>();
 

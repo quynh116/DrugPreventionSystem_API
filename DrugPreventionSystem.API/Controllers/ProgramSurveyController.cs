@@ -1,4 +1,4 @@
-using DrugPreventionSystem.BusinessLogic.Services;
+﻿using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.BusinessLogic.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -36,23 +36,34 @@ namespace DrugPreventionSystem.API.Controllers
             return Ok(survey);
         }
 
+
+
         [HttpPost]
         public async Task<ActionResult> Create([FromBody] ProgramSurveyCreateRequest request)
         {
-            var entity = new ProgramSurvey
+            try
             {
-                SurveyId = Guid.NewGuid(),
-                Title = request.Title,
-                Description = request.Description
-            };
-            await _service.AddAsync(entity);
-            var dto = new ProgramSurveyDto
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var dto = await _service.CreateProgramSurveyAndLinkToProgramAsync(request); 
+
+                return CreatedAtAction(nameof(GetById), new { id = dto.SurveyId }, dto);
+            }
+            catch (ArgumentException ex)
             {
-                SurveyId = entity.SurveyId,
-                Title = entity.Title,
-                Description = entity.Description
-            };
-            return CreatedAtAction(nameof(GetById), new { id = entity.SurveyId }, dto);
+                return NotFound(new { message = ex.Message }); 
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new { message = ex.Message }); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi khi tạo và liên kết khảo sát với chương trình.", error = ex.Message });
+            }
         }
 
         [HttpPut("{id}")]

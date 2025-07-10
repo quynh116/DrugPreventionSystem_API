@@ -45,7 +45,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 CreatedAt = program.CreatedAt,
                 UpdatedAt = program.UpdatedAt,
                 MaxParticipants = program.MaxParticipants,
-                CurrentParticipantsCount = count
+                CurrentParticipantsCount = count,
+                SurveyId = program.SurveyId,
             };
         }
         public async Task<Result<CommunityProgramResponse>> AddCommunityProgram(CommunityProgramCreateRequest request)
