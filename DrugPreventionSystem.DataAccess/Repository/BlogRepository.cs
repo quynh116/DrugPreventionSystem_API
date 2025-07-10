@@ -28,12 +28,12 @@ namespace DrugPreventionSystem.DataAccess.Repository
 
         public async Task<IEnumerable<Blog>> GetAllAsync()
         {
-            return await _context.Blogs.Include(b => b.Category).ToListAsync();
+            return await _context.Blogs.Include(b => b.Category).Include(b => b.User).ToListAsync();
         }
 
         public async Task<Blog?> GetByIdAsync(Guid id)
         {
-            return await _context.Blogs.Include(b => b.Category).FirstOrDefaultAsync(b => b.Id == id);
+            return await _context.Blogs.Include(b => b.Category).Include(b => b.User).FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task UpdateAsync(Blog blog)

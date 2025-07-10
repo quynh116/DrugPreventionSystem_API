@@ -30,6 +30,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 Id = blog.Id,
                 UserId = blog.UserId,
+                Username = blog.User.Username,
                 Title = blog.Title,
                 Content = blog.Content,
                 Excerpt = blog.Excerpt,
@@ -49,7 +50,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             var newBlog = new Blog
             {
                 Id = Guid.NewGuid(),
-
+                UserId = request.UserId,
                 Title = request.Title,
                 Content = request.Content,
                 Excerpt = request.Excerpt,
@@ -62,8 +63,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 CreatedAt = DateTime.Now,
             };
 
-            var created = await _blogRepository.CreateAsync(newBlog);
-            return Result<BlogResponse>.Success(MapToResponse(created));
+            await _blogRepository.CreateAsync(newBlog);
+            var createdBlog = await _blogRepository.GetByIdAsync(newBlog.Id);
+            return Result<BlogResponse>.Success(MapToResponse(createdBlog));
         }
 
         public async Task<Result<IEnumerable<BlogResponse>>> GetAllAsync()
@@ -113,7 +115,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 blog.UpdatedAt = DateTime.Now;
 
                 await _blogRepository.UpdateAsync(blog);
-                return Result<BlogResponse>.Success(MapToResponse(blog));
+                var updatedBlog = await _blogRepository.GetByIdAsync(id);
+                return Result<BlogResponse>.Success(MapToResponse(updatedBlog));
             }
             catch (Exception ex)
             {
