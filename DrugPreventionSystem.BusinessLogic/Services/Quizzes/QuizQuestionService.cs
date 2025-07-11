@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes.QuizQuestion;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes;
 using DrugPreventionSystem.BusinessLogic.Token;
@@ -18,11 +19,13 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
     {
         private readonly IQuizQuestionRepository _quizQuestionRepository;
         private readonly ProvideToken _provideToken;
+        private readonly IQuizRepository _quizRepository;
 
-        public QuizQuestionService(IQuizQuestionRepository quizQuestionRepository, ProvideToken provideToken)
+        public QuizQuestionService(IQuizQuestionRepository quizQuestionRepository, ProvideToken provideToken, IQuizRepository quizRepository)
         {
             _quizQuestionRepository = quizQuestionRepository;
             _provideToken = provideToken;
+            _quizRepository = quizRepository;
         }
 
         private QuizQuestionResponse MapToResponse(QuizQuestion question)
@@ -45,6 +48,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
 
         public async Task<Result<QuizQuestionResponse>> CreateAsync(QuizQuestionCreateRequest request)
         {
+            var quiz = await _quizRepository.GetByIdAsync(request.QuizId);
+            if (quiz == null)
+            {
+                return Result<QuizQuestionResponse>.NotFound($"quiz with ID {request.QuizId} not found.");
+            }
             var newQuestion = new QuizQuestion()
             {
                 QuestionId = Guid.NewGuid(),
@@ -56,6 +64,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
             };
 
             var created = await _quizQuestionRepository.CreateAsync(newQuestion);
+            quiz.TotalQuestions = (quiz.TotalQuestions ?? 0) + 1;
+            await _quizRepository.UpdateAsync(quiz);
             return Result<QuizQuestionResponse>.Success(MapToResponse(created));
         }
 

@@ -14,5 +14,7 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<ProgramParticipant> CreateAsync(ProgramParticipant participant);
         Task UpdateAsync(ProgramParticipant participant);
         Task DeleteAsync(Guid id);
+        Task<int> CountByProgramIdAsync(Guid programId);
+        Task<ProgramParticipant?> GetByUserIdAndProgramIdAsync(Guid userId, Guid programId);
     }
 }

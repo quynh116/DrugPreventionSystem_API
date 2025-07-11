@@ -33,7 +33,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             };
         }
 
-        public async Task<Result<LessonResource>> AddNewLessonResourceAsync(LessonResourceRequest lessonResource)
+        public async Task<Result<LessonResourceResponse>> AddNewLessonResourceAsync(LessonResourceRequest lessonResource)
         {
             var newLessonResource = new LessonResource
             {
@@ -44,7 +44,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             };
 
             var added = await _lessonResourceRepository.AddNewLessonResource(newLessonResource);
-            return Result<LessonResource>.Success(added, "Added successfully");
+            return Result<LessonResourceResponse>.Success(MapToResponse(added), "Added successfully");
         }
 
         public async Task<Result<IEnumerable<LessonResourceResponse>>> GetAllLessonResourcesAsync()
@@ -67,17 +67,17 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<bool>.Success(true, "Deleted successfully");
         }
 
-        public async Task<Result<LessonResource>> UpdateLessonResourceAsync(Guid id, LessonResource lessonResource)
+        public async Task<Result<LessonResourceResponse>> UpdateLessonResourceAsync(Guid id, LessonResourceRequest lessonResource)
         {
             var existing = await _lessonResourceRepository.GetLessonResourceByIdAsync(id);
-            if (existing == null) return Result<LessonResource>.NotFound($"Not found LessonResource with id: {id}");
+            if (existing == null) return Result<LessonResourceResponse>.NotFound($"Not found LessonResource with id: {id}");
             // Update fields
             existing.LessonId = lessonResource.LessonId;
             existing.ResourceType = lessonResource.ResourceType;
             existing.ResourceUrl = lessonResource.ResourceUrl;
             existing.Description = lessonResource.Description;
             await _lessonResourceRepository.UpdateLessonResourceAsync(existing);
-            return Result<LessonResource>.Success(existing, "Updated successfully");
+            return Result<LessonResourceResponse>.Success(MapToResponse(existing), "Updated successfully");
         }
 
         public async Task<Result<IEnumerable<LessonResourceResponse>>> GetResourcesByLessonIdAsync(Guid lessonId)

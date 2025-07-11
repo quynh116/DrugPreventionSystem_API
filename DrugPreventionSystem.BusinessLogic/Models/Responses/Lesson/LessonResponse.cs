@@ -8,6 +8,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.Lesson
         public Guid LessonId { get; set; }
         public string Title { get; set; } = string.Empty;
         public int? DurationMinutes { get; set; }
+        public string? Content { get; set; }
         public int Sequence { get; set; }
         public bool HasQuiz { get; set; }
         public bool HasPractice { get; set; }

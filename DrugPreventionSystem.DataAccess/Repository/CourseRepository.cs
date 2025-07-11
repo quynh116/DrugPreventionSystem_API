@@ -64,5 +64,16 @@ namespace DrugPreventionSystem.DataAccess.Repository
             }
             return await query.ToListAsync();
         }
+
+        public async Task<Course?> GetCourseContentForEditAsync(Guid courseId)
+        {
+            return await _context.Courses
+         .Include(c => c.Instructor)
+         .Include(c => c.CourseWeeks.OrderBy(cw => cw.WeekNumber))
+             .ThenInclude(cw => cw.Lessons.OrderBy(l => l.Sequence))
+                 .ThenInclude(l => l.LessonResources)
+         
+         .FirstOrDefaultAsync(c => c.CourseId == courseId);
+        }
     }
 }

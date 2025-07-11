@@ -13,11 +13,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 {
     public interface ILessonService
     {
-        Task<Result<Lesson>> AddNewLessonAsync(LessonRequest lesson);
+        Task<Result<LessonResponse>> AddNewLessonAsync(LessonRequest lesson);
         Task<Result<IEnumerable<LessonResponse>>> GetAllLessonsAsync();
         Task<Result<LessonResponse>> GetLessonByIdAsync(Guid id);
         Task<Result<bool>> DeleteLessonByIdAsync(Guid id);
-        Task<Result<Lesson>> UpdateLessonAsync(Guid id, Lesson lesson);
+        Task<Result<LessonResponse>> UpdateLessonAsync(Guid id, LessonRequest lesson);
         Task<Result<LessonDetailResponse>> GetLessonDetailsForUserAsync(Guid lessonId, Guid userId);
         Task<Result<QuestionAndOptionResponse>> GetQuizQuestionsAndAnswersByLessonIdAsync(Guid lessonId);
 

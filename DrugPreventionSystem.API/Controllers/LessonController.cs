@@ -93,14 +93,14 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Result<Lesson>>> Create([FromBody] LessonRequest lesson)
+        public async Task<ActionResult<Result<LessonResponse>>> Create([FromBody] LessonRequest lesson)
         {
             var result = await _lessonService.AddNewLessonAsync(lesson);
             return HandleResult(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Result<Lesson>>> Update(Guid id, [FromBody] Lesson lesson)
+        public async Task<ActionResult<Result<LessonResponse>>> Update(Guid id, [FromBody] LessonRequest lesson)
         {
             var result = await _lessonService.UpdateLessonAsync(id, lesson);
             return HandleResult(result);

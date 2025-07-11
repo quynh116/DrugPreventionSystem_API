@@ -9,6 +9,8 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes;
 using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
+using DrugPreventionSystem.DataAccess.Repository;
+using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces.IQuizzes;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
@@ -17,11 +19,13 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
     {
         private readonly IQuizRepository _quizRepository;
         private readonly ProvideToken _provideToken;
+        private readonly ILessonRepository _lessonRepository;
 
-        public QuizService(IQuizRepository quizRepository, ProvideToken provideToken)
+        public QuizService(IQuizRepository quizRepository, ProvideToken provideToken, ILessonRepository lessonRepository)
         {
             _quizRepository = quizRepository;
             _provideToken = provideToken;
+            _lessonRepository = lessonRepository;
         }
 
         private QuizResponse MapToResponse(Quiz quiz)
@@ -50,7 +54,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
                 LessonId = request.LessonId,
                 Title = request.Title,
                 Description = request.Description,
-                TotalQuestions = request.TotalQuestions,
+                TotalQuestions = 0,
                 PassingScore = request.PassingScore,
                 CreatedAt = DateTime.Now
             };
@@ -102,7 +106,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
 
                 quiz.Title = request.Title;
                 quiz.Description = request.Description;
-                quiz.TotalQuestions = request.TotalQuestions;
                 quiz.PassingScore = request.PassingScore;
 
                 await _quizRepository.UpdateAsync(quiz);
@@ -130,6 +133,48 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Quizzes
             {
                 return Result<bool>.Error($"Error deleting quiz: {ex.Message}");
             }
+        }
+
+        public async Task<Result<QuizFullEditDto>> GetQuizByLessonIdForEditAsync(Guid lessonId)
+        {
+            var lesson = await _lessonRepository.GetLessonByIdAsync(lessonId);
+            if (lesson == null)
+            {
+                return Result<QuizFullEditDto>.NotFound($"Lesson with ID {lessonId} not found.");
+            }
+
+            var quiz = await _quizRepository.GetQuizWithQuestionsAndOptionsByLessonIdAsync(lessonId);
+            if (quiz == null)
+            {
+                return Result<QuizFullEditDto>.NotFound($"Quiz not found for lesson ID {lessonId}.");
+            }
+
+            // Map Quiz entity sang QuizFullEditDto
+            var response = new QuizFullEditDto
+            {
+                QuizId = quiz.QuizId,
+                LessonId = quiz.LessonId,
+                TitleLesson = lesson.Title,
+                Title = quiz.Title,
+                Description = quiz.Description,
+                PassingScore = quiz.PassingScore,
+                Questions = quiz.QuizQuestions.Select(qq => new QuizQuestionFullEditDto
+                {
+                    QuestionId = qq.QuestionId,
+                    QuizId = qq.QuizId,
+                    QuestionText = qq.QuestionText,
+                    QuestionType = qq.QuestionType,
+                    Sequence = qq.Sequence,
+                    Options = qq.QuizOptions.Select(qo => new QuizOptionDto
+                    {
+                        OptionId = qo.OptionId,
+                        QuestionId = qo.QuestionId,
+                        OptionText = qo.OptionText,
+                        IsCorrect = qo.IsCorrect
+                    }).ToList()
+                }).ToList()
+            };
+            return Result<QuizFullEditDto>.Success(response);
         }
     }
 

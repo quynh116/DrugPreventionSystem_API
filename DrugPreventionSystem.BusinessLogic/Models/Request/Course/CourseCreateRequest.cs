@@ -12,13 +12,8 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.Course
         public string? Description { get; set; }
         public string? AgeGroup { get; set; } // học sinh, sinh viên, phụ huynh, giáo viên, ...
         public bool IsActive { get; set; } = true;
-        public int? TotalDuration { get; set; } // Tổng thời lượng khóa học 
-        public int? LessonCount { get; set; }
-        public int? StudentCount { get; set; }
         public Guid InstructorId { get; set; }
         public string? ThumbnailUrl { get; set; }
         public string? Requirements { get; set; }
-        public bool CertificateAvailable { get; set; } = false;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
     }
 }

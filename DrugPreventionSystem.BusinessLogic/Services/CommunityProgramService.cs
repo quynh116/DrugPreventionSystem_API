@@ -16,18 +16,23 @@ namespace DrugPreventionSystem.BusinessLogic.Services
     public class CommunityProgramService : ICommunityProgramService
     {
         private readonly ICommunityProgramRepository _communityProgramRepository;
+        private readonly IProgramParticipantRepository _participantRepository;
 
-        public CommunityProgramService(ICommunityProgramRepository communityProgramRepository) 
+        public CommunityProgramService(ICommunityProgramRepository communityProgramRepository, IProgramParticipantRepository participantRepository) 
         {
             _communityProgramRepository = communityProgramRepository;
+            _participantRepository = participantRepository;
+
         }
 
-        public CommunityProgramResponse MapToResponse(CommunityProgram program)
+        public async Task<CommunityProgramResponse> MapToResponse(CommunityProgram program)
         {
             if(program == null)
             {
                 return null;
             }
+            var count = await _participantRepository.CountByProgramIdAsync(program.ProgramId);
+
             return new CommunityProgramResponse
             {
                 ProgramId = program.ProgramId,
@@ -38,7 +43,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 EndDate = program.EndDate,
                 Location = program.Location,
                 CreatedAt = program.CreatedAt,
-                UpdatedAt = program.UpdatedAt
+                UpdatedAt = program.UpdatedAt,
+                MaxParticipants = program.MaxParticipants,
+                CurrentParticipantsCount = count
             };
         }
         public async Task<Result<CommunityProgramResponse>> AddCommunityProgram(CommunityProgramCreateRequest request)
@@ -66,14 +73,16 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     StartDate = request.StartDate,
                     EndDate = request.EndDate,
                     Location = request.Location,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = DateTime.Now,
+                    MaxParticipants = request.MaxParticipants,
+                    SurveyId = request.SurveyId,
                 };
                 var addedProgram = await _communityProgramRepository.AddCommunityProgramAsync(communityProgram);
                 if (addedProgram == null)
                 {
                     return Result<CommunityProgramResponse>.Error("Failed to add community program.");
                 }
-                return Result<CommunityProgramResponse>.Success(MapToResponse(addedProgram), "Community program added successfully.");
+                return Result<CommunityProgramResponse>.Success(await MapToResponse(addedProgram), "Community program added successfully.");
             }
             catch(Exception ex)
             {
@@ -108,7 +117,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<IEnumerable<CommunityProgramResponse>>.NotFound("No community programs found.");
                 }
-                var programResponses = programs.Select(p => MapToResponse(p)).ToList();
+                var programResponses = new List<CommunityProgramResponse>();
+                foreach (var program in programs)
+                {
+                    var response = await MapToResponse(program);
+                    programResponses.Add(response);
+                }
                 return Result<IEnumerable<CommunityProgramResponse>>.Success(programResponses, "Community programs retrieved successfully.");
             }
             catch (Exception ex)
@@ -126,7 +140,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<CommunityProgramResponse>.NotFound("Community program not found.");
                 }
-                return Result<CommunityProgramResponse>.Success(MapToResponse(program), "Community program retrieved successfully.");
+                return Result<CommunityProgramResponse>.Success(await MapToResponse(program), "Community program retrieved successfully.");
             }
             catch (Exception ex)
             {
@@ -162,8 +176,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 existingProgram.EndDate = program.EndDate;
                 existingProgram.Location = program.Location;
                 existingProgram.UpdatedAt = DateTime.Now;
+                existingProgram.MaxParticipants = program.MaxParticipants;
                 var updatedProgram = await _communityProgramRepository.UpdateCommunityProgramAsync(existingProgram);
-                return Result<CommunityProgramResponse>.Success(MapToResponse(updatedProgram), "Community program updated successfully.");
+                return Result<CommunityProgramResponse>.Success(await MapToResponse(updatedProgram), "Community program updated successfully.");
             }
             catch (Exception ex)
             {

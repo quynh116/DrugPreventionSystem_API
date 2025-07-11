@@ -42,9 +42,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 ParticipantId = Guid.NewGuid(),
                 ProgramId = request.ProgramId,
                 UserId = request.UserId,
-                RegisteredAt = request.RegisteredAt,
-                Attended = request.Attended,
-                FeedbackSubmitted = request.FeedbackSubmitted
+                RegisteredAt = DateTime.Now,
+                Attended = false,
+                FeedbackSubmitted = false
             };
 
             var created = await _participantRepository.CreateAsync(newParticipant);

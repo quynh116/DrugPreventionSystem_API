@@ -16,7 +16,7 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request.CommunityProgram
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
         public string? Location { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? UpdatedAt { get; set; }
+        public int? MaxParticipants { get; set; }
+        public Guid? SurveyId { get; set; }
     }
 }

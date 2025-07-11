@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<IEnumerable<Course>> GetAllAsync();
         Task<Course?> GetByIdAsync(Guid id);
         Task<IEnumerable<Course>> GetAllActiveCoursesWithInstructorsAsync(string? ageGroup = null);
+        Task<Course?> GetCourseContentForEditAsync(Guid courseId);
     }
 }

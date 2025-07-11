@@ -93,6 +93,108 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.ToTable("appointments");
                 });
 
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.Blog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("CategoryId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("category_id");
+
+                    b.Property<string>("Content")
+                        .HasColumnType("text")
+                        .HasColumnName("content");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Excerpt")
+                        .HasColumnType("text")
+                        .HasColumnName("excerpt");
+
+                    b.Property<DateTime?>("PublishedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("published_at");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Tags")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("tags");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)")
+                        .HasColumnName("thumbnail_url");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("user_id");
+
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int")
+                        .HasColumnName("views_count");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("blogs");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.BlogCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("text")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("updated_at");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("blog_categories");
+                });
+
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.CommunityProgram", b =>
                 {
                     b.Property<Guid>("ProgramId")
@@ -105,7 +207,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnName("created_at");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
                     b.Property<DateTime>("EndDate")
@@ -117,9 +219,17 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("location");
 
+                    b.Property<int?>("MaxParticipants")
+                        .HasColumnType("int")
+                        .HasColumnName("max_participants");
+
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2")
                         .HasColumnName("start_date");
+
+                    b.Property<Guid?>("SurveyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("survey_id");
 
                     b.Property<string>("TargetAudience")
                         .HasMaxLength(255)
@@ -137,6 +247,8 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnName("updated_at");
 
                     b.HasKey("ProgramId");
+
+                    b.HasIndex("SurveyId");
 
                     b.ToTable("community_programs");
                 });
@@ -564,6 +676,146 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.ToTable("program_participants");
                 });
 
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurvey", b =>
+                {
+                    b.Property<Guid>("SurveyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("survey_id");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("description");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("title");
+
+                    b.HasKey("SurveyId");
+
+                    b.ToTable("program_surveys");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyAnswer", b =>
+                {
+                    b.Property<Guid>("AnswerId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("answer_id");
+
+                    b.Property<string>("AnswerText")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("answer_text");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("question_id");
+
+                    b.Property<Guid>("ResponseId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("response_id");
+
+                    b.Property<Guid?>("SelectedOptionId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("selected_option_id");
+
+                    b.HasKey("AnswerId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.HasIndex("ResponseId");
+
+                    b.HasIndex("SelectedOptionId");
+
+                    b.ToTable("program_survey_answers");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyAnswerOption", b =>
+                {
+                    b.Property<Guid>("OptionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("option_id");
+
+                    b.Property<string>("OptionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("option_text");
+
+                    b.Property<Guid>("QuestionId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("question_id");
+
+                    b.HasKey("OptionId");
+
+                    b.HasIndex("QuestionId");
+
+                    b.ToTable("program_survey_answer_options");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyQuestion", b =>
+                {
+                    b.Property<Guid>("QuestionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("question_id");
+
+                    b.Property<string>("QuestionText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("question_text");
+
+                    b.Property<string>("QuestionType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("question_type");
+
+                    b.Property<Guid>("SurveyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("survey_id");
+
+                    b.HasKey("QuestionId");
+
+                    b.HasIndex("SurveyId");
+
+                    b.ToTable("program_survey_questions");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyResponse", b =>
+                {
+                    b.Property<Guid>("ResponseId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("response_id");
+
+                    b.Property<Guid>("ProgramId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("program_id");
+
+                    b.Property<DateTime>("SubmittedAt")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("submitted_at");
+
+                    b.Property<Guid>("SurveyId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("survey_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("user_id");
+
+                    b.HasKey("ResponseId");
+
+                    b.HasIndex("ProgramId");
+
+                    b.HasIndex("SurveyId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("program_survey_responses");
+                });
+
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.Quiz", b =>
                 {
                     b.Property<Guid>("QuizId")
@@ -712,7 +964,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 1,
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 237, DateTimeKind.Local).AddTicks(2815),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3788),
                             Description = "System Administrator",
                             IsActive = true,
                             RoleName = "Admin"
@@ -720,7 +972,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 2,
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 237, DateTimeKind.Local).AddTicks(2833),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3805),
                             Description = "System Manager",
                             IsActive = true,
                             RoleName = "Manager"
@@ -728,7 +980,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 3,
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 237, DateTimeKind.Local).AddTicks(2834),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3807),
                             Description = "Staff Member",
                             IsActive = true,
                             RoleName = "Staff"
@@ -736,7 +988,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 4,
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 237, DateTimeKind.Local).AddTicks(2834),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3808),
                             Description = "Professional Consultant",
                             IsActive = true,
                             RoleName = "Consultant"
@@ -744,7 +996,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 5,
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 237, DateTimeKind.Local).AddTicks(2835),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3809),
                             Description = "Registered Member",
                             IsActive = true,
                             RoleName = "Member"
@@ -1018,45 +1270,45 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("89fdb205-8e45-44c3-970e-80b1726eedf0"),
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 424, DateTimeKind.Local).AddTicks(8182),
+                            UserId = new Guid("2bd597dd-87da-46d1-afd6-fb9f0d3f164b"),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8730),
                             Email = "admin@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$q4dsqqEp2OgFtMunWpt6B.wIVTt8MBWvCaTU8CSjBO91Tmwug0H6e",
+                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
                             RoleId = 1,
                             Username = "admin_user"
                         },
                         new
                         {
-                            UserId = new Guid("de00b292-5014-442f-85c2-73bef7c991ad"),
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 424, DateTimeKind.Local).AddTicks(8194),
+                            UserId = new Guid("ee824d09-2c82-48f1-b491-bf38a9ac97a3"),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8745),
                             Email = "manager@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$q4dsqqEp2OgFtMunWpt6B.wIVTt8MBWvCaTU8CSjBO91Tmwug0H6e",
+                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
                             RoleId = 2,
                             Username = "manager_user"
                         },
                         new
                         {
-                            UserId = new Guid("74efb02d-98e9-439b-a4af-4a4c0318db20"),
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 424, DateTimeKind.Local).AddTicks(8201),
+                            UserId = new Guid("951ebd31-e6da-49e7-b576-8b7b23c19c3a"),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8751),
                             Email = "staff@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$q4dsqqEp2OgFtMunWpt6B.wIVTt8MBWvCaTU8CSjBO91Tmwug0H6e",
+                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
                             RoleId = 3,
                             Username = "staff_user"
                         },
                         new
                         {
-                            UserId = new Guid("f6ed0576-ab74-4fca-bb8d-2af1816d6821"),
-                            CreatedAt = new DateTime(2025, 6, 30, 23, 15, 41, 424, DateTimeKind.Local).AddTicks(8363),
+                            UserId = new Guid("121d18c7-a22c-463f-a212-6ab4a9118dc6"),
+                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8756),
                             Email = "consultant@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$q4dsqqEp2OgFtMunWpt6B.wIVTt8MBWvCaTU8CSjBO91Tmwug0H6e",
+                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
                             RoleId = 4,
                             Username = "consultant_user"
                         });
@@ -1445,6 +1697,34 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.Blog", b =>
+                {
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.BlogCategory", "Category")
+                        .WithMany("Blogs")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.User", "User")
+                        .WithMany("Blogs")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.CommunityProgram", b =>
+                {
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurvey", "ProgramSurvey")
+                        .WithMany("Programs")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("ProgramSurvey");
+                });
+
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.Consultant", b =>
                 {
                     b.HasOne("DrugPreventionSystem.DataAccess.Models.User", "User")
@@ -1564,6 +1844,81 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .IsRequired();
 
                     b.Navigation("CommunityProgram");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyAnswer", b =>
+                {
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurveyQuestion", "ProgramSurveyQuestion")
+                        .WithMany()
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurveyResponse", "ProgramSurveyResponse")
+                        .WithMany("Answers")
+                        .HasForeignKey("ResponseId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurveyAnswerOption", "ProgramSurveyAnswerOption")
+                        .WithMany()
+                        .HasForeignKey("SelectedOptionId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("ProgramSurveyAnswerOption");
+
+                    b.Navigation("ProgramSurveyQuestion");
+
+                    b.Navigation("ProgramSurveyResponse");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyAnswerOption", b =>
+                {
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurveyQuestion", "ProgramSurveyQuestion")
+                        .WithMany("AnswerOptions")
+                        .HasForeignKey("QuestionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProgramSurveyQuestion");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyQuestion", b =>
+                {
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurvey", "ProgramSurvey")
+                        .WithMany("Questions")
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProgramSurvey");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyResponse", b =>
+                {
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.CommunityProgram", "CommunityProgram")
+                        .WithMany()
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.ProgramSurvey", "ProgramSurvey")
+                        .WithMany()
+                        .HasForeignKey("SurveyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("DrugPreventionSystem.DataAccess.Models.User", "User")
+                        .WithMany("ProgramSurveyResponses")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CommunityProgram");
+
+                    b.Navigation("ProgramSurvey");
 
                     b.Navigation("User");
                 });
@@ -1822,6 +2177,11 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.BlogCategory", b =>
+                {
+                    b.Navigation("Blogs");
+                });
+
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.CommunityProgram", b =>
                 {
                     b.Navigation("ProgramFeedbacks");
@@ -1870,6 +2230,23 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.Navigation("UserLessonProgresses");
 
                     b.Navigation("UserModuleQuizResults");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurvey", b =>
+                {
+                    b.Navigation("Programs");
+
+                    b.Navigation("Questions");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyQuestion", b =>
+                {
+                    b.Navigation("AnswerOptions");
+                });
+
+            modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.ProgramSurveyResponse", b =>
+                {
+                    b.Navigation("Answers");
                 });
 
             modelBuilder.Entity("DrugPreventionSystem.DataAccess.Models.Quiz", b =>
@@ -1924,6 +2301,8 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                 {
                     b.Navigation("Appointments");
 
+                    b.Navigation("Blogs");
+
                     b.Navigation("Consultant");
 
                     b.Navigation("CourseCertificates");
@@ -1931,6 +2310,8 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.Navigation("ProgramFeedbacks");
 
                     b.Navigation("ProgramParticipants");
+
+                    b.Navigation("ProgramSurveyResponses");
 
                     b.Navigation("UserCourseEnrollments");
 

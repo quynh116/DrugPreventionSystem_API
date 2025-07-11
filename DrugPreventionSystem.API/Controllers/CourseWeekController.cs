@@ -36,14 +36,14 @@ namespace DrugPreventionSystem.API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<Result<CourseWeek>>> Create([FromBody] CourseWeekRequest courseWeek)
+        public async Task<ActionResult<Result<CourseWeekResponse>>> Create([FromBody] CourseWeekRequest courseWeek)
         {
             var result = await _courseWeekService.AddNewCourseWeekAsync(courseWeek);
             return HandleResult(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<Result<CourseWeek>>> Update(Guid id, [FromBody] CourseWeek courseWeek)
+        public async Task<ActionResult<Result<CourseWeekResponse>>> Update(Guid id, [FromBody] CourseWeekRequest courseWeek)
         {
             var result = await _courseWeekService.UpdateCourseWeekAsync(id, courseWeek);
             return HandleResult(result);

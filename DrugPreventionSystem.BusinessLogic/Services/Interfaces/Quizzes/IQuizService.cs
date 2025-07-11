@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DrugPreventionSystem.BusinessLogic.Commons;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes.Quiz;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
+using DrugPreventionSystem.DataAccess.Models;
 
 namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes
 {
@@ -16,6 +17,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes
         Task<Result<QuizResponse>> GetByIdAsync(Guid id);
         Task<Result<QuizResponse>> UpdateAsync(QuizUpdateRequest request, Guid id);
         Task<Result<bool>> DeleteAsync(Guid id);
+        Task<Result<QuizFullEditDto>> GetQuizByLessonIdForEditAsync(Guid lessonId);
     }
 
 }

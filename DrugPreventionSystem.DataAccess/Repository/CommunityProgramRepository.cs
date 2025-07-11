@@ -47,6 +47,17 @@ namespace DrugPreventionSystem.DataAccess.Repository
             return await _context.CommunityPrograms.FirstOrDefaultAsync(cp => cp.ProgramId == id);
         }
 
+        public async Task<CommunityProgram?> GetProgramDetailsByIdAsync(Guid id)
+        {
+            return await _context.CommunityPrograms
+                .Include(cp => cp.ProgramParticipants) 
+                .Include(cp => cp.ProgramFeedbacks)    
+                .Include(cp => cp.ProgramSurvey)       
+                    .ThenInclude(ps => ps.Questions)   
+                        .ThenInclude(psq => psq.AnswerOptions) 
+                .FirstOrDefaultAsync(cp => cp.ProgramId == id);
+        }
+
         public async Task<CommunityProgram> UpdateCommunityProgramAsync(CommunityProgram program)
         {
             _context.Update(program);

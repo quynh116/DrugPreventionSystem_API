@@ -108,6 +108,13 @@ namespace DrugPreventionSystem.API.Controllers
 
         }
 
+        [HttpGet("{courseId}/manager-content")] 
+        public async Task<ActionResult<Result<CourseContentForEditResponse>>> GetCourseContentForAdmin(Guid courseId)
+        {
+            var result = await _courseService.GetCourseContentForEditAsync(courseId);
+            return HandleResult(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<CourseResponse>>> UpdateAsync(Guid id, [FromBody] CourseUpdateRequest request)
         {

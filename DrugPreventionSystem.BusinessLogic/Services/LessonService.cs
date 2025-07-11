@@ -14,6 +14,8 @@ using DrugPreventionSystem.DataAccess.Repository.Quizzes;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.Quiz;
 using DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes;
 using Microsoft.EntityFrameworkCore;
+using Azure.Core;
+using DrugPreventionSystem.BusinessLogic.Models.Responses.UserCourseEnrollment;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -23,12 +25,14 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         private readonly IQuizRepository _quizRepository;
         private readonly IUserModuleQuizResultRepository _userModuleQuizResultRepository;
         private readonly IUserQuizAnswerRepository _userQuizAnswerRepository;
+        private readonly ICourseRepository _courseRepository;
+        private readonly ICourseWeekRepository _courseWeekRepository;
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
         private readonly IUserCourseEnrollmentRepository _userCourseEnrollmentRepository;
 
         public LessonService(ILessonRepository lessonRepository, IUserLessonProgressRepository userLessonProgressRepository,
         IUserCourseEnrollmentRepository userCourseEnrollmentRepository, IQuizRepository quizRepository, IUserModuleQuizResultRepository userModuleQuizResultRepository, 
-                             IUserQuizAnswerRepository userQuizAnswerRepository)
+                             IUserQuizAnswerRepository userQuizAnswerRepository,ICourseRepository courseRepository, ICourseWeekRepository courseWeekRepository)
         {
             _userLessonProgressRepository = userLessonProgressRepository;
             _userCourseEnrollmentRepository = userCourseEnrollmentRepository;
@@ -36,23 +40,44 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             _quizRepository = quizRepository;
             _userModuleQuizResultRepository = userModuleQuizResultRepository; 
             _userQuizAnswerRepository = userQuizAnswerRepository;
+            _courseRepository = courseRepository;
+            _courseWeekRepository = courseWeekRepository;
         }
 
-        public async Task<Result<Lesson>> AddNewLessonAsync(LessonRequest lesson)
+        public async Task<Result<LessonResponse>> AddNewLessonAsync(LessonRequest lesson)
         {
+            var courseWeek = await _courseWeekRepository.GetCourseWeekByIdAsync(lesson.WeekId); 
+            if (courseWeek == null)
+            {
+                return Result<LessonResponse>.NotFound($"Course Week with ID {lesson.WeekId} not found.");
+            }
             var newLesson = new Lesson()
             {
+                LessonId = Guid.NewGuid(),
                 WeekId = lesson.WeekId,
                 Title = lesson.Title,
+                Content = lesson.Content,
                 DurationMinutes = lesson.DurationMinutes,
                 Sequence = lesson.Sequence,
                 HasQuiz = lesson.HasQuiz,
                 HasPractice = lesson.HasPractice,
-                CreatedAt = lesson.CreatedAt,
+                CreatedAt = DateTime.Now,
             };
 
             var added = await _lessonRepository.AddNewLesson(newLesson);
-            return Result<Lesson>.Success(added, "Added successfully");
+            var course = await _courseRepository.GetByIdAsync(courseWeek.CourseId);
+            if (course != null)
+            {
+                course.LessonCount = (course.LessonCount ?? 0) + 1;
+                await _courseRepository.UpdateAsync(course);
+            }
+            else
+            {
+                
+                 return Result<LessonResponse>.Error("Associated Course not found after adding lesson.");
+            }
+
+            return Result<LessonResponse>.Success(MapLessonToResponse(added), "Added successfully");
         }
 
         public async Task<Result<IEnumerable<LessonResponse>>> GetAllLessonsAsync()
@@ -79,19 +104,20 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             return Result<bool>.Success(true, "Deleted successfully");
         }
 
-        public async Task<Result<Lesson>> UpdateLessonAsync(Guid id, Lesson lesson)
+        public async Task<Result<LessonResponse>> UpdateLessonAsync(Guid id, LessonRequest lesson)
         {
             var existing = await _lessonRepository.GetLessonByIdAsync(id);
-            if (existing == null) return Result<Lesson>.NotFound($"Not found Lesson with id: {id}");
+            if (existing == null) return Result<LessonResponse>.NotFound($"Not found Lesson with id: {id}");
             // Update fields
             existing.Title = lesson.Title;
             existing.WeekId = lesson.WeekId;
+            existing.Content = lesson.Content;
             existing.DurationMinutes = lesson.DurationMinutes;
             existing.Sequence = lesson.Sequence;
             existing.HasQuiz = lesson.HasQuiz;
             existing.HasPractice = lesson.HasPractice;
             await _lessonRepository.UpdateLessonAsync(existing);
-            return Result<Lesson>.Success(existing, "Updated successfully");
+            return Result<LessonResponse>.Success(MapLessonToResponse(existing), "Updated successfully");
         }
 
         private LessonResponse MapLessonToResponse(Lesson l)
@@ -100,6 +126,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 LessonId = l.LessonId,
                 Title = l.Title,
+                Content = l.Content,
                 DurationMinutes = l.DurationMinutes,
                 Sequence = l.Sequence,
                 HasQuiz = l.HasQuiz,

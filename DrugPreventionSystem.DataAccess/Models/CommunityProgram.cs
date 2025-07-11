@@ -20,7 +20,7 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("title")]
         public string Title { get; set; } = string.Empty; 
 
-        [Column("description", TypeName = "text")]
+        [Column("description", TypeName = "nvarchar(max)")]
         public string? Description { get; set; } 
 
         [MaxLength(255)]
@@ -31,7 +31,10 @@ namespace DrugPreventionSystem.DataAccess.Models
         public DateTime StartDate { get; set; } 
 
         [Column("end_date")]
-        public DateTime EndDate { get; set; } 
+        public DateTime EndDate { get; set; }
+
+        [Column("max_participants")]
+        public int? MaxParticipants { get; set; }
 
         [MaxLength(255)]
         [Column("location")]
@@ -42,6 +45,11 @@ namespace DrugPreventionSystem.DataAccess.Models
 
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
+
+        [ForeignKey("ProgramSurvey")]
+        [Column("survey_id")]
+        public Guid? SurveyId { get; set; }
+        public virtual ProgramSurvey? ProgramSurvey { get; set; }
 
         // Navigation properties
         public virtual ICollection<ProgramParticipant> ProgramParticipants { get; set; } = new List<ProgramParticipant>();
