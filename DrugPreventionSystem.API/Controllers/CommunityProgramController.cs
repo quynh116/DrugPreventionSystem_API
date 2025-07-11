@@ -116,5 +116,97 @@ namespace DrugPreventionSystem.API.Controllers
                 return StatusCode(500, new { message = "An unexpected error occurred." });
             }
         }
+
+        [HttpGet("{programId}/survey")]
+        public async Task<IActionResult> GetProgramSurvey(Guid programId)
+        {
+            try
+            {
+                var survey = await _programService.GetProgramSurveyAsync(programId);
+                if (survey == null)
+                {
+                    return NotFound(new { message = $"No survey found for program {programId} or program does not exist." });
+                }
+                return Ok(survey);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving the survey.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("{programId}/survey/completion-status")]
+        public async Task<IActionResult> GetProgramSurveyStatus(Guid programId, [FromQuery] Guid userId)
+        {
+            try
+            {
+                
+
+                var hasSubmitted = await _programService.HasUserSubmittedProgramSurveyAsync(userId, programId);
+                return Ok(new { hasSubmitted = hasSubmitted }); 
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { message = ex.Message }); 
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while checking survey status.", error = ex.Message });
+            }
+        }
+
+        [HttpPost("{programId}/submit-survey")]
+        public async Task<IActionResult> SubmitProgramSurvey(Guid programId, Guid userId, SubmitProgramSurveyDto surveyDto)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                var response = await _programService.SubmitProgramSurveyAsync(userId, programId, surveyDto);
+                return Ok(response);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return StatusCode(403, new { message = ex.Message }); // Forbidden / Business rule violation
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while submitting the survey.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("{programId}/my-survey-response")]
+        public async Task<IActionResult> GetMySurveyResponse(Guid programId, Guid userId)
+        {
+            try
+            {
+                
+                var response = await _programService.GetUserProgramSurveyResponseAsync(userId, programId);
+                if (response == null)
+                {
+                    return NotFound(new { message = $"No survey response found for program {programId} from this user." });
+                }
+                return Ok(response);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving survey response.", error = ex.Message });
+            }
+        }
     }
 }

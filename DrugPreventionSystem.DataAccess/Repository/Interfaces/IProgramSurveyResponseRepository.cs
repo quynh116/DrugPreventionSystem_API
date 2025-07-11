@@ -14,5 +14,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task AddAsync(ProgramSurveyResponse response);
         Task UpdateAsync(ProgramSurveyResponse response);
         Task DeleteAsync(Guid responseId);
+        Task<ProgramSurveyResponse?> GetByUserIdProgramIdAndSurveyIdWithAnswersAsync(Guid userId, Guid programId, Guid surveyId);
     }
 }

@@ -14,5 +14,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task AddAsync(ProgramSurvey survey);
         Task UpdateAsync(ProgramSurvey survey);
         Task DeleteAsync(Guid surveyId);
+        Task<ProgramSurvey?> GetSurveyWithDetailsAsync(Guid surveyId);
     }
 }

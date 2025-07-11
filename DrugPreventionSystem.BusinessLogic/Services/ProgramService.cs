@@ -11,6 +11,9 @@ using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.CommunityProgram;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.ProgramFeedback;
+using DrugPreventionSystem.DataAccess.Repository;
+using DrugPreventionSystem.BusinessLogic.Models.Request.CommunityProgram;
+using Microsoft.EntityFrameworkCore;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -20,18 +23,69 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         private readonly IProgramParticipantRepository _participantRepository;
         private readonly IProgramFeedbackRepository _feedbackRepository;
         private readonly IUserRepository _userRepository;
+        private readonly IProgramSurveyRepository _surveyRepository;
+        private readonly IProgramSurveyResponseRepository _surveyResponseRepository;
+        private readonly IProgramSurveyQuestionRepository _surveyQuestionRepository;
+        private readonly IProgramSurveyAnswerRepository _surveyAnswerRepository;
+        private readonly IProgramSurveyAnswerOptionRepository _surveyAnswerOptionRepository;
 
         public ProgramService(
             ICommunityProgramRepository programRepository,
             IProgramParticipantRepository participantRepository,
             IProgramFeedbackRepository feedbackRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            IProgramSurveyRepository surveyRepository,
+            IProgramSurveyResponseRepository surveyResponseRepository,
+            IProgramSurveyQuestionRepository surveyQuestionRepository,
+            IProgramSurveyAnswerRepository surveyAnswerRepository,
+            IProgramSurveyAnswerOptionRepository surveyAnswerOptionRepository)
         {
             _programRepository = programRepository;
             _participantRepository = participantRepository;
             _feedbackRepository = feedbackRepository;
             _userRepository = userRepository;
+            _surveyRepository = surveyRepository;
+            _surveyResponseRepository = surveyResponseRepository;
+            _surveyQuestionRepository = surveyQuestionRepository;
+            _surveyAnswerRepository = surveyAnswerRepository;
+            _surveyAnswerOptionRepository = surveyAnswerOptionRepository;
         }
+
+        private async Task<ProgramSurveyResponseDto> MapSurveyResponseToDto(ProgramSurveyResponse response)
+        {
+            var dto = new ProgramSurveyResponseDto
+            {
+                ResponseId = response.ResponseId,
+                SubmittedAt = response.SubmittedAt,
+                Answers = new List<ProgramSurveyAnswerDto1>()
+            };
+
+            foreach (var answer in response.Answers)
+            {
+                var question = await _surveyQuestionRepository.GetByIdAsync(answer.QuestionId);
+                string? optionText = null;
+
+                if (answer.SelectedOptionId.HasValue)
+                {
+                    var option = await _surveyAnswerOptionRepository.GetByIdAsync(answer.SelectedOptionId.Value);
+                    optionText = option?.OptionText;
+                }
+
+                dto.Answers.Add(new ProgramSurveyAnswerDto1
+                {
+                    QuestionId = question.QuestionId,
+                    QuestionText = question.QuestionText,
+                    QuestionType = question.QuestionType,
+                    AnswerText = answer.AnswerText,
+                    SelectedOptionId = answer.SelectedOptionId,
+                    SelectedOptionText = optionText
+                });
+            }
+
+            return dto;
+        }
+
+
 
         // 1. Đăng ký tham gia chương trình
         public async Task<ProgramParticipantResponse> RegisterForProgramAsync(ProgramParticipantCreateRequest request)
@@ -184,5 +238,173 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             await _participantRepository.DeleteAsync(participant.ParticipantId);
             return true;
         }
+
+        public async Task<ProgramSurveyWithUserResponseDto?> GetProgramSurveyAsync(Guid programId)
+        {
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId);
+            if (program == null)
+            {
+                throw new ArgumentException("Program not found.");
+            }
+
+            if (!program.SurveyId.HasValue || program.ProgramSurvey == null)
+            {
+                return null; 
+            }
+
+            var survey = program.ProgramSurvey; 
+
+            var resultDto = new ProgramSurveyWithUserResponseDto
+            {
+                SurveyId = survey.SurveyId,
+                Title = survey.Title,
+                Description = survey.Description,
+                Questions = survey.Questions.Select(q => new ProgramSurveyQuestionDto
+                {
+                    QuestionId = q.QuestionId,
+                    QuestionText = q.QuestionText,
+                    QuestionType = q.QuestionType,
+                    AnswerOptions = q.AnswerOptions.Select(ao => new ProgramSurveyAnswerOptionDto
+                    {
+                        OptionId = ao.OptionId,
+                        OptionText = ao.OptionText
+                    }).ToList()
+                }).ToList()
+            };
+
+            
+            
+
+
+            return resultDto;
+        }
+
+        public async Task<bool> CanUserTakeSurveyAsync(Guid userId, Guid programId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null) return false;
+
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId); 
+            if (program == null || !program.SurveyId.HasValue)
+            {
+                return false; 
+            }
+
+            // Người dùng phải là người tham gia chương trình
+            var participant = await GetUserProgramParticipationStatusAsync(userId, programId);
+            if (participant == null)
+            {
+                return false; 
+            }
+
+            // Chương trình phải kết thúc
+            if (DateTime.Now <= program.EndDate)
+            {
+                return false; 
+            }
+
+            
+
+            return true;
+
+        }
+
+        public async Task<ProgramSurveyResponseDto> SubmitProgramSurveyAsync(Guid userId, Guid programId, SubmitProgramSurveyDto surveyDto)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId)
+                ?? throw new ArgumentException("User not found.");
+
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId)
+                ?? throw new ArgumentException("Program not found.");
+
+            if (!program.SurveyId.HasValue)
+                throw new InvalidOperationException("This program does not have a survey.");
+
+            var canTakeSurvey = await CanUserTakeSurveyAsync(userId, programId);
+            if (!canTakeSurvey)
+                throw new InvalidOperationException("Cannot submit survey. Either the program has not ended, you are not registered, or you have already submitted the survey.");
+
+            var survey = await _surveyRepository.GetByIdAsync(program.SurveyId.Value)
+                ?? throw new InvalidOperationException("Associated survey not found.");
+
+            var surveyResponse = new ProgramSurveyResponse
+            {
+                ResponseId = Guid.NewGuid(),
+                SurveyId = survey.SurveyId,
+                ProgramId = programId,
+                UserId = userId,
+                SubmittedAt = DateTime.Now,
+                Answers = new List<ProgramSurveyAnswer>()
+            };
+
+            foreach (var answerDto in surveyDto.Answers)
+            {
+                var question = await _surveyQuestionRepository.GetByIdAsync(answerDto.QuestionId);
+                if (question == null || question.SurveyId != survey.SurveyId)
+                    throw new ArgumentException($"Question {answerDto.QuestionId} not found or does not belong to this survey.");
+
+                var answer = new ProgramSurveyAnswer
+                {
+                    AnswerId = Guid.NewGuid(),
+                    ResponseId = surveyResponse.ResponseId,
+                    QuestionId = answerDto.QuestionId,
+                    AnswerText = answerDto.AnswerText,
+                    SelectedOptionId = answerDto.SelectedOptionId
+                };
+
+                surveyResponse.Answers.Add(answer);
+            }
+
+            await _surveyResponseRepository.AddAsync(surveyResponse);
+
+            return await MapSurveyResponseToDto(surveyResponse);
+        }
+
+
+        public async Task<ProgramSurveyResponseDto?> GetUserProgramSurveyResponseAsync(Guid userId, Guid programId)
+        {
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId);
+            if (program == null || !program.SurveyId.HasValue)
+                return null;
+
+            var response = await _surveyResponseRepository
+                .GetByUserIdProgramIdAndSurveyIdWithAnswersAsync(userId, programId, program.SurveyId.Value);
+
+            if (response == null) return null;
+
+            return await MapSurveyResponseToDto(response);
+        }
+
+
+        public async Task<ProgramParticipant?> GetUserProgramParticipationStatusAsync(Guid userId, Guid programId)
+        {
+            return await _participantRepository.GetByUserIdAndProgramIdAsync(userId, programId);
+        }
+
+        public async Task<bool> HasUserSubmittedProgramSurveyAsync(Guid userId, Guid programId)
+        {
+            var user = await _userRepository.GetUserByIdAsync(userId);
+            if (user == null)
+            {
+                throw new ArgumentException("User not found.");
+            }
+
+            var program = await _programRepository.GetProgramDetailsByIdAsync(programId);
+            if (program == null)
+            {
+                throw new ArgumentException("Program not found.");
+            }
+
+            if (!program.SurveyId.HasValue || program.ProgramSurvey == null)
+            {
+                
+                return false;
+            }
+
+            
+            var userResponse = await GetUserProgramSurveyResponseAsync(userId, programId);
+
+            return userResponse != null;
+        }
     }
-} 
+}
