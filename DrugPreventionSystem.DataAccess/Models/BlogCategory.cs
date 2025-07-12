@@ -20,7 +20,7 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("name")]
         public string Name { get; set; } = string.Empty;
 
-        [Column("description", TypeName = "text")]
+        [Column("description", TypeName = "nvarchar(max)")]
         public string? Description { get; set; }
 
         [Column("created_at")]

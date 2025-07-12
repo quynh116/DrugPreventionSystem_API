@@ -23,10 +23,10 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("title")]
         public string Title { get; set; } = string.Empty;
 
-        [Column("content", TypeName = "text")]
+        [Column("content", TypeName = "nvarchar(max)")]
         public string? Content { get; set; }
 
-        [Column("excerpt", TypeName = "text")]
+        [Column("excerpt", TypeName = "nvarchar(max)")]
         public string? Excerpt { get; set; }
 
         [MaxLength(1000)]
