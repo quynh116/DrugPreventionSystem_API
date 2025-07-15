@@ -14,6 +14,8 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.ProgramFeedback;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.BusinessLogic.Models.Request.CommunityProgram;
 using Microsoft.EntityFrameworkCore;
+using SkiaSharp;
+using DrugPreventionSystem.DataAccess.Repository.Participants;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -96,7 +98,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             var program = await _programRepository.GetProgramByIdAsync(request.ProgramId);
             if (program == null) throw new ArgumentException("Program not found.");
 
-            // Kiểm tra số lượng người tham gia tối đa
             if (program.MaxParticipants.HasValue)
             {
                 var currentParticipantsCount = await _participantRepository.CountByProgramIdAsync(request.ProgramId);
@@ -320,6 +321,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             if (!program.SurveyId.HasValue)
                 throw new InvalidOperationException("This program does not have a survey.");
 
+            var participant = await _participantRepository.GetByUserIdAndProgramIdAsync(userId, programId);
+            if (participant == null)
+                throw new InvalidOperationException("User is not registered for this program.");
+
             var canTakeSurvey = await CanUserTakeSurveyAsync(userId, programId);
             if (!canTakeSurvey)
                 throw new InvalidOperationException("Cannot submit survey. Either the program has not ended, you are not registered, or you have already submitted the survey.");
@@ -356,7 +361,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
 
             await _surveyResponseRepository.AddAsync(surveyResponse);
-
+            participant.Attended = true; 
+            participant.FeedbackSubmitted = true; 
+            await _participantRepository.UpdateAsync(participant);
             return await MapSurveyResponseToDto(surveyResponse);
         }
 
@@ -405,6 +412,66 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             var userResponse = await GetUserProgramSurveyResponseAsync(userId, programId);
 
             return userResponse != null;
+        }
+
+        public async Task<ProgramDetailDto> GetProgramDetailsWithParticipantStatusAsync(Guid programId)
+        {
+            var program = await _programRepository.GetProgramWithParticipantsAndSurveyAsync(programId);
+
+            if (program == null)
+            {
+                throw new ArgumentException($"Program with ID '{programId}' not found.");
+            }
+
+            var participantsStatus = new List<ParticipantStatusDto>();
+
+            // Lấy tất cả SurveyResponses cho khảo sát của chương trình này (nếu có khảo sát)
+            var submittedSurveyResponses = new List<ProgramSurveyResponse>();
+            if (program.SurveyId.HasValue)
+            {
+                submittedSurveyResponses = await _surveyResponseRepository.GetBySurveyIdAsync(program.SurveyId.Value);
+            }
+
+            // Duyệt qua từng người tham gia chương trình để lấy thông tin và trạng thái khảo sát
+            foreach (var participant in program.ProgramParticipants)
+            {
+                // Kiểm tra xem người dùng đã nộp khảo sát chưa
+                bool hasSubmittedSurvey = false;
+                if (program.SurveyId.HasValue)
+                {
+                    hasSubmittedSurvey = submittedSurveyResponses.Any(
+                        psr => psr.UserId == participant.UserId && psr.SurveyId == program.SurveyId.Value
+                    );
+                }
+
+                string userName = participant.User?.Username ?? "N/A";
+
+                participantsStatus.Add(new ParticipantStatusDto
+                {
+                    UserId = participant.UserId,
+                    UserName = userName,
+                    EnrollmentDate = participant.RegisteredAt,
+                    HasSubmittedSurvey = hasSubmittedSurvey
+                });
+            }
+
+            // Trả về DTO chi tiết chương trình
+            return new ProgramDetailDto
+            {
+                ProgramId = program.ProgramId,
+                Title = program.Title,
+                Description = program.Description,
+                TargetAudience = program.TargetAudience,
+                StartDate = program.StartDate,
+                EndDate = program.EndDate,
+                Location = program.Location,
+                MaxParticipants = program.MaxParticipants,
+                CreatedAt = program.CreatedAt,
+                UpdatedAt = program.UpdatedAt,
+                SurveyId = program.SurveyId,
+                CurrentParticipantsCount = program.ProgramParticipants.Count,
+                Participants = participantsStatus.OrderBy(p => p.UserName).ToList()
+            };
         }
     }
 }

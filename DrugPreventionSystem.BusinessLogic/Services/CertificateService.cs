@@ -104,9 +104,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             DrawCenteredText(canvas, data.CompletionDate.ToString("dd/MM/yyyy"), detailPaint, leftColumnCenterX, detailStartY);
             DrawCenteredText(canvas, data.DurationWeeks, detailPaint, rightColumnCenterX, detailStartY);
 
-            float instructorCenterX = width * 0.32f;        
-            float instructorY = detailStartY + 105;      
-            DrawCenteredText(canvas, data.InstructorName, detailPaint, instructorCenterX, instructorY);
+            float instructorCenterX = width * 0.196f;        
+            float instructorY = detailStartY + 105;
+            DrawLeftAlignedText(canvas, data.InstructorName, detailPaint, instructorCenterX, instructorY);
         }
 
         private void DrawCenteredText(SKCanvas canvas, string text, SKPaint paint, float centerX, float y)

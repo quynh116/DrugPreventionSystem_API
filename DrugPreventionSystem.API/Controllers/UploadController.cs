@@ -29,7 +29,7 @@ namespace DrugPreventionSystem.API.Controllers
                     CourseTitle = "Khóa học phòng chống tệ nạn xã hội",
                     CompletionDate = DateTime.Now,
                     DurationWeeks = "8 tuần",
-                    InstructorName = "Thầy Nguyễn Minh Tuấn"
+                    InstructorName = "Nguyễn Minh Tuấn"
                 };
 
                 var certificateUrl = await _certificateService.GenerateCertificateWithTemplateAsync(testData);

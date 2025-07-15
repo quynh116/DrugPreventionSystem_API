@@ -24,5 +24,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
 
         Task<ProgramParticipant?> GetUserProgramParticipationStatusAsync(Guid userId, Guid programId);
         Task<bool> HasUserSubmittedProgramSurveyAsync(Guid userId, Guid programId);
+        Task<ProgramDetailDto> GetProgramDetailsWithParticipantStatusAsync(Guid programId);
     }
 }
