@@ -144,14 +144,14 @@ namespace DrugPreventionSystem.API.Controllers
         {
             try
             {
-                
+
 
                 var hasSubmitted = await _programService.HasUserSubmittedProgramSurveyAsync(userId, programId);
-                return Ok(new { hasSubmitted = hasSubmitted }); 
+                return Ok(new { hasSubmitted = hasSubmitted });
             }
             catch (ArgumentException ex)
             {
-                return NotFound(new { message = ex.Message }); 
+                return NotFound(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -186,12 +186,12 @@ namespace DrugPreventionSystem.API.Controllers
             }
         }
 
-        [HttpGet("{programId}/my-survey-response")]
+        [HttpGet("{programId}/User-survey-response")]
         public async Task<IActionResult> GetMySurveyResponse(Guid programId, Guid userId)
         {
             try
             {
-                
+
                 var response = await _programService.GetUserProgramSurveyResponseAsync(userId, programId);
                 if (response == null)
                 {
@@ -206,6 +206,24 @@ namespace DrugPreventionSystem.API.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { message = "An error occurred while retrieving survey response.", error = ex.Message });
+            }
+        }
+
+        [HttpGet("{programId}/details-with-participants")]
+        public async Task<IActionResult> GetProgramDetailsWithParticipantStatus(Guid programId)
+        {
+            try
+            {
+                var programDetails = await _programService.GetProgramDetailsWithParticipantStatusAsync(programId);
+                return Ok(programDetails);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "An error occurred while retrieving program details.", error = ex.Message });
             }
         }
     }

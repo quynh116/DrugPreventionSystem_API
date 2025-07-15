@@ -58,6 +58,15 @@ namespace DrugPreventionSystem.DataAccess.Repository
                 .FirstOrDefaultAsync(cp => cp.ProgramId == id);
         }
 
+        public async Task<CommunityProgram?> GetProgramWithParticipantsAndSurveyAsync(Guid programId)
+        {
+            return await _context.CommunityPrograms
+               .Include(p => p.ProgramParticipants)
+                   .ThenInclude(pp => pp.User)
+               .Include(p => p.ProgramSurvey)
+               .FirstOrDefaultAsync(p => p.ProgramId == programId);
+        }
+
         public async Task<CommunityProgram> UpdateCommunityProgramAsync(CommunityProgram program)
         {
             _context.Update(program);

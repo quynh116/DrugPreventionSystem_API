@@ -15,5 +15,6 @@ namespace DrugPreventionSystem.DataAccess.Repository.Interfaces
         Task<CommunityProgram> UpdateCommunityProgramAsync(CommunityProgram program);
         Task DeleteCommunityProgramAsync(Guid communityProgramId);
         Task<CommunityProgram?> GetProgramDetailsByIdAsync(Guid id);
+        Task<CommunityProgram?> GetProgramWithParticipantsAndSurveyAsync(Guid programId);
     }
 }

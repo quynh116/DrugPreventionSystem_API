@@ -22,17 +22,24 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         private readonly IUserLessonProgressRepository _userLessonProgressRepository;
         private readonly ICourseRepository _courseRepository;
         private readonly IUserRepository _userRepository;
+        private readonly ICertificateService _certificateService;
+        private readonly IPhotoService _photoService;
+
         public CourseCertificateService(ICourseCertificateRepository repo,
             IUserCourseEnrollmentRepository enrollmentRepository,
             IUserLessonProgressRepository userLessonProgressRepository,
             ICourseRepository courseRepository,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            ICertificateService certificateService,
+            IPhotoService photoService)
         {
             _repo = repo;
             _enrollmentRepository = enrollmentRepository;
             _userLessonProgressRepository = userLessonProgressRepository;
             _courseRepository = courseRepository;
             _userRepository = userRepository;
+            _certificateService = certificateService;
+            _photoService = photoService;
         }
         private CourseCertificateResponse MapToResponse(CourseCertificate entity)
         {
@@ -140,8 +147,16 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
             else
             {
-                
-                string certificateUrl = $"https://res.cloudinary.com/dvkqdbaue/image/upload/v1751177064/ch%E1%BB%A9ng_ch%E1%BB%89_kh%C3%B3a_h%E1%BB%8Dc_v_c8selw.png"; // Thay yourdomain.com
+                var certificateData = new CertificateData
+                {
+                    UserName = user.Username,
+                    CourseTitle = course.Title,
+                    CompletionDate = DateTime.Now, // Sẽ được cập nhật sau
+                    DurationWeeks = course.TotalDuration.HasValue ? $"{course.TotalDuration} tuần" : "N/A",
+                    InstructorName = course.Instructor?.FullName ?? "N/A",
+                };
+
+                string certificateUrl = await _certificateService.GenerateCertificateWithTemplateAsync(certificateData);
 
                 var newCertificate = new CourseCertificate
                 {

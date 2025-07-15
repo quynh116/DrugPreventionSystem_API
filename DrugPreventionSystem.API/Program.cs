@@ -1,3 +1,4 @@
+using DrugPreventionSystem.BusinessLogic.Models;
 using DrugPreventionSystem.BusinessLogic.Services;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces.Quizzes;
@@ -30,6 +31,7 @@ builder.Services.AddControllers()
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 
 // JWT set up
 builder.Services.AddEndpointsApiExplorer();
@@ -139,6 +141,7 @@ builder.Services.AddScoped<ICourseWeekService, CourseWeekService>();
 builder.Services.AddScoped<ILessonService, LessonService>();
 builder.Services.AddScoped<ILessonResourceService, LessonResourceService>();
 builder.Services.AddScoped<IPracticeExerciseService, PracticeExerciseService>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICourseCertificateService, CourseCertificateService>();
 builder.Services.AddScoped<IUserCourseEnrollmentService, UserCourseEnrollmentService>();
 builder.Services.AddScoped<IUserQuizAnswerService, UserQuizAnswerService>();
@@ -150,10 +153,13 @@ builder.Services.AddScoped<IQuizOptionService, QuizOptionService>();
 builder.Services.AddScoped<DrugPreventionSystem.BusinessLogic.Services.Interfaces.IProgramFeedbackService, DrugPreventionSystem.BusinessLogic.Services.ProgramFeedbackService>();
 builder.Services.AddScoped<IProgramParticipantService, ProgramParticipantService>();
 builder.Services.AddScoped<ICommunityProgramService, CommunityProgramService>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IBlogCategoryService, BlogCategoryService>();
 builder.Services.AddScoped<IProgramSurveyAnswerOptionService, ProgramSurveyAnswerOptionService>();
+
 
 builder.Services.AddScoped<ProgramSurveyRepository>();
 builder.Services.AddScoped<ProgramSurveyService>();
@@ -164,6 +170,7 @@ builder.Services.AddScoped<IProgramSurveyQuestionService, ProgramSurveyQuestionS
 
 builder.Services.AddScoped<IProgramSurveyService, ProgramSurveyService>();
 
+builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddSingleton<ProvideToken>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
