@@ -159,6 +159,7 @@ builder.Services.AddScoped<IProgramService, ProgramService>();
 builder.Services.AddScoped<IBlogService, BlogService>();
 builder.Services.AddScoped<IBlogCategoryService, BlogCategoryService>();
 builder.Services.AddScoped<IProgramSurveyAnswerOptionService, ProgramSurveyAnswerOptionService>();
+builder.Services.AddScoped<IAdminAnalyticsService, AdminAnalyticsService>();
 
 
 builder.Services.AddScoped<ProgramSurveyRepository>();
