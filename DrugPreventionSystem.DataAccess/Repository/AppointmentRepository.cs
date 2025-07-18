@@ -37,17 +37,17 @@ namespace DrugPreventionSystem.DataAccess.Repository
 
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsAsync()
         {
-            return await _context.Appointments.ToListAsync();
+            return await _context.Appointments.Include(a => a.TimeSlot).ToListAsync();
         }
 
         public async Task<Appointment?> GetAppointmentByIdAsync(Guid appointmentId)
         {
-            return await _context.Appointments.FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
+            return await _context.Appointments.Include(a => a.TimeSlot).FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
         }
 
         public async Task<IEnumerable<Appointment>> GetAppointmentsByUserIdAsync(Guid userId)
         {
-            return await _context.Appointments
+            return await _context.Appointments.Include(a => a.TimeSlot)
                 .Where(a => a.UserId == userId)
                 .ToListAsync();
         }

@@ -20,5 +20,8 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Responses.Appointment
         public string MeetUrl { get; set; } = string.Empty;
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime? UpdatedAt { get; set; }
+        public DateTime SlotDate { get; set; }
+        public TimeSpan StartTime { get; set; }
+        public TimeSpan EndTime { get; set; }
     }
 }

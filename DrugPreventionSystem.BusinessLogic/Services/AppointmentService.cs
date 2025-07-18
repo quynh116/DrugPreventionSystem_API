@@ -41,7 +41,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Notes = appointment.Notes,
                 MeetUrl = appointment.MeetUrl,
                 CreatedAt = appointment.CreatedAt,
-                UpdatedAt = appointment.UpdatedAt
+                UpdatedAt = appointment.UpdatedAt,
+                SlotDate = appointment.TimeSlot?.SlotDate ?? default,
+                StartTime = appointment.TimeSlot?.StartTime ?? default,
+                EndTime = appointment.TimeSlot?.EndTime ?? default
             };
         }
         public AppointmentService(IAppointmentRepository appointmentRepository, 
