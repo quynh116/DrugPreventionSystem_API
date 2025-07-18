@@ -25,6 +25,11 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             return user;
         }
 
+        public async Task<int> CountUsersByRoleIdAsync(int roleId)
+        {
+            return await _context.Users.CountAsync(u => u.RoleId == roleId);
+        }
+
         public async Task DeleteUserAsync(Guid id)
         {
             var user = await _context.Users.FindAsync(id);

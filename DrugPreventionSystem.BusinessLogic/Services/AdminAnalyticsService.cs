@@ -35,8 +35,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 var summary = new AdminDashboardSummaryDto();
 
-                var allUsers = await _userRepository.GetAllUsersAsync();
-                summary.TotalUsers = allUsers.Count();
+                const int memberRoleId = 5; 
+                summary.TotalUsers = await _userRepository.CountUsersByRoleIdAsync(memberRoleId);
 
                 var allEnrollments = await _userCourseEnrollmentRepository.GetAllAsync();
                 summary.TotalCourseEnrollments = allEnrollments.Count();

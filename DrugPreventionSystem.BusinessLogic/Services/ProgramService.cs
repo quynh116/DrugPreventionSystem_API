@@ -299,10 +299,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
 
             // Chương trình phải kết thúc
-            if (DateTime.Now <= program.EndDate)
-            {
-                return false; 
-            }
+            //if (DateTime.Now <= program.EndDate)
+            //{
+            //    return false; 
+            //}
 
             
 
