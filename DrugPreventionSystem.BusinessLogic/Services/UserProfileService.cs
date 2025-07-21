@@ -124,12 +124,17 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     userProfile.Gender = request.Gender;
                 }
 
+                if (!string.IsNullOrEmpty(request.PhoneNumber) && userProfile.PhoneNumber != request.PhoneNumber)
+                {
+                    userProfile.PhoneNumber = request.PhoneNumber;
+                }
+
                 if (!string.IsNullOrEmpty(request.Address) && userProfile.Address != request.Address)
                 {
                     userProfile.Address = request.Address;
                 }
 
-                if (!string.IsNullOrEmpty(request.City) && userProfile.Address != request.City)
+                if (!string.IsNullOrEmpty(request.City) && userProfile.City != request.City)
                 {
                     userProfile.City = request.City;
                 }
