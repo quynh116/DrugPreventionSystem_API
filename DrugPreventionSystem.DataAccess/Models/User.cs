@@ -50,6 +50,12 @@ namespace DrugPreventionSystem.DataAccess.Models
         [Column("last_login")]
         public DateTime? LastLogin { get; set; }
 
+        [Column("email_verification_token")]
+        public string? EmailVerificationToken { get; set; }
+
+        [Column("email_verification_token_expires")]
+        public DateTime? EmailVerificationTokenExpires { get; set; }
+
         // Navigation properties
         public virtual Role Role { get; set; } = null!;
         public virtual UserProfile? UserProfile { get; set; }

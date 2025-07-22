@@ -964,7 +964,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 1,
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3788),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 242, DateTimeKind.Local).AddTicks(3095),
                             Description = "System Administrator",
                             IsActive = true,
                             RoleName = "Admin"
@@ -972,7 +972,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 2,
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3805),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 242, DateTimeKind.Local).AddTicks(3127),
                             Description = "System Manager",
                             IsActive = true,
                             RoleName = "Manager"
@@ -980,7 +980,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 3,
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3807),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 242, DateTimeKind.Local).AddTicks(3129),
                             Description = "Staff Member",
                             IsActive = true,
                             RoleName = "Staff"
@@ -988,7 +988,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 4,
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3808),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 242, DateTimeKind.Local).AddTicks(3130),
                             Description = "Professional Consultant",
                             IsActive = true,
                             RoleName = "Consultant"
@@ -996,7 +996,7 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         new
                         {
                             RoleId = 5,
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 711, DateTimeKind.Local).AddTicks(3809),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 242, DateTimeKind.Local).AddTicks(3131),
                             Description = "Registered Member",
                             IsActive = true,
                             RoleName = "Member"
@@ -1223,6 +1223,14 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("email");
 
+                    b.Property<string>("EmailVerificationToken")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("email_verification_token");
+
+                    b.Property<DateTime?>("EmailVerificationTokenExpires")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("email_verification_token_expires");
+
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("bit")
                         .HasColumnName("email_verified");
@@ -1270,45 +1278,45 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                     b.HasData(
                         new
                         {
-                            UserId = new Guid("2bd597dd-87da-46d1-afd6-fb9f0d3f164b"),
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8730),
+                            UserId = new Guid("e65ee90d-6979-4c9c-8468-4d3e753f1e47"),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 375, DateTimeKind.Local).AddTicks(7501),
                             Email = "admin@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
+                            PasswordHash = "$2a$11$tFfkgQU2oOl.jM7tEuUj0e4rvCTMBKVCsnJ5be00sDP2Pw56POg.e",
                             RoleId = 1,
                             Username = "admin_user"
                         },
                         new
                         {
-                            UserId = new Guid("ee824d09-2c82-48f1-b491-bf38a9ac97a3"),
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8745),
+                            UserId = new Guid("6dceb31d-419f-4d23-8efb-3d3fdff197fc"),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 375, DateTimeKind.Local).AddTicks(7509),
                             Email = "manager@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
+                            PasswordHash = "$2a$11$tFfkgQU2oOl.jM7tEuUj0e4rvCTMBKVCsnJ5be00sDP2Pw56POg.e",
                             RoleId = 2,
                             Username = "manager_user"
                         },
                         new
                         {
-                            UserId = new Guid("951ebd31-e6da-49e7-b576-8b7b23c19c3a"),
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8751),
+                            UserId = new Guid("15e4d441-23ae-47de-a6d7-98da7227402d"),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 375, DateTimeKind.Local).AddTicks(7520),
                             Email = "staff@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
+                            PasswordHash = "$2a$11$tFfkgQU2oOl.jM7tEuUj0e4rvCTMBKVCsnJ5be00sDP2Pw56POg.e",
                             RoleId = 3,
                             Username = "staff_user"
                         },
                         new
                         {
-                            UserId = new Guid("121d18c7-a22c-463f-a212-6ab4a9118dc6"),
-                            CreatedAt = new DateTime(2025, 7, 8, 16, 23, 34, 843, DateTimeKind.Local).AddTicks(8756),
+                            UserId = new Guid("0d3ef6c4-4474-498b-9847-7eb89293a00b"),
+                            CreatedAt = new DateTime(2025, 7, 22, 19, 35, 45, 375, DateTimeKind.Local).AddTicks(7524),
                             Email = "consultant@example.com",
                             EmailVerified = true,
                             IsActive = true,
-                            PasswordHash = "$2a$11$0RPQOs.f5HRmOIS47a1Q3.dItw6WsZdD5vQPS5tv3uGxlqgdDfisO",
+                            PasswordHash = "$2a$11$tFfkgQU2oOl.jM7tEuUj0e4rvCTMBKVCsnJ5be00sDP2Pw56POg.e",
                             RoleId = 4,
                             Username = "consultant_user"
                         });

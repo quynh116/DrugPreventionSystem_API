@@ -19,5 +19,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories.Interfaces
         Task<Role?> GetRoleByIdAsync(int roleId); 
         Task<Role?> GetRoleByNameAsync(string roleName);
         Task<IEnumerable<Role>> GetSpecificRolesAsync(params string[] roleNames);
+        Task<User?> GetUserByVerificationTokenAsync(string token);
     }
 }

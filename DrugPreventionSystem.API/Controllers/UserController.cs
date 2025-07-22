@@ -76,6 +76,20 @@ namespace DrugPreventionSystem.API.Controllers
             return HandleResult(result);
         }
 
+        [HttpGet("verify")]
+        public async Task<ActionResult<Result<bool>>> VerifyEmail([FromQuery] string token)
+        {
+            var result = await _userService.VerifyEmailAsync(token);
+            return HandleResult(result);
+        }
+
+        [HttpPost("resend-verification")]
+        public async Task<ActionResult<Result<bool>>> ResendVerificationEmail([FromQuery] string email)
+        {
+            var result = await _userService.ResendVerificationEmailAsync(email);
+            return HandleResult(result);
+        }
+
         [HttpPut("{id}")]
         public async Task<ActionResult<Result<UserResponse>>> UpdateUser(Guid id, [FromBody] UserUpdateRequest request)
         {

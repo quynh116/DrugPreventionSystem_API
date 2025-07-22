@@ -72,6 +72,13 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             return await _context.Users.Include(u => u.Role).FirstOrDefaultAsync(u => u.Username == username);
         }
 
+        public async Task<User?> GetUserByVerificationTokenAsync(string token)
+        {
+            return await _context.Users
+        .Include(u => u.Role)
+        .FirstOrDefaultAsync(u => u.EmailVerificationToken == token);
+        }
+
         public async Task UpdateUserAsync(User user)
         {
             _context.Users.Update(user);
