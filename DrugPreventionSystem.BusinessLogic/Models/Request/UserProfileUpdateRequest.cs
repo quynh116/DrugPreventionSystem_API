@@ -19,6 +19,5 @@ namespace DrugPreventionSystem.BusinessLogic.Models.Request
         public string? EducationLevel { get; set; }
         public string? AgeGroup { get; set; }
         public string? AvatarUrl { get; set; }
-        public DateTime? UpdatedAt { get; set; }
     }
 }

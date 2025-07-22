@@ -21,5 +21,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories.Interfaces
         Task<IEnumerable<Role>> GetSpecificRolesAsync(params string[] roleNames);
 
         Task<int> CountUsersByRoleIdAsync(int roleId);
+        Task<User?> GetUserByVerificationTokenAsync(string token);
     }
 }

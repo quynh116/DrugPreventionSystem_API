@@ -8,9 +8,12 @@ using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
 using DrugPreventionSystem.DataAccess.Utilities;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Mail;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -22,13 +25,15 @@ namespace DrugPreventionSystem.DataAccess.Repositories
         private readonly ProvideToken _provideToken;
         private readonly IUserProfileRepository _userProfileRepository;
         private readonly IConsultantRepository _consultantRepository;
+        private readonly IConfiguration _configuration;
 
-        public UserService(IUserRepository userRepositories, IUserProfileRepository userProfileRepository, IConsultantRepository consultantRepository, ProvideToken provideToken)
+        public UserService(IUserRepository userRepositories, IUserProfileRepository userProfileRepository, IConsultantRepository consultantRepository, ProvideToken provideToken, IConfiguration configuration)
         {
             _userRepository = userRepositories;
             _provideToken = provideToken;
             _userProfileRepository = userProfileRepository;
             _consultantRepository = consultantRepository;
+            _configuration = configuration;
         }
 
         private UserResponse MapToUserResponse(User user)
@@ -103,7 +108,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
         {
             try
             {
-                
+
                 if (await _userRepository.GetUserByUsernameAsync(request.Username) != null)
                 {
                     return Result<UserResponse>.Duplicated("Username already exists.");
@@ -120,6 +125,8 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     return Result<UserResponse>.Error("Member role not found.");
                 }
 
+                var verificationToken = Guid.NewGuid().ToString();
+
                 var newUser = new User
                 {
                     UserId = Guid.NewGuid(),
@@ -129,6 +136,8 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     RoleId = memberRole.RoleId,
                     IsActive = true,
                     EmailVerified = false,
+                    EmailVerificationToken = verificationToken,
+                    EmailVerificationTokenExpires = DateTime.Now.AddHours(24),
                     CreatedAt = DateTime.Now
                 };
 
@@ -140,9 +149,10 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     UserId = addedUser.UserId,
                     CreatedAt = DateTime.Now
                 };
+                await SendEmailVerificationAsync(addedUser.Email, verificationToken);
                 await _userProfileRepository.AddUserProfileAsync(newUserProfile);
                 var userWithRole = await _userRepository.GetUserByIdAsync(addedUser.UserId);
-                return Result<UserResponse>.Success(MapToUserResponse(userWithRole), "Member registered.");
+                return Result<UserResponse>.Success(MapToUserResponse(userWithRole), "Member registered.Please check your email to verify your account.");
             }
             catch (Exception ex)
             {
@@ -150,7 +160,88 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             }
         }
 
-        public async Task<Result<UserResponse>> UpdateUserAsync(Guid id, UserUpdateRequest request)
+
+        // METHOD XÁC THỰC EMAIL
+        public async Task<Result<bool>> VerifyEmailAsync(string token)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(token))
+                {
+                    return Result<bool>.Failed("Verification token is required.");
+                }
+
+                var user = await _userRepository.GetUserByVerificationTokenAsync(token);
+                if (user == null)
+                {
+                    return Result<bool>.NotFound("Invalid verification token.");
+                }
+
+                if (user.EmailVerificationTokenExpires < DateTime.Now)
+                {
+                    return Result<bool>.Failed("Verification token has expired. Please request a new verification email.");
+                }
+
+                if (user.EmailVerified)
+                {
+                    return Result<bool>.Success(true, "Email is already verified.");
+                }
+
+                // CẬP NHẬT USER
+                user.EmailVerified = true;
+                user.EmailVerificationToken = null;
+                user.EmailVerificationTokenExpires = null;
+                user.UpdatedAt = DateTime.Now;
+
+                await _userRepository.UpdateUserAsync(user);
+
+                return Result<bool>.Success(true, "Email verified successfully. You can now login to your account.");
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Error($"Error during email verification: {ex.Message}");
+            }
+        }
+
+        // METHOD GỬI LẠI EMAIL VERIFICATION
+        public async Task<Result<bool>> ResendVerificationEmailAsync(string email)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(email))
+                {
+                    return Result<bool>.Failed("Email is required.");
+                }
+
+                var user = await _userRepository.GetUserByEmailAsync(email);
+                if (user == null)
+                {
+                    return Result<bool>.NotFound("User with this email does not exist.");
+                }
+
+                if (user.EmailVerified)
+                {
+                    return Result<bool>.Success(true, "Email is already verified.");
+                }
+
+                // TẠO TOKEN MỚI
+                var verificationToken = Guid.NewGuid().ToString();
+                user.EmailVerificationToken = verificationToken;
+                user.EmailVerificationTokenExpires = DateTime.Now.AddHours(24);
+                user.UpdatedAt = DateTime.Now;
+
+                await _userRepository.UpdateUserAsync(user);
+                await SendEmailVerificationAsync(user.Email, verificationToken);
+
+                return Result<bool>.Success(true, "Verification email has been sent. Please check your email.");
+            }
+            catch (Exception ex)
+            {
+                return Result<bool>.Error($"Error sending verification email: {ex.Message}");
+            }
+        }
+
+            public async Task<Result<UserResponse>> UpdateUserAsync(Guid id, UserUpdateRequest request)
         {
             try
             {
@@ -244,12 +335,12 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     return Result<LoginResponse>.Failed("Your account has been locked.");
                 }
 
-                //if (!user.EmailVerified)
-                //{
-                //    return Result<LoginResponse>.NotVerified("Your email is not verified.");
-                //}
+                if (!user.EmailVerified)
+                {
+                    return Result<LoginResponse>.NotVerified("Your email is not verified.");
+                }
 
-                
+
                 user.LastLogin = DateTime.Now;
                 await _userRepository.UpdateUserAsync(user); 
 
@@ -439,6 +530,45 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             {
                 return Result<IEnumerable<RoleResponse>>.Error($"Error retrieving management roles: {ex.Message}");
             }
+        }
+
+        public async Task SendEmailVerificationAsync(string email, string token)
+        {
+            using var client = new SmtpClient(_configuration["Email:SmtpServer"],
+            int.Parse(_configuration["Email:SmtpPort"]));
+            client.EnableSsl = true;
+            client.Credentials = new NetworkCredential(
+                _configuration["Email:Username"],
+                _configuration["Email:Password"]);
+
+            // Sử dụng endpoint có sẵn
+            var verificationLink = $"{_configuration["BaseUrl"]}/api/User/verify?token={token}";
+
+            var message = new MailMessage
+            {
+                From = new MailAddress(_configuration["Email:FromAddress"]),
+                Subject = "Xác thực email của bạn",
+                Body = $@"
+        <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;'>
+            <h2>Xác thực email</h2>
+            <div style='text-align: center; margin: 30px 0;'>
+                <a href='{verificationLink}' 
+                   style='background: #007bff; 
+                          color: white; 
+                          padding: 15px 30px; 
+                          text-decoration: none; 
+                          border-radius: 5px; 
+                          font-weight: bold; 
+                          display: inline-block;'>
+                    Xác Thực Email
+                </a>
+            </div>
+            <p>Link này sẽ hết hạn sau 24 giờ.</p>
+        </div>",
+                IsBodyHtml = true
+            };
+            message.To.Add(email);
+            await client.SendMailAsync(message);
         }
     }
 }

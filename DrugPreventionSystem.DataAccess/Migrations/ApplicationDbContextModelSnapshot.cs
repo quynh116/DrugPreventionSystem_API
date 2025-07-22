@@ -1223,6 +1223,14 @@ namespace DrugPreventionSystem.DataAccess.Migrations
                         .HasColumnType("nvarchar(255)")
                         .HasColumnName("email");
 
+                    b.Property<string>("EmailVerificationToken")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("email_verification_token");
+
+                    b.Property<DateTime?>("EmailVerificationTokenExpires")
+                        .HasColumnType("datetime2")
+                        .HasColumnName("email_verification_token_expires");
+
                     b.Property<bool>("EmailVerified")
                         .HasColumnType("bit")
                         .HasColumnName("email_verified");

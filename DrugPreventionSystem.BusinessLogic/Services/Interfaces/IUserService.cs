@@ -22,5 +22,8 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<ChangeRoleResponse>> ChangeUserRoleAsync(Guid userId, ChangeRoleRequest request);
         Task<Result<UserResponse>> RegisterUserByAdminAsync(AdminUserRegistrationRequest request);
         Task<Result<IEnumerable<RoleResponse>>> GetManagementRolesAsync();
+        Task SendEmailVerificationAsync(string email, string token);
+        Task<Result<bool>> ResendVerificationEmailAsync(string email);
+        Task<Result<bool>> VerifyEmailAsync(string token);
     }
 }
