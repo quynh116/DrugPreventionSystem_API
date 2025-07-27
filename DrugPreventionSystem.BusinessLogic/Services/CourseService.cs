@@ -426,6 +426,20 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             };
             return Result<CourseContentForEditResponse>.Success(response);
         }
+
+        public async Task<Result<IEnumerable<CourseResponse>>> GetTopCoursesByStudentCountAsync(int top)
+        {
+            try
+            {
+                var courses = await _courseRepository.GetTopCoursesByStudentCountAsync(top);
+                var courseResponses = courses.Select(c => MapToResponse(c)).ToList();
+                return Result<IEnumerable<CourseResponse>>.Success(courseResponses);
+            }
+            catch (Exception ex)
+            {
+                return Result<IEnumerable<CourseResponse>>.Error($"Error getting top courses: {ex.Message}");
+            }
+        }
     }
 }
     

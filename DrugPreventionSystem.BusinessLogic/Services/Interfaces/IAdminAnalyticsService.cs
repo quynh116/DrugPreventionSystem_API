@@ -11,5 +11,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
     public interface IAdminAnalyticsService
     {
         Task<Result<AdminDashboardSummaryDto>> GetAdminDashboardSummaryAsync();
+        Task<Result<DashboardSummaryDto>> GetDashboardSummaryAsync();
     }
 }

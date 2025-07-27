@@ -40,6 +40,14 @@ namespace DrugPreventionSystem.API.Controllers
             var result= await _courseService.GetAllAsync();
             return HandleResult(result);
         }
+
+        [HttpGet("top-courses")]
+        public async Task<ActionResult<Result<IEnumerable<CourseResponse>>>> GetTopCourses([FromQuery] int top = 3)
+        {
+            var result = await _courseService.GetTopCoursesByStudentCountAsync(top);
+            return HandleResult(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Result<CourseResponse>>> GetByIdAsync(Guid id)
         {

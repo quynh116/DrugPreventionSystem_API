@@ -542,7 +542,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 _configuration["Email:Password"]);
 
             // Sử dụng endpoint có sẵn
-            var verificationLink = $"{_configuration["BaseUrl"]}/api/User/verify?token={token}";
+            var verificationLink = $"{_configuration["BaseUrl"]}/verify-email?token={token}";
 
             var message = new MailMessage
             {

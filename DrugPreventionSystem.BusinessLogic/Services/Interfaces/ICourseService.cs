@@ -23,5 +23,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services.Interfaces
         Task<Result<CourseProgressDetailResponse>> GetCourseProgressDetailsForUserAsync(Guid courseId, Guid userId);
         Task<Result<CourseDetailForUserResponse>> GetCourseDetailForUserAsync(Guid courseId, Guid userId);
         Task<Result<CourseContentForEditResponse>> GetCourseContentForEditAsync(Guid courseId);
+        Task<Result<IEnumerable<CourseResponse>>> GetTopCoursesByStudentCountAsync(int top);
     }
 }

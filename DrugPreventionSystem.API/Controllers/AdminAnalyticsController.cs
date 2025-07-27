@@ -23,5 +23,11 @@ namespace DrugPreventionSystem.API.Controllers
             var result = await _adminAnalyticsService.GetAdminDashboardSummaryAsync();
             return HandleResult(result); 
         }
+        [HttpGet("summary_home")]
+        public async Task<ActionResult<Result<DashboardSummaryDto>>> GetDashboardSummary()
+        {
+            var result = await _adminAnalyticsService.GetDashboardSummaryAsync();
+            return HandleResult(result);
+        }
     }
 }

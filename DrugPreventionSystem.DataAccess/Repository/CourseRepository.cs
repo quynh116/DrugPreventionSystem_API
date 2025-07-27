@@ -28,7 +28,6 @@ namespace DrugPreventionSystem.DataAccess.Repository
         {
            return await _context.Courses
                 .Include(c => c.Instructor)
-                .Where(c => c.IsActive)
                 .ToListAsync();
         }
         public async Task<Course?> GetByIdAsync(Guid id)
@@ -74,6 +73,16 @@ namespace DrugPreventionSystem.DataAccess.Repository
                  .ThenInclude(l => l.LessonResources)
          
          .FirstOrDefaultAsync(c => c.CourseId == courseId);
+        }
+
+        public async Task<IEnumerable<Course>> GetTopCoursesByStudentCountAsync(int top)
+        {
+            return await _context.Courses
+       .Where(c => c.IsActive) 
+       .OrderByDescending(c => c.StudentCount ?? 0)
+       .Take(top)
+       .Include(c => c.Instructor)
+       .ToListAsync();
         }
     }
 }
