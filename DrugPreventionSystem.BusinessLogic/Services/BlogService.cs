@@ -10,6 +10,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.Blog;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -60,7 +61,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Status = request.Status,
                 PublishedAt = request.PublishedAt,
                 ViewsCount = 0,
-                CreatedAt = DateTime.Now,
+                CreatedAt = TimeHelper.GetVietNamTime(),
             };
 
             await _blogRepository.CreateAsync(newBlog);
@@ -112,7 +113,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 blog.CategoryId = request.CategoryId;
                 blog.Tags = request.Tags;
                 blog.Status = request.Status;
-                blog.UpdatedAt = DateTime.Now;
+                blog.UpdatedAt = TimeHelper.GetVietNamTime();
 
                 await _blogRepository.UpdateAsync(blog);
                 var updatedBlog = await _blogRepository.GetByIdAsync(id);

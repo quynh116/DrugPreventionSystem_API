@@ -16,6 +16,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Request.Quizzes;
 using Microsoft.EntityFrameworkCore;
 using Azure.Core;
 using DrugPreventionSystem.BusinessLogic.Models.Responses.UserCourseEnrollment;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -61,7 +62,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Sequence = lesson.Sequence,
                 HasQuiz = lesson.HasQuiz,
                 HasPractice = lesson.HasPractice,
-                CreatedAt = DateTime.Now,
+                CreatedAt = TimeHelper.GetVietNamTime(),
             };
 
             var added = await _lessonRepository.AddNewLesson(newLesson);
@@ -291,7 +292,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     QuestionId = userAnswerRequest.QuestionId,
                     SelectedOptionId = userAnswerRequest.SelectedOptionId,
                     AnswerText = null,
-                    AnsweredAt = DateTime.Now 
+                    AnsweredAt = TimeHelper.GetVietNamTime()
                 });
 
                 questionsWithResults.Add(new QuizResultQuestionResponse
@@ -325,7 +326,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     CorrectCount = correctCount,
                     TotalQuestions = quiz.QuizQuestions.Count,
                     Status = status,
-                    TakenAt = DateTime.Now
+                    TakenAt = TimeHelper.GetVietNamTime()
                 };
                 await _userModuleQuizResultRepository.AddUserModuleQuizResultAsync(userQuizResult);
             }
@@ -337,7 +338,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 userQuizResult.CorrectCount = correctCount;
                 userQuizResult.TotalQuestions = quiz.QuizQuestions.Count;
                 userQuizResult.Status = status;
-                userQuizResult.TakenAt = DateTime.Now; 
+                userQuizResult.TakenAt = TimeHelper.GetVietNamTime(); 
                 await _userModuleQuizResultRepository.UpdateUserModuleQuizResultAsync(userQuizResult);
 
                 
@@ -366,18 +367,18 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     ProgressId = Guid.NewGuid(),
                     UserId = request.UserId,
                     LessonId = quiz.LessonId,
-                    CompletedAt = DateTime.Now,
+                    CompletedAt = TimeHelper.GetVietNamTime(),
                     QuizScore = totalScore,
                     Passed = false,
-                    UpdatedAt = DateTime.Now
+                    UpdatedAt = TimeHelper.GetVietNamTime()
                 };
                 await _userLessonProgressRepository.AddUserLessonProgressAsync(userLessonProgress);
             }
             else
             {
-                userLessonProgress.CompletedAt = DateTime.Now;
+                userLessonProgress.CompletedAt = TimeHelper.GetVietNamTime();
                 userLessonProgress.QuizScore = totalScore;
-                userLessonProgress.UpdatedAt = DateTime.Now;
+                userLessonProgress.UpdatedAt = TimeHelper.GetVietNamTime();
                 await _userLessonProgressRepository.UpdateUserLessonProgressAsync(userLessonProgress);
             }
 
@@ -476,16 +477,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<bool>.NotFound("Bạn cần làm bài học này trước khi đánh dấu hoàn thành.");
             }
 
-            // 2. Kiểm tra kết quả quiz gần nhất
+            
             var quizForLesson = await _quizRepository.GetQuizByLessonIdAsync(request.LessonId);
             if (quizForLesson == null)
             {
-                // Nếu bài học không có quiz, có thể cho phép hoàn thành luôn
-                // hoặc trả về lỗi nếu mọi bài học phải có quiz để hoàn thành.
-                // Tùy thuộc vào quy tắc nghiệp vụ của bạn.
-                // Ví dụ: return Result<bool>.Error("Bài học này không có quiz để đánh giá hoàn thành.");
-                userLessonProgress.Passed = true; // Nếu không có quiz, tự động hoàn thành
-                userLessonProgress.UpdatedAt = DateTime.Now;
+                userLessonProgress.Passed = true; 
+                userLessonProgress.UpdatedAt = TimeHelper.GetVietNamTime();
                 await _userLessonProgressRepository.UpdateUserLessonProgressAsync(userLessonProgress);
                 return Result<bool>.Success(true, "Bài học đã được đánh dấu hoàn thành (không có quiz).");
             }
@@ -497,11 +494,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<bool>.Error("Bạn cần hoàn thành và đỗ bài kiểm tra của bài học này để đánh dấu hoàn thành.");
             }
 
-            // 3. Nếu đủ điều kiện, cập nhật UserLessonProgress.Passed
-            if (!userLessonProgress.Passed) // Chỉ cập nhật nếu chưa được đánh dấu hoàn thành
+            
+            if (!userLessonProgress.Passed) 
             {
                 userLessonProgress.Passed = true;
-                userLessonProgress.UpdatedAt = DateTime.Now;
+                userLessonProgress.UpdatedAt = TimeHelper.GetVietNamTime();
                 await _userLessonProgressRepository.UpdateUserLessonProgressAsync(userLessonProgress);
             }
 
@@ -534,27 +531,23 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     {
                         OptionId = qo.OptionId,
                         OptionText = qo.OptionText,
-                        // Luôn bao gồm IsCorrect ở Backend, Frontend sẽ không sử dụng để tránh gian lận
                         IsCorrect = qo.IsCorrect
                     }).ToList()
                 }).ToList()
             };
 
-            // 1. Kiểm tra xem người dùng đã từng làm quiz này chưa
             var latestUserQuizResult = await _userModuleQuizResultRepository.GetLatestUserModuleQuizResultForLessonAsync(userId, lessonId);
 
-            // Logic chính: Nếu forceAttempt là true, hoặc người dùng chưa từng làm bài
             if (forceAttempt || latestUserQuizResult == null)
             {
-                // Luôn trả về dữ liệu câu hỏi để họ bắt đầu làm bài mới
                 return Result<QuizStatusResponse>.Success(new QuizStatusResponse
                 {
                     QuizId = quiz.QuizId,
                     LessonId = lessonId,
                     QuizTitle = quiz.Title,
-                    DisplayMode = QuizDisplayMode.AttemptQuiz, // Frontend hiển thị màn hình làm bài
+                    DisplayMode = QuizDisplayMode.AttemptQuiz, 
                     LatestQuizResultData = null,
-                    QuizAttemptData = quizAttemptData          // Gửi dữ liệu câu hỏi
+                    QuizAttemptData = quizAttemptData          
                 });
             }
             else

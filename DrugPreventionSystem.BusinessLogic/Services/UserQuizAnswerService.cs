@@ -12,6 +12,7 @@ using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -54,7 +55,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     QuestionId = request.QuestionId,
                     SelectedOptionId = request.SelectedOptionId,
                     AnswerText = request.AnswerText,
-                    AnsweredAt = DateTime.Now
+                    AnsweredAt = TimeHelper.GetVietNamTime()
                 };
                 var tmp = await _userQuizAnswerRepository.AddUserQuizAnswerAsync(newUserQuizAnswer);
                 return Result<UserQuizAnswerResponse>.Success(MapToUserQuizAnswerResponse(tmp), "Added successfully");
@@ -174,7 +175,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 }
                 existingAnswer.SelectedOptionId = request.SelectedOptionId;
                 existingAnswer.AnswerText = request.AnswerText;
-                existingAnswer.AnsweredAt = DateTime.Now;
+                existingAnswer.AnsweredAt = TimeHelper.GetVietNamTime();
                 var updatedAnswer = await _userQuizAnswerRepository.UpdateUserQuizAnswerAsync(existingAnswer);
                 return Result<UserQuizAnswerResponse>.Success(MapToUserQuizAnswerResponse(updatedAnswer), "Updated successfully");
             }

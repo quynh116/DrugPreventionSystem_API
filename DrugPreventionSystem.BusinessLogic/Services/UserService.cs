@@ -137,8 +137,8 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     IsActive = true,
                     EmailVerified = false,
                     EmailVerificationToken = verificationToken,
-                    EmailVerificationTokenExpires = DateTime.Now.AddHours(24),
-                    CreatedAt = DateTime.Now
+                    EmailVerificationTokenExpires = TimeHelper.GetVietNamTime().AddHours(24),
+                    CreatedAt = TimeHelper.GetVietNamTime()
                 };
 
                 var addedUser = await _userRepository.AddUserAsync(newUser);
@@ -147,7 +147,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 {
                     ProfileId = Guid.NewGuid(),
                     UserId = addedUser.UserId,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = TimeHelper.GetVietNamTime()
                 };
                 await SendEmailVerificationAsync(addedUser.Email, verificationToken);
                 await _userProfileRepository.AddUserProfileAsync(newUserProfile);
@@ -161,7 +161,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories
         }
 
 
-        // METHOD XÁC THỰC EMAIL
         public async Task<Result<bool>> VerifyEmailAsync(string token)
         {
             try
@@ -177,7 +176,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     return Result<bool>.NotFound("Invalid verification token.");
                 }
 
-                if (user.EmailVerificationTokenExpires < DateTime.Now)
+                if (user.EmailVerificationTokenExpires < TimeHelper.GetVietNamTime())
                 {
                     return Result<bool>.Failed("Verification token has expired. Please request a new verification email.");
                 }
@@ -187,11 +186,10 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     return Result<bool>.Success(true, "Email is already verified.");
                 }
 
-                // CẬP NHẬT USER
                 user.EmailVerified = true;
                 user.EmailVerificationToken = null;
                 user.EmailVerificationTokenExpires = null;
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = TimeHelper.GetVietNamTime();
 
                 await _userRepository.UpdateUserAsync(user);
 
@@ -203,7 +201,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories
             }
         }
 
-        // METHOD GỬI LẠI EMAIL VERIFICATION
         public async Task<Result<bool>> ResendVerificationEmailAsync(string email)
         {
             try
@@ -227,8 +224,8 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 // TẠO TOKEN MỚI
                 var verificationToken = Guid.NewGuid().ToString();
                 user.EmailVerificationToken = verificationToken;
-                user.EmailVerificationTokenExpires = DateTime.Now.AddHours(24);
-                user.UpdatedAt = DateTime.Now;
+                user.EmailVerificationTokenExpires = TimeHelper.GetVietNamTime().AddHours(24);
+                user.UpdatedAt = TimeHelper.GetVietNamTime();
 
                 await _userRepository.UpdateUserAsync(user);
                 await SendEmailVerificationAsync(user.Email, verificationToken);
@@ -251,7 +248,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     return Result<UserResponse>.NotFound($"User with ID {id} not found.");
                 }
 
-                // Cập nhật các thuộc tính nếu được cung cấp
                 if (!string.IsNullOrEmpty(request.Username) && user.Username != request.Username)
                 {
                     if (await _userRepository.GetUserByUsernameAsync(request.Username) != null)
@@ -299,7 +295,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     }
                 }
 
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = TimeHelper.GetVietNamTime();
                 await _userRepository.UpdateUserAsync(user);
 
                 
@@ -341,7 +337,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 }
 
 
-                user.LastLogin = DateTime.Now;
+                user.LastLogin = TimeHelper.GetVietNamTime();
                 await _userRepository.UpdateUserAsync(user); 
 
                 
@@ -419,7 +415,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 }
 
                 user.RoleId = role.RoleId;
-                user.UpdatedAt = DateTime.Now;
+                user.UpdatedAt = TimeHelper.GetVietNamTime();
                 await _userRepository.UpdateUserAsync(user);
 
                 var updatedUser = await _userRepository.GetUserByIdAsync(userId);
@@ -467,7 +463,7 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                     RoleId = targetRole.RoleId,
                     IsActive = true,
                     EmailVerified = false,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = TimeHelper.GetVietNamTime()
                 };
 
                 var addedUser = await _userRepository.AddUserAsync(newUser);
@@ -477,11 +473,10 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 {
                     ProfileId = Guid.NewGuid(),
                     UserId = addedUser.UserId,
-                    CreatedAt = DateTime.Now
+                    CreatedAt = TimeHelper.GetVietNamTime()
                 };
                 await _userProfileRepository.AddUserProfileAsync(newUserProfile);
 
-                // Nếu role là Consultant, tạo thêm Consultant profile
                 if (request.RoleName.Equals("Consultant", StringComparison.OrdinalIgnoreCase))
                 {
                     var newConsultant = new Consultant
@@ -490,8 +485,8 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                         UserId = addedUser.UserId,
                         IsAvailable = true,         
                         TotalConsultations = 0,     
-                        CreatedAt = DateTime.Now
-                        
+                        CreatedAt = TimeHelper.GetVietNamTime()
+
                     };
                     await _consultantRepository.AddConsultant(newConsultant);
                 }
@@ -541,7 +536,6 @@ namespace DrugPreventionSystem.DataAccess.Repositories
                 _configuration["Email:Username"],
                 _configuration["Email:Password"]);
 
-            // Sử dụng endpoint có sẵn
             var verificationLink = $"{_configuration["BaseUrl"]}/verify-email?token={token}";
 
             var message = new MailMessage

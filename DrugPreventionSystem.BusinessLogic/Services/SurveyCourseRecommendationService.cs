@@ -10,6 +10,7 @@ using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -162,7 +163,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 recommendation.RecommendedActionKeyword = request.RecommendedActionKeyword;
                 recommendation.CourseId = request.CourseId;
                 recommendation.Priority = request.Priority;
-                recommendation.UpdatedAt = DateTime.Now;
+                recommendation.UpdatedAt = TimeHelper.GetVietNamTime();
                 var updatedRecommendation = await _surveyCourseRecommendationRepository.UpdateRecommendation(recommendation);
                 return Result<SurveyCourseRecommendationResponse>
                     .Success(MapToSurveyCourseRecommendationResponse(updatedRecommendation), "Recommendation updated successfully");

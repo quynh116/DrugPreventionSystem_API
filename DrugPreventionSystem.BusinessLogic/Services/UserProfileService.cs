@@ -4,6 +4,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -159,7 +160,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     userProfile.AvatarUrl = request.AvatarUrl;
                 }
 
-                userProfile.UpdatedAt = DateTime.Now;
+                userProfile.UpdatedAt = TimeHelper.GetVietNamTime();
 
                 await _userProfileRepository.UpdateUserProfileAsync(userProfile);
 

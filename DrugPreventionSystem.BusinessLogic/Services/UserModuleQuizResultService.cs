@@ -13,6 +13,7 @@ using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -186,7 +187,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 result.CorrectCount = request.CorrectCount;
                 result.TotalQuestions = request.TotalQuestions;
                 result.Status = request.Status;
-                result.TakenAt = DateTime.Now;
+                result.TakenAt = TimeHelper.GetVietNamTime();
                 await _userModuleQuizResultRepository.UpdateUserModuleQuizResultAsync(result);
                 var response = MapToUserModuleQuizResultResponse(result);
                 return Result<UserModuleQuizResultResponse>.Success(response, "User Module Quiz Result updated successfully");

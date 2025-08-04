@@ -5,6 +5,7 @@ using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -80,7 +81,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             if (entity == null) return Result<UserCourseEnrollmentResponse>.NotFound($"Not found UserCourseEnrollment with id: {id}");
             entity.Status = request.Status ?? entity.Status;
             entity.CompletedAt = request.CompletedAt;
-            entity.UpdatedAt = request.UpdatedAt ?? DateTime.Now;
+            entity.UpdatedAt = request.UpdatedAt ?? TimeHelper.GetVietNamTime();
             await _repo.UpdateAsync(entity);
             return Result<UserCourseEnrollmentResponse>.Success(MapToResponse(entity), "Updated successfully");
         }

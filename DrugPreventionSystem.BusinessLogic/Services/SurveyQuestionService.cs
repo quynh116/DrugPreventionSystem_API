@@ -12,6 +12,7 @@ using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -51,6 +52,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 QuestionText = request.QuestionText,
                 QuestionType = request.QuestionType,
                 Sequence = request.Sequence,
+                CreatedAt = TimeHelper.GetVietNamTime()
             };
             var createdQuestion = await _surveyQuestionRepository.AddSurveyQuestionAsync(newQuestion);
                 return Result<SurveyQuestionResponse>.Success(MapToResponse(createdQuestion));
@@ -99,7 +101,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 question.QuestionText = request.QuestionText;
                 question.QuestionType = request.QuestionType;
                 question.Sequence = request.Sequence;
-                question.UpdatedAt = DateTime.Now;
+                question.UpdatedAt = TimeHelper.GetVietNamTime();
 
                 await _surveyQuestionRepository.UpdateSurveyQuestion(question);
 

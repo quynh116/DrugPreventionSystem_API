@@ -8,6 +8,7 @@ using System.Linq;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.BusinessLogic.Models.Request;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -80,7 +81,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             
             program.SurveyId = newSurvey.SurveyId;
             
-            program.UpdatedAt = DateTime.UtcNow; 
+            program.UpdatedAt = TimeHelper.GetVietNamTime(); 
 
             await _programRepository.UpdateCommunityProgramAsync(program); 
 

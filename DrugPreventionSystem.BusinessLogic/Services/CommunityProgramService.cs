@@ -10,6 +10,7 @@ using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -74,7 +75,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     StartDate = request.StartDate,
                     EndDate = request.EndDate,
                     Location = request.Location,
-                    CreatedAt = DateTime.Now,
+                    CreatedAt = TimeHelper.GetVietNamTime(),
                     MaxParticipants = request.MaxParticipants,
                     SurveyId = request.SurveyId,
                 };
@@ -176,7 +177,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 existingProgram.StartDate = program.StartDate;
                 existingProgram.EndDate = program.EndDate;
                 existingProgram.Location = program.Location;
-                existingProgram.UpdatedAt = DateTime.Now;
+                existingProgram.UpdatedAt = TimeHelper.GetVietNamTime();
                 existingProgram.MaxParticipants = program.MaxParticipants;
                 var updatedProgram = await _communityProgramRepository.UpdateCommunityProgramAsync(existingProgram);
                 return Result<CommunityProgramResponse>.Success(await MapToResponse(updatedProgram), "Community program updated successfully.");

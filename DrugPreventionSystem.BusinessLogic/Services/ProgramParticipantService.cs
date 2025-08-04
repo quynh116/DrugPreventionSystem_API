@@ -4,6 +4,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +43,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 ParticipantId = Guid.NewGuid(),
                 ProgramId = request.ProgramId,
                 UserId = request.UserId,
-                RegisteredAt = DateTime.Now,
+                RegisteredAt = TimeHelper.GetVietNamTime(),
                 Attended = false,
                 FeedbackSubmitted = false
             };

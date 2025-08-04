@@ -12,6 +12,7 @@ using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -73,7 +74,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Requirements = request.Requirements,
                 ThumbnailUrl = request.ThumbnailUrl,
                 CertificateAvailable = false,
-                CreatedAt = DateTime.Now,
+                CreatedAt = TimeHelper.GetVietNamTime(),
             };
             var createdCourse = await _courseRepository.CreateAsync(newCourse);
             return Result<CourseResponse>.Success(MapToResponse(createdCourse));
@@ -127,7 +128,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 course.InstructorId = request.InstructorId;
                 course.Requirements = request.Requirements;
                 course.CertificateAvailable = false;
-                course.UpdatedAt = DateTime.Now;
+                course.UpdatedAt = TimeHelper.GetVietNamTime();
                 await _courseRepository.UpdateAsync(course);
                 return Result<CourseResponse>.Success(MapToResponse(course));
             }
@@ -174,7 +175,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         {
             try
             {
-                var course = await _courseRepository.GetByIdAsync(courseId); // Lấy thông tin khóa học cơ bản
+                var course = await _courseRepository.GetByIdAsync(courseId); 
                 if (course == null)
                 {
                     return Result<CourseContentResponse>.NotFound($"Course with ID {courseId} not found.");
@@ -222,18 +223,15 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
                 var userCourses = new List<UserCourseResponse>();
 
-                // Lấy tất cả tiến độ bài học của user cho tất cả các khóa học đã đăng ký trong một lần để tối ưu
                 var allUserProgresses = await _userLessonProgressRepository.GetAllUserLessonProgressesByUserIdAsync(userId);
-                // Bạn cần thêm method GetAllUserLessonProgressesByUserIdAsync vào IUserLessonProgressRepository
 
                 foreach (var enrollment in enrollments)
                 {
                     var course = enrollment.Course;
-                    if (course == null) continue; // Bỏ qua nếu thông tin khóa học bị thiếu
+                    if (course == null) continue; 
 
                     int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
 
-                    // Lọc tiến độ bài học của user cho khóa học hiện tại
                     int completedLessonsByUser = allUserProgresses
                         .Count(ulp => ulp.Lesson?.CourseWeek?.CourseId == course.CourseId && ulp.Passed);
 
@@ -341,11 +339,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     return Result<CourseDetailForUserResponse>.NotFound($"Course with ID {courseId} not found.");
                 }
 
-                // Kiểm tra trạng thái đăng ký của người dùng
                 var userEnrollment = await _userCourseEnrollmentRepository.GetByUserIdAndCourseIdAsync(userId, courseId);
                 bool isEnrolled = (userEnrollment != null);
 
-                // Tính toán tiến độ khóa học
                 int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
                 int completedLessonsByUser = 0;
                 if (isEnrolled) 
@@ -362,7 +358,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     Title = course.Title,
                     Description = course.Description,
                     ThumbnailUrl = course.ThumbnailUrl,
-                    InstructorName = course.Instructor?.FullName, // Sử dụng ?. để an toàn
+                    InstructorName = course.Instructor?.FullName, 
                     DurationWeeks = course.TotalDuration,
                     CourseProgressPercentage = courseProgressPercentage,
                     TotalLessonsInCourse = totalLessonsInCourse,
@@ -380,7 +376,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
         public async Task<Result<CourseContentForEditResponse>> GetCourseContentForEditAsync(Guid courseId)
         {
-            var course = await _courseRepository.GetCourseContentForEditAsync(courseId); // Dùng phương thức mới
+            var course = await _courseRepository.GetCourseContentForEditAsync(courseId);
             if (course == null)
             {
                 return Result<CourseContentForEditResponse>.NotFound($"Course with ID {courseId} not found.");

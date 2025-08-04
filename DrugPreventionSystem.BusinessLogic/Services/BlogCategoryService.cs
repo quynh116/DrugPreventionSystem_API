@@ -8,6 +8,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Responses.BlogCategory;
 using DrugPreventionSystem.BusinessLogic.Services.Interfaces;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -41,7 +42,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 Id = Guid.NewGuid(),
                 Name = request.Name,
                 Description = request.Description,
-                CreatedAt = DateTime.Now
+                CreatedAt = TimeHelper.GetVietNamTime()
             };
 
             var created = await _blogCategoryRepository.CreateAsync(newCategory);
@@ -87,7 +88,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
                 category.Name = request.Name;
                 category.Description = request.Description;
-                category.UpdatedAt = DateTime.Now;
+                category.UpdatedAt = TimeHelper.GetVietNamTime();
 
                 await _blogCategoryRepository.UpdateAsync(category);
                 return Result<BlogCategoryResponse>.Success(MapToResponse(category));

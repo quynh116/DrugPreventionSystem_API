@@ -16,6 +16,7 @@ using DrugPreventionSystem.BusinessLogic.Models.Request.CommunityProgram;
 using Microsoft.EntityFrameworkCore;
 using SkiaSharp;
 using DrugPreventionSystem.DataAccess.Repository.Participants;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -89,7 +90,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
 
 
-        // 1. Đăng ký tham gia chương trình
         public async Task<ProgramParticipantResponse> RegisterForProgramAsync(ProgramParticipantCreateRequest request)
         {
             var user = await _userRepository.GetUserByIdAsync(request.UserId);
@@ -117,7 +117,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 ParticipantId = Guid.NewGuid(),
                 UserId = request.UserId,
                 ProgramId = request.ProgramId,
-                RegisteredAt = DateTime.Now,
+                RegisteredAt = TimeHelper.GetVietNamTime(),
                 Attended = false,
                 FeedbackSubmitted = false
             };
@@ -139,7 +139,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             };
         }
 
-        // 2. Lấy các chương trình mà người dùng đã đăng ký
         public async Task<IEnumerable<CommunityProgramResponse>> GetProgramsUserEnrolledAsync(Guid userId)
         {
             var enrolled = (await _participantRepository.GetAllAsync())
@@ -178,7 +177,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             };
         }
 
-        // 3. Gửi feedback sau khi tham gia
         public async Task<ProgramFeedbackResponse> SubmitProgramFeedbackAsync(ProgramFeedbackCreateRequest request)
         {
             var participant = (await _participantRepository.GetAllAsync())
@@ -194,7 +192,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             if (participant.FeedbackSubmitted)
                 throw new InvalidOperationException("Feedback already submitted for this program.");
 
-            if (DateTime.Now <= program.EndDate)
+            if (TimeHelper.GetVietNamTime() <= program.EndDate)
                 throw new InvalidOperationException("Cannot submit feedback. Program has not ended yet.");
 
             var feedback = new ProgramFeedback
@@ -204,7 +202,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 ProgramId = request.ProgramId,
                 Rating = request.Rating,
                 Comments = request.Comments,
-                SubmittedAt = DateTime.Now
+                SubmittedAt = TimeHelper.GetVietNamTime()
             };
             await _feedbackRepository.AddAsync(feedback);
 
@@ -291,18 +289,13 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return false; 
             }
 
-            // Người dùng phải là người tham gia chương trình
             var participant = await GetUserProgramParticipationStatusAsync(userId, programId);
             if (participant == null)
             {
                 return false; 
             }
 
-            // Chương trình phải kết thúc
-            //if (DateTime.Now <= program.EndDate)
-            //{
-            //    return false; 
-            //}
+            
 
             
 
@@ -338,7 +331,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 SurveyId = survey.SurveyId,
                 ProgramId = programId,
                 UserId = userId,
-                SubmittedAt = DateTime.Now,
+                SubmittedAt = TimeHelper.GetVietNamTime(),
                 Answers = new List<ProgramSurveyAnswer>()
             };
 
@@ -425,17 +418,14 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
             var participantsStatus = new List<ParticipantStatusDto>();
 
-            // Lấy tất cả SurveyResponses cho khảo sát của chương trình này (nếu có khảo sát)
             var submittedSurveyResponses = new List<ProgramSurveyResponse>();
             if (program.SurveyId.HasValue)
             {
                 submittedSurveyResponses = await _surveyResponseRepository.GetBySurveyIdAsync(program.SurveyId.Value);
             }
 
-            // Duyệt qua từng người tham gia chương trình để lấy thông tin và trạng thái khảo sát
             foreach (var participant in program.ProgramParticipants)
             {
-                // Kiểm tra xem người dùng đã nộp khảo sát chưa
                 bool hasSubmittedSurvey = false;
                 if (program.SurveyId.HasValue)
                 {
@@ -455,7 +445,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 });
             }
 
-            // Trả về DTO chi tiết chương trình
             return new ProgramDetailDto
             {
                 ProgramId = program.ProgramId,

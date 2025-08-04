@@ -12,6 +12,7 @@ using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -56,7 +57,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     CompletedAt = request.CompletedAt,
                     QuizScore = request.QuizScore,
                     Passed = request.Passed,
-                    UpdatedAt = DateTime.Now
+                    UpdatedAt = TimeHelper.GetVietNamTime()
                 };
                 await _userLessonProgressRepository.AddUserLessonProgressAsync(result);
                 return Result<UserLessonProgressResponse>.Success(MapToUserLessonProgressResponse(result), "User lesson progress added successfully.");
@@ -188,7 +189,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 ulp.CompletedAt = request.CompletedAt;
                 ulp.QuizScore = request.QuizScore;
                 ulp.Passed = request.Passed;
-                ulp.UpdatedAt = DateTime.Now;
+                ulp.UpdatedAt = TimeHelper.GetVietNamTime();
                 var updatedUlp = await _userLessonProgressRepository.UpdateUserLessonProgressAsync(ulp);
                 return Result<UserLessonProgressResponse>.Success(MapToUserLessonProgressResponse(updatedUlp), "User lesson progress updated successfully.");
             }

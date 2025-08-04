@@ -9,6 +9,7 @@ using DrugPreventionSystem.BusinessLogic.Token;
 using DrugPreventionSystem.DataAccess.Models;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 
 namespace DrugPreventionSystem.BusinessLogic.Services
 {
@@ -140,7 +141,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
-        // 1. Phương thức để bắt đầu một phiên khảo sát mới
+        
         public async Task<Result<StartSurveyResponseDto>> StartNewSurveySession(StartSurveyRequestDto request)
         {
             try
@@ -150,15 +151,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     return Result<StartSurveyResponseDto>.NotFound("Khảo sát không tồn tại.");
                 }
-                // Optional: Check if user exists (requires IUserRepository)
-                // var user = await _userRepository.GetUserByIdAsync(request.UserId);
-                // if (user == null) return Result<StartSurveyResponseDto>.NotFound("Người dùng không tồn tại.");
 
                 var newResponse = new UserSurveyResponse
                 {
                     UserId = request.UserId,
                     SurveyId = request.SurveyId,
-                    TakenAt = DateTime.Now,
+                    TakenAt = TimeHelper.GetVietNamTime(),
                 };
 
                 newResponse = await _userSurveyResponseRepository.CreateAsync(newResponse);
@@ -178,12 +176,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
-        // 2. Phương thức để lưu từng câu trả lời khi người dùng nhấn "Tiếp theo"
+        
         public async Task<Result<SaveSingleAnswerResponseDto>> SaveSingleAnswer(SaveSingleAnswerRequestDto request)
         {
             try
             {
-                // Lấy UserSurveyResponse bao gồm các UserSurveyAnswers của nó
+                
                 var userResponse = await _userSurveyResponseRepository.GetByIdWithAnswersAsync(request.ResponseId);
                 if (userResponse == null)
                 {
@@ -203,30 +201,28 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 }
 
                 UserSurveyAnswer userSurveyAnswer;
-                // Kiểm tra xem câu trả lời cho câu hỏi này đã tồn tại trong danh sách của response chưa
+                
 
                 var existingAnswer = userResponse.UserSurveyAnswers
                                        .FirstOrDefault(a => a.QuestionId == request.QuestionId);
 
                 if (existingAnswer != null)
                 {
-                    // Cập nhật câu trả lời hiện có
                     userSurveyAnswer = existingAnswer;
                     userSurveyAnswer.OptionId = request.OptionId;
                     userSurveyAnswer.AnswerText = option.OptionText;
-                    userSurveyAnswer.AnsweredAt = DateTime.Now;
+                    userSurveyAnswer.AnsweredAt = TimeHelper.GetVietNamTime();
                     await _userSurveyAnswerRepository.UpdateUserSurveyAnswerAsync(userSurveyAnswer);
                 }
                 else
                 {
-                    // Thêm câu trả lời mới
                     userSurveyAnswer = new UserSurveyAnswer
                     {
                         ResponseId = request.ResponseId,
                         QuestionId = request.QuestionId,
                         OptionId = request.OptionId,
                         AnswerText = option.OptionText,
-                        AnsweredAt = DateTime.Now
+                        AnsweredAt = TimeHelper.GetVietNamTime()
                     };
                     userSurveyAnswer = await _userSurveyAnswerRepository.AddNewUserSurveyAnswer(userSurveyAnswer);
                 }
@@ -236,12 +232,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     AnswerId = userSurveyAnswer.AnswerId,
                     ResponseId = userSurveyAnswer.ResponseId,
                     QuestionId = userSurveyAnswer.QuestionId,
-                    OptionId = userSurveyAnswer.OptionId!.Value, // Đảm bảo không null vì ta đã kiểm tra option
+                    OptionId = userSurveyAnswer.OptionId!.Value, 
                     OptionText = option.OptionText,
                     ScoreValue = option.ScoreValue,
                     AnsweredAt = userSurveyAnswer.AnsweredAt,
-                    Message = "Câu trả lời đã được lưu thành công." // message for DTO
-                }, "Câu trả lời đã được lưu thành công."); // message for Result
+                    Message = "Câu trả lời đã được lưu thành công." 
+                }, "Câu trả lời đã được lưu thành công."); 
             }
             catch (Exception ex)
             {
@@ -249,12 +245,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
-        // 3. Phương thức để hoàn thành khảo sát và tính toán kết quả cuối cùng
         public async Task<Result<SurveyResultResponseDto>> CompleteSurvey(Guid responseId)
         {
             try
             {
-                // Lấy UserSurveyResponse bao gồm tất cả các UserSurveyAnswers, SurveyOption và Survey
+                
                 var userSurveyResponse = await _userSurveyResponseRepository.GetByIdWithAnswersAndSurveyAsync(responseId);
 
                 if (userSurveyResponse == null)
@@ -262,11 +257,11 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     return Result<SurveyResultResponseDto>.NotFound("Không tìm thấy phiên phản hồi khảo sát để hoàn thành.");
                 }
 
-                // Lấy thông tin Survey để xác định loại khảo sát
-                var survey = userSurveyResponse.Survey; // Đã được include từ GetByIdWithAnswersAndSurveyAsync
+                
+                var survey = userSurveyResponse.Survey; 
                 if (survey == null)
                 {
-                    // Fallback nếu survey không được load, nhưng lý tưởng thì nó phải có
+                    
                     survey = await _surveyRepository.GetSurveyByIdAsync(userSurveyResponse.SurveyId);
                     if (survey == null)
                     {
@@ -284,7 +279,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                         {
                             totalScore += option.ScoreValue.Value;
                         }
-                        // Fallback này có thể không cần thiết nếu eager-loading hoạt động đúng
+                        
                         else if (answer.OptionId.HasValue)
                         {
                             var fallbackOption = await _surveyOptionRepository.GetByIdAsync(answer.OptionId.Value);
@@ -300,7 +295,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     return Result<SurveyResultResponseDto>.Error("Không thể tải các câu trả lời cho khảo sát.");
                 }
 
-                // Tính toán Risk Level và Score Interpretation dựa trên tên khảo sát
+                
                 var (riskLevel, scoreInterpretation) = CalculateRiskLevelAndInterpretation(survey.Name, totalScore);
 
                 var recommendedCoursesFromRules = await _surveyCourseRecommendationRepository
@@ -319,17 +314,17 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                         {
                             ResponseId = userSurveyResponse.ResponseId,
                             CourseId = recRule.CourseId,
-                            RecommendedAt = DateTime.Now
+                            RecommendedAt = TimeHelper.GetVietNamTime()
                         };
                         userSpecificRecommendations.Add(userRec);
                     }
                 }
 
-                // Kiểm tra xem đã có đề xuất nào được lưu cho responseId này chưa để tránh trùng lặp
+                
                 var existingUserRecommendations = await _userResponseCourseRecommendationRepository
                                                       .GetUsersResponseByResponseIdAsync(responseId);
 
-                if (!existingUserRecommendations.Any()) // Chỉ thêm nếu chưa có
+                if (!existingUserRecommendations.Any()) 
                 {
                     foreach (var userRec in userSpecificRecommendations)
                     {
@@ -338,7 +333,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 }
 
                 userSurveyResponse.RiskLevel = riskLevel;
-                userSurveyResponse.RecommendedAction = string.Join(";", recommendedCourseTitles); // Lưu các tiêu đề khóa học
+                userSurveyResponse.RecommendedAction = string.Join(";", recommendedCourseTitles); 
 
                 await _userSurveyResponseRepository.UpdateAsync(userSurveyResponse);
 
@@ -350,9 +345,9 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     TakenAt = userSurveyResponse.TakenAt,
                     TotalScore = totalScore,
                     RiskLevel = riskLevel,
-                    RecommendedActions = recommendedCourseTitles, // Trả về list các tiêu đề
+                    RecommendedActions = recommendedCourseTitles, 
                     Disclaimer = "Lưu ý: Kết quả này chỉ mang tính chất tham khảo và không thay thế cho chẩn đoán chuyên nghiệp. Nếu bạn lo lắng về việc sử dụng chất gây nghiện, vui lòng tham khảo ý kiến của chuyên viên tư vấn.",
-                    ScoreInterpretation = scoreInterpretation // Thêm thang điểm đánh giá vào DTO
+                    ScoreInterpretation = scoreInterpretation 
                 }, "Khảo sát đã được hoàn thành và kết quả đã được tính toán.");
             }
             catch (Exception ex)
@@ -361,12 +356,12 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
         }
 
-        // 4. Phương thức để lấy lại kết quả đã hoàn thành (nếu người dùng refresh trang kết quả)
+        
         public async Task<Result<SurveyResultResponseDto>> GetSurveyResult(Guid responseId)
         {
             try
             {
-                // Lấy UserSurveyResponse cùng với UserSurveyAnswers và các option
+                
                 var userSurveyResponse = await _userSurveyResponseRepository.GetByIdWithAnswersAndSurveyAsync(responseId);
 
                 if (userSurveyResponse == null)
@@ -374,7 +369,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     return Result<SurveyResultResponseDto>.NotFound("Không tìm thấy kết quả khảo sát.");
                 }
 
-                // Lấy thông tin Survey để xác định loại khảo sát
+                
                 var survey = userSurveyResponse.Survey;
                 if (survey == null)
                 {
@@ -392,7 +387,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
                 var recommendedActionsList = userSurveyResponse.RecommendedAction.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                // Re-calculate total score to ensure consistency (optional, but good for validation)
+                
                 int totalScore = 0;
                 if (userSurveyResponse.UserSurveyAnswers != null)
                 {
@@ -406,8 +401,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     }
                 }
 
-                // Tính toán Risk Level và Score Interpretation dựa trên tên khảo sát
-                // Sử dụng lại logic từ CompleteSurvey để đảm bảo tính nhất quán
+               
                 var (riskLevel, scoreInterpretation) = CalculateRiskLevelAndInterpretation(survey.Name, totalScore);
 
                 return Result<SurveyResultResponseDto>.Success(new SurveyResultResponseDto
@@ -417,10 +411,10 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     SurveyId = userSurveyResponse.SurveyId,
                     TakenAt = userSurveyResponse.TakenAt,
                     TotalScore = totalScore,
-                    RiskLevel = userSurveyResponse.RiskLevel, // Lấy từ DB nếu đã lưu
+                    RiskLevel = userSurveyResponse.RiskLevel, 
                     RecommendedActions = recommendedActionsList,
                     Disclaimer = "Lưu ý: Kết quả này chỉ mang tính chất tham khảo và không thay thế cho chẩn đoán chuyên nghiệp. Nếu bạn lo lắng về việc sử dụng chất gây nghiện, vui lòng tham khảo ý kiến của chuyên viên tư vấn.",
-                    ScoreInterpretation = scoreInterpretation // Thêm thang điểm đánh giá vào DTO
+                    ScoreInterpretation = scoreInterpretation 
                 }, "Lấy kết quả khảo sát thành công.");
             }
             catch (Exception ex)
@@ -455,7 +449,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     scoreInterpretation.Add("27+: Nguy cơ cao");
                     break;
                 case "Bài đánh giá CRAFFT":
-                    // Dựa trên ảnh image_07107b.png
                     if (totalScore == 0)
                     {
                         riskLevel = "Không có nguy cơ";
@@ -479,15 +472,55 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                     scoreInterpretation.Add("3+: Nguy cơ cao");
                     break;
                 case "Bài đánh giá AUDIT":
-                    // Thêm logic đánh giá cho AUDIT nếu có
-                    // Ví dụ:
-                    // if (totalScore >= 0 && totalScore <= 7) riskLevel = "Nguy cơ thấp";
-                    // else if (totalScore >= 8 && totalScore <= 15) riskLevel = "Nguy cơ trung bình";
-                    // else riskLevel = "Nguy cơ cao";
-                    // scoreInterpretation.Add("Thang điểm đánh giá AUDIT:");
-                    // scoreInterpretation.Add("0-7: Nguy cơ thấp");
-                    // scoreInterpretation.Add("8-15: Nguy cơ trung bình");
-                    // scoreInterpretation.Add("16+: Nguy cơ cao");
+                    if (totalScore >= 0 && totalScore <= 7)
+                    {
+                        riskLevel = "Nguy cơ thấp";
+                    }
+                    else if (totalScore >= 8 && totalScore <= 15)
+                    {
+                        riskLevel = "Nguy cơ trung bình";
+                    }
+                    else if (totalScore >= 16 && totalScore <= 19)
+                    {
+                        riskLevel = "Nguy cơ cao";
+                    }
+                    else if (totalScore >= 20 && totalScore <= 40)
+                    {
+                        riskLevel = "Nguy cơ rất cao";
+                    }
+                    scoreInterpretation.Add("Thang điểm đánh giá AUDIT:");
+                    scoreInterpretation.Add("0-7: Nguy cơ thấp, uống rượu ở mức độ xã hội, không có vấn đề đáng kể.");
+                    scoreInterpretation.Add("8-15: Nguy cơ trung bình, uống rượu nguy hiểm hoặc có hại, cần được tư vấn ngắn gọn.");
+                    scoreInterpretation.Add("16-19: Nguy cơ cao, khả năng phụ thuộc rượu, cần đánh giá và can thiệp chuyên sâu.");
+                    scoreInterpretation.Add("20-40: Nguy cơ rất cao, phụ thuộc rượu nghiêm trọng, cần can thiệp và điều trị toàn diện.");
+                    break;
+                case "Bài đánh giá DAST-10":
+                    if (totalScore == 0)
+                    {
+                        riskLevel = "Không có vấn đề";
+                    }
+                    else if (totalScore >= 1 && totalScore <= 2)
+                    {
+                        riskLevel = "Nguy cơ thấp";
+                    }
+                    else if (totalScore >= 3 && totalScore <= 5)
+                    {
+                        riskLevel = "Nguy cơ trung bình";
+                    }
+                    else if (totalScore >= 6 && totalScore <= 8)
+                    {
+                        riskLevel = "Nguy cơ cao";
+                    }
+                    else if (totalScore >= 9 && totalScore <= 10)
+                    {
+                        riskLevel = "Nguy cơ rất cao";
+                    }
+                    scoreInterpretation.Add("Thang điểm đánh giá DAST-10:");
+                    scoreInterpretation.Add("0: Không có vấn đề về sử dụng ma túy.");
+                    scoreInterpretation.Add("1-2: Nguy cơ thấp, cần được giáo dục và tư vấn ngắn gọn.");
+                    scoreInterpretation.Add("3-5: Nguy cơ trung bình, cần được đánh giá chuyên sâu hơn.");
+                    scoreInterpretation.Add("6-8: Nguy cơ cao, cần can thiệp và điều trị chuyên sâu.");
+                    scoreInterpretation.Add("9-10: Nguy cơ rất cao, phụ thuộc ma túy nghiêm trọng, cần can thiệp cấp bách.");
                     break;
                 default:
                     // Mặc định hoặc xử lý cho các khảo sát không xác định
@@ -502,7 +535,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
         {
             try
             {
-                // Lấy tất cả phản hồi khảo sát của người dùng cùng với thông tin khảo sát
                 var userResponses = await _userSurveyResponseRepository.GetByUserIdWithSurveyAsync(userId);
                 if (userResponses == null || !userResponses.Any())
                 {
@@ -520,20 +552,17 @@ namespace DrugPreventionSystem.BusinessLogic.Services
 
                     var recommendedActionsList = response.RecommendedAction.Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                    // Tính toán totalScore từ UserSurveyAnswers đã được tải sẵn
                     int totalScore = 0;
                     if (response.UserSurveyAnswers != null)
                     {
                         foreach (var answer in response.UserSurveyAnswers)
                         {
-                            // SurveyOption đã được ThenInclude
                             if (answer.SurveyOption != null && answer.SurveyOption.ScoreValue.HasValue)
                             {
                                 totalScore += answer.SurveyOption.ScoreValue.Value;
                             }
                         }
                     }
-                    // else: không cần fallback ở đây vì repository đảm bảo UserSurveyAnswers được tải
 
                     surveyList.Add(new SurveyResultSummaryResponse
                     {
@@ -541,7 +570,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                         SurveyId = response.SurveyId,
                         SurveyName = response.Survey?.Name ?? "N/A",
                         TakenAt = response.TakenAt,
-                        TotalScore = totalScore, // Dùng TotalScore đã tính lại
+                        TotalScore = totalScore, 
                         RiskLevel = response.RiskLevel,
                         RecommendedActions = recommendedActionsList
                     });

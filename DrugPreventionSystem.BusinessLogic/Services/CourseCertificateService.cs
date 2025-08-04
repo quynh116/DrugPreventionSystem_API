@@ -8,6 +8,7 @@ using DrugPreventionSystem.DataAccess.Repositories;
 using DrugPreventionSystem.DataAccess.Repositories.Interfaces;
 using DrugPreventionSystem.DataAccess.Repository;
 using DrugPreventionSystem.DataAccess.Repository.Interfaces;
+using DrugPreventionSystem.DataAccess.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,7 +59,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             {
                 UserId = request.UserId,
                 CourseId = request.CourseId,
-                IssuedAt = request.IssuedAt ?? DateTime.Now,
+                IssuedAt = request.IssuedAt ?? TimeHelper.GetVietNamTime(),
                 CertificateUrl = request.CertificateUrl
             };
             var added = await _repo.AddAsync(entity);
@@ -122,7 +123,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<CertificateDetailsResponse>.NotFound("User is not enrolled in this course.");
             }
 
-            // 2. Kiểm tra tiến độ hoàn thành khóa học
             int totalLessonsInCourse = course.CourseWeeks?.SelectMany(cw => cw.Lessons).Count() ?? 0;
             if (totalLessonsInCourse == 0)
             {
@@ -137,7 +137,6 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 return Result<CertificateDetailsResponse>.Error("Course not yet completed. Progress: " + (int)Math.Round(courseProgressPercentage) + "%");
             }
 
-            // 3. Lấy hoặc tạo chứng chỉ
             var existingCertificate = await _repo.GetByUserIdAndCourseIdAsync(userId, courseId);
 
             CourseCertificate certificateToReturn;
@@ -151,7 +150,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     UserName = user.Username,
                     CourseTitle = course.Title,
-                    CompletionDate = DateTime.Now, // Sẽ được cập nhật sau
+                    CompletionDate = TimeHelper.GetVietNamTime(), 
                     DurationWeeks = course.TotalDuration.HasValue ? $"{course.TotalDuration} tuần" : "N/A",
                     InstructorName = course.Instructor?.FullName ?? "N/A",
                 };
@@ -162,7 +161,7 @@ namespace DrugPreventionSystem.BusinessLogic.Services
                 {
                     UserId = userId,
                     CourseId = courseId,
-                    IssuedAt = DateTime.Now, // Ngày cấp chứng chỉ là ngày tạo mới
+                    IssuedAt = TimeHelper.GetVietNamTime(), 
                     CertificateUrl = certificateUrl
                 };
                 certificateToReturn = await _repo.AddAsync(newCertificate);
@@ -184,17 +183,16 @@ namespace DrugPreventionSystem.BusinessLogic.Services
             }
 
 
-            // 5. Build và trả về CertificateDetailsResponse
             var response = new CertificateDetailsResponse
             {
                 CertificateId = certificateToReturn.CertificateId.ToString(),
                 CertificateUrl = certificateToReturn.CertificateUrl ?? string.Empty,
-                UserName =user.Username, // Giả sử User có FullName
+                UserName =user.Username,
                 CourseTitle = course.Title,
                 CompletionDate = completionDate,
-                DurationWeeks = course.TotalDuration.HasValue ? $"{course.TotalDuration} tuần" : "N/A", // Format lại
-                InstructorName = course.Instructor?.FullName ?? "N/A", // Giả sử Course có Instructor và Instructor có FullName
-                IssuingOrganization = "Trung tâm Phòng chống Ma túy Quốc gia" // Hoặc lấy từ cấu hình
+                DurationWeeks = course.TotalDuration.HasValue ? $"{course.TotalDuration} tuần" : "N/A", 
+                InstructorName = course.Instructor?.FullName ?? "N/A", 
+                IssuingOrganization = "Trung tâm Phòng chống Ma túy Quốc gia" 
             };
 
             return Result<CertificateDetailsResponse>.Success(response);
